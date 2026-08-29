@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% block title %}מדריכים — SignalFlow{% endblock %}
+{% block content %}
+<main class="wrap" style="padding:48px 0 72px">
+  <p class="eyebrow">מדריכים</p>
+  <h1 style="font-size:clamp(2rem,4vw,3rem);letter-spacing:-0.03em;margin:8px 0 10px">איך מחברים, בלי מושגים.</h1>
+  <p class="lede">ארבעה מדריכים קצרים. כל אחד עם תמונות מסך מצוירות. אפשר לעבור עם העכבר כדי לעצור.</p>
+
+  <nav class="guide-toc" aria-label="נושאים">
+    <a class="toc-card" href="#whatsapp">
+      <span class="dest-chip"><i class="dest-dot wa"></i> וואטסאפ</span>
+      <h3>לטלפון שלכם</h3>
+      <p>מוסיפים איש קשר, מקבלים קוד.</p>
+    </a>
+    <a class="toc-card" href="#telegram">
+      <span class="dest-chip"><i class="dest-dot tg"></i> טלגרם</span>
+      <h3>בוט אישי</h3>
+      <p>BotFather ואז מספר צ׳אט.</p>
+    </a>
+    <a class="toc-card" href="#discord">
+      <span class="dest-chip"><i class="dest-dot dc"></i> דיסקורד</span>
+      <h3>קישור לערוץ</h3>
+      <p>Integrations → Webhooks.</p>
+    </a>
+    <a class="toc-card" href="#tradingview">
+      <span class="dest-chip"><i class="dest-dot tv"></i> TradingView</span>
+      <h3>סימון הווי</h3>
+      <p>Notifications → Webhook URL.</p>
+    </a>
+  </nav>
+
+  <article class="tutorial" id="whatsapp" data-tutorial>
+    <div class="tutorial-head">
+      <p class="eyebrow">וואטסאפ</p>
+      <h2>הדרך הקלה — לטלפון שלי</h2>
+      <p class="lede">זה שולח לאותו וואטסאפ שהפעלתם. בלי מכשיר שני, בלי סריקת QR.</p>
+    </div>
+    <div class="steps">
+      <div class="step-list">
+        <button type="button" class="step is-on" data-step>
+          <b>1. מוסיפים איש קשר</b>
+          <p>בוואטסאפ מוסיפים <span dir="ltr">+34 694 23 41 84</span>. קוראים לו SignalFlow / CallMeBot.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>2. שולחים בדיוק את המשפט</b>
+          <p dir="ltr">I allow callmebot to send me messages</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>3. מחכים לקוד</b>
+          <p>מגיעה תשובה עם APIKEY. אם אין תשובה תוך שתי דקות — מנסים שוב מחר.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>4. מדביקים במערכת</b>
+          <p>המספר בפורמט 9725… ואת הקוד. אחר כך בדיקה מהירה.</p>
+        </button>
+      </div>
+      <div class="shot-stage">
+        <div data-shot>
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="frame-bar" style="background:#075e54;color:#fff">איש קשר חדש</div>
+            <p style="padding:16px;color:#d1d7db;font-size:0.88rem">שם: SignalFlow<br><span dir="ltr">+34 694 23 41 84</span></p>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="frame-bar" style="background:#075e54;color:#fff">CallMeBot</div>
+            <div class="bubble" style="background:#202c33">I allow callmebot to send me messages</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="frame-bar" style="background:#075e54;color:#fff">CallMeBot</div>
+            <div class="bubble">API Activated. Your APIKEY is 123123</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame" style="background:#0c111c;min-height:240px">
+            <div class="frame-bar">SignalFlow</div>
+            <p style="padding:16px;font-size:0.88rem">מספר טלפון<br><span class="preview-url" style="margin-top:8px">972501234567</span></p>
+            <p style="padding:0 16px 16px;font-size:0.88rem">קוד שקיבלתם בואטסאפ<br><span class="preview-url" style="margin-top:8px">••••123</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <details class="panel" style="margin-top:18px">
+      <summary style="cursor:pointer">דרך מתקדמת — Green-API (לא חובה)</summary>
+      <p class="hint" style="margin-top:10px">רק אם כבר משתמשים בזה: <a href="https://console.green-api.com" target="_blank" style="color:var(--signal)">console.green-api.com</a> → Create instance → ממתינים כשתי דקות → Get QR. בוואטסאפ: Linked devices → Link a device. אין QR בדף הבית של Green-API.</p>
+    </details>
+  </article>
+
+  <article class="tutorial" id="telegram" data-tutorial>
+    <div class="tutorial-head">
+      <p class="eyebrow">טלגרם</p>
+      <h2>בוט אישי ומספר צ׳אט</h2>
+    </div>
+    <div class="steps">
+      <div class="step-list">
+        <button type="button" class="step is-on" data-step>
+          <b>1. BotFather</b>
+          <p>פותחים את BotFather ושולחים /newbot.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>2. מעתיקים את הקוד</b>
+          <p>הבוט מחזיר קוד ארוך — זה קוד הבוט.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>3. Start</b>
+          <p>פותחים את הבוט החדש ולוחצים Start, או מוסיפים לקבוצה.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>4. מספר הצ׳אט</b>
+          <p>אחרי הודעה, פותחים getUpdates ומחפשים id.</p>
+        </button>
+      </div>
+      <div class="shot-stage">
+        <div data-shot>
+          <div class="frame frame-tg">
+            <div class="frame-bar" style="color:#2aabee">BotFather</div>
+            <div class="bubble" style="background:#182533">/newbot</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tg">
+            <div class="frame-bar" style="color:#2aabee">BotFather</div>
+            <div class="bubble">Use this token to access the HTTP API:<br><span dir="ltr">7123:AA-xxxx</span></div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tg">
+            <div class="frame-bar" style="color:#2aabee">הבוט שלכם</div>
+            <div class="tv-check" style="background:rgba(42,171,238,0.18);box-shadow:0 0 0 2px #2aabee">Start</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tg" dir="ltr" style="text-align:left">
+            <div class="frame-bar">api.telegram.org/…/getUpdates</div>
+            <pre style="padding:12px;font-size:0.72rem;color:#9ad4f5;margin:0">"chat": {"id": 123456789}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="tutorial" id="discord" data-tutorial>
+    <div class="tutorial-head">
+      <p class="eyebrow">דיסקורד</p>
+      <h2>קישור Webhook מהערוץ</h2>
+    </div>
+    <div class="steps">
+      <div class="step-list">
+        <button type="button" class="step is-on" data-step>
+          <b>1. גלגל ליד הערוץ</b>
+          <p>במחשב, לוחצים על גלגל השיניים ליד שם הערוץ.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>2. Integrations</b>
+          <p>בתפריט: Integrations → Webhooks.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>3. New Webhook</b>
+          <p>יוצרים או בוחרים קישור קיים.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>4. Copy Webhook URL</b>
+          <p>חייבים קישור שנראה כמו discord.com/api/webhooks/ — לא כתובת הערוץ.</p>
+        </button>
+      </div>
+      <div class="shot-stage">
+        <div data-shot>
+          <div class="frame frame-dc">
+            <div class="frame-bar" style="color:#fff"># alerts  ⚙</div>
+            <p style="padding:16px;color:#b5bac1;font-size:0.85rem">הגדרות ערוץ</p>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-dc">
+            <div class="frame-bar" style="color:#fff">Integrations</div>
+            <div class="tv-check" style="background:rgba(88,101,242,0.25);box-shadow:0 0 0 2px #5865f2">Webhooks</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-dc">
+            <div class="frame-bar" style="color:#fff">Webhooks</div>
+            <div class="tv-check" style="background:rgba(88,101,242,0.25);box-shadow:0 0 0 2px #5865f2">New Webhook</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-dc" dir="ltr" style="text-align:left">
+            <div class="frame-bar" style="color:#fff">Copy Webhook URL</div>
+            <div class="preview-url">https://discord.com/api/webhooks/…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="tutorial" id="tradingview" data-tutorial>
+    <div class="tutorial-head">
+      <p class="eyebrow">TradingView</p>
+      <h2>חובה לסמן Webhook URL</h2>
+      <p class="lede">בלי הסימון הזה ההתראה נשארת רק ב-TradingView.</p>
+    </div>
+    <div class="steps">
+      <div class="step-list">
+        <button type="button" class="step is-on" data-step>
+          <b>1. יוצרים התראה</b>
+          <p>בגרף: שעון / Alert.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>2. Notifications</b>
+          <p>גוללים לחלק Notifications.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>3. וי ליד Webhook URL</b>
+          <p>זה הצעד שרוב האנשים מפספסים.</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>4. מדביקים ושומרים</b>
+          <p>הקישור מ-SignalFlow + תבנית JSON בשדה ההודעה.</p>
+        </button>
+      </div>
+      <div class="shot-stage">
+        <div data-shot>
+          <div class="frame frame-tv">
+            <div class="frame-bar">Create Alert</div>
+            <p style="padding:16px;color:#9aa4b2;font-size:0.85rem">שעון על הגרף</p>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tv" dir="ltr" style="text-align:left">
+            <div class="frame-bar">Notifications</div>
+            <p style="padding:12px;color:#8b95a8;font-size:0.8rem">Notify on app</p>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tv" dir="ltr" style="text-align:left">
+            <div class="frame-bar">Notifications</div>
+            <div class="tv-check"><span class="check">✓</span> Webhook URL</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tv" dir="ltr" style="text-align:left">
+            <div class="frame-bar">Webhook URL</div>
+            <div class="preview-url">https://…/api/v1/webhook/…</div>
+            <pre style="padding:12px;font-size:0.7rem;color:#c4ccd8;margin:0">{"ticker": "{{ticker}}"}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</main>
+{% endblock %}

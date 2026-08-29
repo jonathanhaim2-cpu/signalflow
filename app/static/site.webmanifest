@@ -1,0 +1,16 @@
+{
+  "name": "SignalFlow",
+  "short_name": "SignalFlow",
+  "dir": "rtl",
+  "lang": "he",
+  "description": "התראות מ-TradingView לטלפון שלכם",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05070d",
+  "theme_color": "#05070d",
+  "icons": [
+    { "src": "/static/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "/static/icon-512.png", "type": "image/png", "sizes": "512x512" },
+    { "src": "/static/apple-touch-icon.png", "type": "image/png", "sizes": "180x180" }
+  ]
+}

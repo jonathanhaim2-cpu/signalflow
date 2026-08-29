@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 TargetLiteral = Literal["telegram", "discord", "whatsapp"]
@@ -17,7 +17,10 @@ class DiscordTargetConfig(BaseModel):
 
 
 class WhatsAppTargetConfig(BaseModel):
-    provider: Literal["green_api", "meta"] = "green_api"
+    provider: Literal["callmebot", "green_api", "meta"] = "callmebot"
+    # CallMeBot — alerts to the same phone that activated the bot
+    phone: str | None = None
+    apikey: str | None = None
     # Green-API
     id_instance: str | None = None
     api_token: str | None = None
@@ -28,9 +31,31 @@ class WhatsAppTargetConfig(BaseModel):
     access_token: str | None = None
     to: str | None = None
 
+    @field_validator("provider", mode="before")
+    @classmethod
+    def normalize_provider(cls, value: object) -> str:
+        if value is None or str(value).strip() == "":
+            return "callmebot"
+        key = str(value).strip().lower().replace("-", "_")
+        aliases = {
+            "callmebot": "callmebot",
+            "call_me_bot": "callmebot",
+            "green_api": "green_api",
+            "greenapi": "green_api",
+            "meta": "meta",
+            "meta_cloud": "meta",
+            "cloud": "meta",
+        }
+        return aliases.get(key, key)
+
     @model_validator(mode="after")
     def validate_provider_fields(self) -> "WhatsAppTargetConfig":
-        if self.provider == "green_api":
+        if self.provider == "callmebot":
+            phone = self.phone or self.chat_id or self.to
+            key = self.apikey or self.api_token
+            if not (phone and key):
+                raise ValueError("חסרים מספר טלפון וקוד שקיבלתם בואטסאפ")
+        elif self.provider == "green_api":
             if not (self.id_instance and self.api_token and self.chat_id):
                 raise ValueError("חסרים פרטי Green-API: מזהה מופע, קוד, ומספר טלפון")
         elif self.provider == "meta":

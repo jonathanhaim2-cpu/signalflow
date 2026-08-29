@@ -2,6 +2,8 @@ SECRET_KEYS = {
     "bot_token",
     "api_token",
     "access_token",
+    "apikey",
+    "api_key",
     "discord_webhook_url",
     "apitokeninstance",
     "token",

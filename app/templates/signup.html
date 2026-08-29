@@ -1,33 +1,72 @@
 {% extends "base.html" %}
+{% set nav_mode = 'auth' %}
+{% set auth_alt = 'login' %}
+{% set auth_alt_label = 'כניסה' %}
 {% block title %}הרשמה — SignalFlow{% endblock %}
 {% block content %}
-<div class="max-w-sm mx-auto px-6 py-24">
-  <h1 class="text-2xl font-bold mb-6 text-center">הרשמה</h1>
-  <form id="signup-form" class="space-y-4">
-    <div>
-      <label class="block text-sm text-slate-400 mb-1">אימייל</label>
-      <input type="email" name="email" required autocomplete="email" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:border-brand-500 outline-none" />
-    </div>
-    <div>
-      <label class="block text-sm text-slate-400 mb-1">סיסמה</label>
-      <input type="password" name="password" required minlength="8" autocomplete="new-password" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:border-brand-500 outline-none" />
-      <p class="text-xs text-slate-500 mt-1">לפחות 8 תווים</p>
-    </div>
-    <p id="error" class="text-red-400 text-sm hidden"></p>
-    <button type="submit" class="w-full py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold transition">הרשמה</button>
-  </form>
-  <p class="text-sm text-slate-400 mt-4 text-center">כבר יש חשבון? <a id="login-link" href="/login" class="text-brand-500 hover:underline">כניסה</a></p>
+<div class="auth-shell">
+  <section class="auth-plans">
+    <p class="eyebrow">בחירת תוכנית</p>
+    <h1 style="font-size:2rem;letter-spacing:-0.03em;margin:10px 0 18px">איך מתחילים?</h1>
+    <p class="lede" style="margin-bottom:22px">בוחרים תוכנית לפני הטופס. אפשר להתחיל בחינם.</p>
+    <button type="button" class="plan-pick is-on" id="pick-free" aria-pressed="true" data-plan="free">
+      <h3>חינם · 0₪</h3>
+      <p>ערוץ אחד, 3 התראות ביום, עם חתימת SignalFlow.</p>
+    </button>
+    <button type="button" class="plan-pick pro" id="pick-pro" aria-pressed="false" data-plan="pro">
+      <h3>פרו · ₪39 לחודש</h3>
+      <p>בלי הגבלה, יעד נוסף, ניסיונות חוזרים. אין סליקה — נפעיל ידנית.</p>
+    </button>
+  </section>
+  <section class="auth-form-col">
+    <form id="signup-form" class="auth-form">
+      <h2 style="margin:0 0 8px">הרשמה</h2>
+      <p class="hint" id="plan-caption" style="color:var(--muted);margin:0 0 20px">נרשמים לתוכנית חינם.</p>
+      <input type="hidden" name="plan" id="plan-input" value="free" />
+      <div class="field">
+        <label>אימייל</label>
+        <input type="email" name="email" required autocomplete="email" dir="ltr" />
+      </div>
+      <div class="field">
+        <label>סיסמה</label>
+        <input type="password" name="password" required minlength="8" autocomplete="new-password" dir="ltr" />
+        <p style="color:var(--faint);font-size:0.75rem;margin:6px 0 0">לפחות 8 תווים</p>
+      </div>
+      <p id="error" class="form-error hidden"></p>
+      <p id="pro-note" class="note note-warn hidden">ביקשת פרו, נפעיל ידנית. החשבון נפתח כחינם עד שנאשר.</p>
+      <button type="submit" class="btn btn-primary" style="width:100%">הרשמה</button>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:16px;text-align:center">כבר יש חשבון? <a id="login-link" href="/login" style="color:var(--signal)">כניסה</a></p>
+    </form>
+  </section>
 </div>
+{% endblock %}
+{% block scripts %}
 <script>
 const nextPath = (() => {
   const n = new URLSearchParams(location.search).get('next') || '';
   return (n.startsWith('/') && !n.startsWith('//')) ? n : '/dashboard';
 })();
 document.getElementById('login-link').href = '/login?next=' + encodeURIComponent(nextPath);
+
+function setPlan(plan) {
+  document.getElementById('plan-input').value = plan;
+  document.getElementById('pick-free').classList.toggle('is-on', plan === 'free');
+  document.getElementById('pick-pro').classList.toggle('is-on', plan === 'pro');
+  document.getElementById('pick-free').setAttribute('aria-pressed', plan === 'free');
+  document.getElementById('pick-pro').setAttribute('aria-pressed', plan === 'pro');
+  document.getElementById('plan-caption').textContent = plan === 'pro'
+    ? 'נרשמים ומבקשים פרו. אין חיוב בכרטיס.'
+    : 'נרשמים לתוכנית חינם.';
+  document.getElementById('pro-note').classList.toggle('hidden', plan !== 'pro');
+}
+document.getElementById('pick-free').addEventListener('click', () => setPlan('free'));
+document.getElementById('pick-pro').addEventListener('click', () => setPlan('pro'));
+const q = new URLSearchParams(location.search).get('plan');
+if (q === 'pro' || q === 'free') setPlan(q);
+
 function heError(detail, fallback) {
   const map = {
     'Invalid email or password': 'אימייל או סיסמה שגויים',
-    'אימייל או סיסמה שגויים': 'אימייל או סיסמה שגויים',
     'Email already registered': 'האימייל הזה כבר רשום אצלנו',
     'האימייל הזה כבר רשום אצלנו': 'האימייל הזה כבר רשום אצלנו',
     'Not authenticated': 'צריך להתחבר מחדש',
@@ -52,7 +91,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     errorEl.classList.remove('hidden');
     return;
   }
-  const body = { email: form.email.value, password: form.password.value };
+  const body = { email: form.email.value, password: form.password.value, plan: form.plan.value };
   const res = await fetch('/api/v1/auth/signup', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
   });

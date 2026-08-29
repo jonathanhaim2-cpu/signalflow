@@ -3,27 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#05070d" />
+  <meta name="description" content="{% block description %}התראות מ-TradingView מגיעות לטלפון שלכם — וואטסאפ, טלגרם או דיסקורד.{% endblock %}" />
+  <meta property="og:title" content="{% block og_title %}SignalFlow{% endblock %}" />
+  <meta property="og:description" content="התראות מ-TradingView לטלפון. בלי לפספס עסקה." />
+  <meta property="og:image" content="/static/og.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
   <title>{% block title %}SignalFlow{% endblock %}</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/static/favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+  <link rel="manifest" href="/static/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/app.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: { 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+            brand: { 500: '#10d48a', 600: '#0fb876', 700: '#0c9a64' }
           },
-          fontFamily: {
-            sans: ['Heebo', 'Assistant', 'system-ui', 'sans-serif']
-          }
+          fontFamily: { sans: ['Heebo', 'system-ui', 'sans-serif'] }
         }
       }
     }
   </script>
+  {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen antialiased font-sans">
+<body class="sf-body">
+  {% block chrome %}
+  {% include "partials/nav.html" %}
+  {% endblock %}
   {% block content %}{% endblock %}
+  {% block after %}
+  {% if nav_mode|default('marketing') == 'marketing' %}
+  {% include "partials/footer.html" %}
+  {% endif %}
+  {% endblock %}
+  <script src="/static/js/app.js" defer></script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

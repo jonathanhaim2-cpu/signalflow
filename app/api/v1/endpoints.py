@@ -10,7 +10,7 @@ from app.models.alert_log import AlertLog
 from app.models.user import User
 from app.models.webhook import WebhookEndpoint
 from app.schemas.webhook import AlertLogOut, EndpointCreate, EndpointOut
-from app.services.dispatcher import normalize_discord_webhook
+from app.services.dispatcher import normalize_callmebot_phone, normalize_discord_webhook
 from app.services.plans import enforce_channel_limit, enforce_extra_destination
 
 router = APIRouter(prefix="/endpoints", tags=["endpoints"])
@@ -20,6 +20,14 @@ def _normalize_config(target_type: str, config: dict) -> dict:
     cleaned = dict(config or {})
     if target_type == "discord" and cleaned.get("discord_webhook_url"):
         cleaned["discord_webhook_url"] = normalize_discord_webhook(cleaned["discord_webhook_url"])
+    if target_type == "whatsapp":
+        provider = (cleaned.get("provider") or "callmebot").strip().lower().replace("-", "_")
+        if provider in {"callmebot", "call_me_bot"}:
+            cleaned["provider"] = "callmebot"
+            raw_phone = cleaned.get("phone") or cleaned.get("chat_id") or cleaned.get("to") or ""
+            cleaned["phone"] = normalize_callmebot_phone(str(raw_phone))
+            if not cleaned.get("apikey") and cleaned.get("api_token"):
+                cleaned["apikey"] = cleaned["api_token"]
     return cleaned
 
 

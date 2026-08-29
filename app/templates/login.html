@@ -1,22 +1,43 @@
 {% extends "base.html" %}
+{% set nav_mode = 'auth' %}
+{% set auth_alt = 'signup' %}
+{% set auth_alt_label = 'הרשמה' %}
 {% block title %}כניסה — SignalFlow{% endblock %}
 {% block content %}
-<div class="max-w-sm mx-auto px-6 py-24">
-  <h1 class="text-2xl font-bold mb-6 text-center">כניסה</h1>
-  <form id="login-form" class="space-y-4">
-    <div>
-      <label class="block text-sm text-slate-400 mb-1">אימייל</label>
-      <input type="email" name="email" required autocomplete="email" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:border-brand-500 outline-none" />
-    </div>
-    <div>
-      <label class="block text-sm text-slate-400 mb-1">סיסמה</label>
-      <input type="password" name="password" required autocomplete="current-password" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:border-brand-500 outline-none" />
-    </div>
-    <p id="error" class="text-red-400 text-sm hidden"></p>
-    <button type="submit" class="w-full py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold transition">כניסה</button>
-  </form>
-  <p class="text-sm text-slate-400 mt-4 text-center">עוד אין חשבון? <a id="signup-link" href="/signup" class="text-brand-500 hover:underline">הרשמה</a></p>
+<div class="auth-shell">
+  <section class="auth-plans">
+    <p class="eyebrow">עוד אין חשבון?</p>
+    <h1 style="font-size:2rem;letter-spacing:-0.03em;margin:10px 0 18px">חינם או פרו</h1>
+    <p class="lede" style="margin-bottom:22px">אפשר להירשם עכשיו. פרו בלי סליקה — נפעיל ידנית.</p>
+    <a class="plan-pick" href="/signup?plan=free">
+      <h3>הרשמה כחינם</h3>
+      <p>ערוץ אחד, 3 התראות ביום. 0₪.</p>
+    </a>
+    <a class="plan-pick pro" href="/signup?plan=pro">
+      <h3>הרשמה כפרו</h3>
+      <p>₪39 לחודש. בלי הגבלה, יעד נוסף, בלי חתימה.</p>
+    </a>
+  </section>
+  <section class="auth-form-col">
+    <form id="login-form" class="auth-form">
+      <h2 style="margin:0 0 8px">כניסה</h2>
+      <p style="color:var(--muted);margin:0 0 20px">חשבון קיים? כאן נכנסים.</p>
+      <div class="field">
+        <label>אימייל</label>
+        <input type="email" name="email" required autocomplete="email" dir="ltr" />
+      </div>
+      <div class="field">
+        <label>סיסמה</label>
+        <input type="password" name="password" required autocomplete="current-password" dir="ltr" />
+      </div>
+      <p id="error" class="form-error hidden"></p>
+      <button type="submit" class="btn btn-primary" style="width:100%">כניסה</button>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:16px;text-align:center">עוד אין חשבון? <a id="signup-link" href="/signup" style="color:var(--signal)">הרשמה</a></p>
+    </form>
+  </section>
 </div>
+{% endblock %}
+{% block scripts %}
 <script>
 const nextPath = (() => {
   const n = new URLSearchParams(location.search).get('next') || '';
