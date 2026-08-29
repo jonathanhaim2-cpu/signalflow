@@ -15,6 +15,10 @@ async def test_dashboard_hebrew_and_sleep_banner(client):
     assert "לא הגיע" in html
     assert "העתק תבנית" in html
     assert "green-api.com" in html
+    assert "הדרך הקלה — לטלפון שלי" in html
+    assert "+34 694 23 41 84" in html
+    assert "I allow callmebot to send me messages" in html
+    assert "בלי סריקת QR" in html
     assert "Integrations" in html
     assert "{{ticker}}" in html
 

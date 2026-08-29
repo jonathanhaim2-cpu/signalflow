@@ -32,7 +32,7 @@
     <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
       <div class="w-8 h-8 mb-2 rounded-full bg-brand-600 flex items-center justify-center font-bold">1</div>
       <h2 class="font-semibold mb-1">לאן לשלוח</h2>
-      <p class="text-sm text-slate-400">מחברים טלגרם, דיסקורד או וואטסאפ. משם תקבלו את ההתראות.</p>
+      <p class="text-sm text-slate-400">מחברים טלגרם, דיסקורד או וואטסאפ לטלפון שלכם. משם תקבלו את ההתראות.</p>
     </div>
     <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
       <div class="w-8 h-8 mb-2 rounded-full bg-brand-600 flex items-center justify-center font-bold">2</div>
@@ -121,11 +121,23 @@
         <div>
           <label class="block text-xs text-slate-400 mb-1">איך לחבר</label>
           <select name="wa_provider" id="wa-provider" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
-            <option value="green_api">הדרך הקלה — Green-API (מומלץ)</option>
+            <option value="callmebot" selected>הדרך הקלה — לטלפון שלי</option>
+            <option value="green_api">דרך מתקדמת — Green-API</option>
             <option value="meta">דרך מתקדמת — Meta</option>
           </select>
         </div>
-        <div id="wa-green-fields" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <p id="wa-own-phone-note" class="text-sm text-slate-300">ההתראות מגיעות <span class="text-white font-semibold">לוואטסאפ שלכם</span> — אותו מספר שמפעילים כאן. בלי מכשיר שני ובלי סריקת QR.</p>
+        <div id="wa-callmebot-fields" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">מספר טלפון</label>
+            <input name="wa_phone" placeholder="972501234567" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">קוד שקיבלתם בואטסאפ</label>
+            <input name="wa_apikey" type="password" autocomplete="off" placeholder="הקוד מההודעה של הבוט" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+        </div>
+        <div id="wa-green-fields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
             <label class="block text-xs text-slate-400 mb-1">מזהה המופע</label>
             <input name="id_instance" placeholder="idInstance" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
@@ -176,10 +188,26 @@
           <div id="extra-discord" class="md:col-span-2 hidden">
             <input id="extra-discord-url" type="password" placeholder="קישור Webhook דיסקורד" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
           </div>
-          <div id="extra-whatsapp" class="md:col-span-2 hidden grid grid-cols-1 md:grid-cols-3 gap-3">
-            <input id="extra-wa-instance" placeholder="idInstance" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-            <input id="extra-wa-token" type="password" placeholder="api token" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-            <input id="extra-wa-chat" placeholder="9725…" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          <div id="extra-whatsapp" class="md:col-span-2 hidden space-y-3">
+            <select id="extra-wa-provider" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
+              <option value="callmebot" selected>הדרך הקלה — לטלפון שלי</option>
+              <option value="green_api">דרך מתקדמת — Green-API</option>
+              <option value="meta">דרך מתקדמת — Meta</option>
+            </select>
+            <div id="extra-wa-callmebot" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input id="extra-wa-phone" placeholder="מספר טלפון 972501234567" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+              <input id="extra-wa-apikey" type="password" placeholder="קוד שקיבלתם בואטסאפ" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+            </div>
+            <div id="extra-wa-green" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+              <input id="extra-wa-instance" placeholder="idInstance" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+              <input id="extra-wa-token" type="password" placeholder="api token" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+              <input id="extra-wa-chat" placeholder="9725…" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+            </div>
+            <div id="extra-wa-meta" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+              <input id="extra-wa-phone-id" placeholder="phone_number_id" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+              <input id="extra-wa-access" type="password" placeholder="access token" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+              <input id="extra-wa-to" placeholder="+972501234567" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+            </div>
           </div>
         </div>
       </div>
@@ -210,17 +238,20 @@
       <p class="mt-2 text-xs text-slate-500">הקישור צריך להיראות בערך כך: <span dir="ltr" class="font-mono">https://discord.com/api/webhooks/…</span> — לא הכתובת הרגילה של הערוץ.</p>
     </details>
     <details id="whatsapp-help" class="mt-4 text-sm text-slate-400 hidden" open>
-      <summary class="cursor-pointer hover:text-slate-300">איך מחברים וואטסאפ בלי מושגים טכניים</summary>
+      <summary class="cursor-pointer hover:text-slate-300">איך מקבלים התראות לוואטסאפ שלכם (בלי סריקת QR)</summary>
       <div class="mt-2 space-y-3">
-        <p class="text-slate-300 font-medium">הדרך הקלה (Green-API)</p>
+        <p class="text-slate-300">זה שולח <span class="text-white font-semibold">לטלפון שלכם</span> — לא למכשיר שני, ולא צריך לסרוק כלום בדף הבית.</p>
         <ol class="list-decimal list-inside space-y-1">
-          <li>נרשמים באתר <a href="https://green-api.com" target="_blank" class="text-brand-500 hover:underline">green-api.com</a> — יש מסלול חינמי להתחלה.</li>
-          <li>יוצרים מופע (instance) וסורקים קוד QR עם הוואטסאפ שלכם, כמו לחבר וואטסאפ במחשב.</li>
-          <li>במסך מופיעים שני ערכים: מזהה המופע (<span dir="ltr">idInstance</span>) והקוד (<span dir="ltr">apiTokenInstance</span>). מעתיקים אותם לכאן.</li>
-          <li>מדביקים גם את מספר הטלפון שיקבל את ההתראות, בפורמט בינלאומי בלי פלוס — למשל <span dir="ltr" class="font-mono">972501234567</span>.</li>
+          <li>בוואטסאפ מוסיפים איש קשר: <span dir="ltr" class="font-mono text-slate-200">+34 694 23 41 84</span> (אפשר לקרוא לו SignalFlow / CallMeBot).</li>
+          <li>שולחים לו בדיוק: <span dir="ltr" class="font-mono text-slate-200">I allow callmebot to send me messages</span></li>
+          <li>מחכים לתשובה עם קוד (APIKEY). אם אין תשובה תוך שתי דקות, מנסים שוב מחר (מגבלת הבוט).</li>
+          <li>מדביקים כאן את המספר שלכם בפורמט <span dir="ltr" class="font-mono">9725…</span> ואת הקוד.</li>
+          <li>לוחצים בדיקה מהירה — ההודעה צריכה להגיע לאותו וואטסאפ.</li>
         </ol>
-        <p class="text-slate-300 font-medium">דרך מתקדמת (Meta)</p>
-        <p>מי שכבר יש לו חשבון Meta Cloud API ממלא מזהה מספר, קוד גישה, ומספר נמען בפורמט בינלאומי.</p>
+        <details class="mt-2 rounded-lg border border-slate-800 p-3">
+          <summary class="cursor-pointer hover:text-slate-300">דרך מתקדמת — Green-API (לא חובה)</summary>
+          <p class="mt-2 text-xs leading-relaxed">רק אם כבר משתמשים בזה: נכנסים ל־<a href="https://console.green-api.com" target="_blank" class="text-brand-500 hover:underline">console.green-api.com</a> → Create instance → ממתינים כשתי דקות → Get QR. בוואטסאפ: Linked devices → Link a device. אין QR בדף הבית של Green-API.</p>
+        </details>
       </div>
     </details>
   </div>
@@ -328,9 +359,18 @@ function syncDestination() {
 }
 
 function syncWaProvider() {
-  const green = waProvider.value === 'green_api';
-  document.getElementById('wa-green-fields').classList.toggle('hidden', !green);
-  document.getElementById('wa-meta-fields').classList.toggle('hidden', green);
+  const provider = waProvider.value;
+  document.getElementById('wa-callmebot-fields').classList.toggle('hidden', provider !== 'callmebot');
+  document.getElementById('wa-own-phone-note').classList.toggle('hidden', provider !== 'callmebot');
+  document.getElementById('wa-green-fields').classList.toggle('hidden', provider !== 'green_api');
+  document.getElementById('wa-meta-fields').classList.toggle('hidden', provider !== 'meta');
+}
+
+function syncExtraWaProvider() {
+  const provider = document.getElementById('extra-wa-provider').value;
+  document.getElementById('extra-wa-callmebot').classList.toggle('hidden', provider !== 'callmebot');
+  document.getElementById('extra-wa-green').classList.toggle('hidden', provider !== 'green_api');
+  document.getElementById('extra-wa-meta').classList.toggle('hidden', provider !== 'meta');
 }
 
 function syncExtra() {
@@ -339,14 +379,17 @@ function syncExtra() {
   document.getElementById('extra-telegram').classList.toggle('hidden', type !== 'telegram');
   document.getElementById('extra-discord').classList.toggle('hidden', type !== 'discord');
   document.getElementById('extra-whatsapp').classList.toggle('hidden', type !== 'whatsapp');
+  if (type === 'whatsapp') syncExtraWaProvider();
 }
 
 targetType.addEventListener('change', syncDestination);
 waProvider.addEventListener('change', syncWaProvider);
 enableExtra.addEventListener('change', syncExtra);
 extraType.addEventListener('change', syncExtra);
+document.getElementById('extra-wa-provider').addEventListener('change', syncExtraWaProvider);
 syncDestination();
 syncWaProvider();
+syncExtraWaProvider();
 
 function defaultPayload() {
   return {
@@ -475,11 +518,18 @@ function buildWhatsAppConfig(form) {
       to: form.wa_to.value
     };
   }
+  if (form.wa_provider.value === 'green_api') {
+    return {
+      provider: 'green_api',
+      id_instance: form.id_instance.value,
+      api_token: form.api_token.value,
+      chat_id: form.wa_chat_id.value
+    };
+  }
   return {
-    provider: 'green_api',
-    id_instance: form.id_instance.value,
-    api_token: form.api_token.value,
-    chat_id: form.wa_chat_id.value
+    provider: 'callmebot',
+    phone: form.wa_phone.value,
+    apikey: form.wa_apikey.value
   };
 }
 
@@ -495,11 +545,27 @@ function buildExtraConfig() {
   const type = extraType.value;
   if (type === 'telegram') return { chat_id: document.getElementById('extra-chat-id').value, bot_token: document.getElementById('extra-bot-token').value || null };
   if (type === 'discord') return { discord_webhook_url: document.getElementById('extra-discord-url').value };
+  const extraProvider = document.getElementById('extra-wa-provider').value;
+  if (extraProvider === 'meta') {
+    return {
+      provider: 'meta',
+      phone_number_id: document.getElementById('extra-wa-phone-id').value,
+      access_token: document.getElementById('extra-wa-access').value,
+      to: document.getElementById('extra-wa-to').value
+    };
+  }
+  if (extraProvider === 'green_api') {
+    return {
+      provider: 'green_api',
+      id_instance: document.getElementById('extra-wa-instance').value,
+      api_token: document.getElementById('extra-wa-token').value,
+      chat_id: document.getElementById('extra-wa-chat').value
+    };
+  }
   return {
-    provider: 'green_api',
-    id_instance: document.getElementById('extra-wa-instance').value,
-    api_token: document.getElementById('extra-wa-token').value,
-    chat_id: document.getElementById('extra-wa-chat').value
+    provider: 'callmebot',
+    phone: document.getElementById('extra-wa-phone').value,
+    apikey: document.getElementById('extra-wa-apikey').value
   };
 }
 

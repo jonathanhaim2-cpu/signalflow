@@ -85,9 +85,18 @@ Plain text still forwards; every attempt is logged as הגיע / לא הגיע.
 
 ## WhatsApp
 
-**Easy path (Green-API):** create an account, scan the QR, copy `idInstance` + `apiTokenInstance`, paste the recipient phone (e.g. `9725…`). SignalFlow POSTs to `https://api.green-api.com/waInstance{id}/sendMessage/{token}`.
+**Easy path (CallMeBot, default):** alerts go to *your* WhatsApp — the same number that activated the bot. No second device, no QR.
 
-**Meta Cloud API:** `phone_number_id` + `access_token` + recipient `to` (E.164). Secrets are masked in the UI.
+1. Add `+34 694 23 41 84` as a WhatsApp contact (name it SignalFlow / CallMeBot).
+2. Send exactly: `I allow callmebot to send me messages`
+3. The bot replies with an APIKEY. If nothing arrives within two minutes, try again tomorrow (bot limit).
+4. In the dashboard, paste your number as `9725…` and the APIKEY, then use בדיקה מהירה.
+
+SignalFlow sends a GET to `https://api.callmebot.com/whatsapp.php?phone=…&text=…&apikey=…` (personal use only). Israeli `05…` numbers are stored as `9725…`. The APIKEY is masked in API responses.
+
+**Advanced — Green-API:** [console.green-api.com](https://console.green-api.com) → Create instance → wait ~2 minutes → Get QR → WhatsApp: Linked devices → Link a device. Then paste `idInstance`, `apiTokenInstance`, and the recipient phone. QR is not on the Green-API homepage.
+
+**Advanced — Meta Cloud API:** `phone_number_id` + `access_token` + recipient `to` (E.164).
 
 ## Telegram / Discord
 

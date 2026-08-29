@@ -25,19 +25,32 @@ class FakeHTTP:
     def __init__(self) -> None:
         self.calls: list[dict] = []
         self.status_code = 200
+        self.response_text = '{"ok":true}'
         self.fail_times = 0
         self._failures_seen = 0
         self.exc: Exception | None = None
 
-    async def post(self, url: str, json=None, headers=None):
-        self.calls.append({"url": url, "json": json, "headers": headers})
+    def _record(self, url: str, *, json=None, headers=None, method: str = "POST", timeout=None):
+        self.calls.append(
+            {"url": url, "json": json, "headers": headers, "method": method, "timeout": timeout}
+        )
+
+    def _next_response(self):
         if self.exc and self._failures_seen < self.fail_times:
             self._failures_seen += 1
             raise self.exc
         if self._failures_seen < self.fail_times:
             self._failures_seen += 1
             return FakeResponse(status_code=503, text="upstream down")
-        return FakeResponse(status_code=self.status_code)
+        return FakeResponse(status_code=self.status_code, text=self.response_text)
+
+    async def post(self, url: str, json=None, headers=None):
+        self._record(url, json=json, headers=headers, method="POST")
+        return self._next_response()
+
+    async def get(self, url: str, params=None, headers=None, timeout=None):
+        self._record(url, json=params, headers=headers, method="GET", timeout=timeout)
+        return self._next_response()
 
 
 @pytest.fixture
