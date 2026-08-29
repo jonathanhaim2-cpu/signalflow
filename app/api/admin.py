@@ -79,6 +79,8 @@ async def _admin_context(
     unused = [inv for inv in invites if invite_status(inv) == "unused"]
     ctx = {
         "admin": admin,
+        "user": admin,
+        "nav_mode": "app",
         "users": await _user_rows(db),
         "unused_invites": unused,
         "invites": invites,

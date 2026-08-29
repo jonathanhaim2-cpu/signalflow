@@ -33,6 +33,8 @@ async def signup(payload: UserCreate, response: Response, db: AsyncSession = Dep
         raise HTTPException(status_code=400, detail="האימייל הזה כבר רשום אצלנו")
 
     user = User(email=email, hashed_password=hash_password(payload.password))
+    if (payload.plan or "free").lower() == "pro":
+        user.upgrade_requested_at = datetime.now(timezone.utc)
     db.add(user)
     await db.commit()
     await db.refresh(user)

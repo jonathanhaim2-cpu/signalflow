@@ -26,4 +26,23 @@ async def test_dashboard_hebrew_and_sleep_banner(client):
 async def test_landing_mentions_whatsapp(client):
     page = await client.get("/")
     assert page.status_code == 200
-    assert "וואטסאפ" in page.text
+    html = page.text
+    assert "וואטסאפ" in html
+    assert "חינם" in html
+    assert "פרו" in html
+    assert "מדריכים" in html
+    assert "מחירים" in html
+    assert 'href="/static/css/app.css"' in html
+    assert "#6366f1" not in html
+
+
+async def test_guides_page(client):
+    page = await client.get("/guides")
+    assert page.status_code == 200
+    html = page.text
+    assert "I allow callmebot to send me messages" in html
+    assert "+34 694 23 41 84" in html
+    assert "BotFather" in html
+    assert "Integrations" in html
+    assert "Webhook URL" in html
+    assert "green-api.com" in html

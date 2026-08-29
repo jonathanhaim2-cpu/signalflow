@@ -1,0 +1,43 @@
+{% set mode = nav_mode|default('marketing') %}
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="wordmark" href="{% if mode == 'app' %}/dashboard{% else %}/{% endif %}" aria-label="SignalFlow">
+      <svg class="wordmark-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="#0c111c"/>
+        <circle cx="32" cy="33" r="20" fill="#10d48a" fill-opacity="0.12"/>
+        <rect x="18" y="32" width="6" height="12" rx="3" fill="#10d48a"/>
+        <rect x="29" y="26" width="6" height="18" rx="3" fill="#10d48a"/>
+        <rect x="40" y="18" width="6" height="26" rx="3" fill="#10d48a"/>
+      </svg>
+      <span class="wordmark-text">SignalFlow</span>
+    </a>
+
+    {% if mode == 'marketing' %}
+    <nav class="nav-links" aria-label="ראשי">
+      <a href="/guides">מדריכים</a>
+      <a href="/#pricing">מחירים</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="/login">כניסה</a>
+      <a class="btn btn-primary btn-sm" href="/signup">הרשמה</a>
+    </div>
+    {% elif mode == 'auth' %}
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="/guides">מדריכים</a>
+      <a class="btn btn-ghost btn-sm" href="{% if auth_alt == 'login' %}/login{% else %}/signup{% endif %}">{{ auth_alt_label|default('כניסה') }}</a>
+    </div>
+    {% else %}
+    <nav class="nav-links" aria-label="חשבון">
+      <a href="/guides">מדריכים</a>
+      {% if user is defined and user.is_admin %}<a href="/admin">ניהול</a>{% endif %}
+    </nav>
+    <div class="nav-cta">
+      <span id="nav-plan-pill" class="plan-pill free">חינם</span>
+      {% if user is defined %}
+      <span class="text-sm" style="color:var(--muted)" dir="ltr">{{ user.email }}</span>
+      {% endif %}
+      <button type="button" id="logout-btn" class="btn btn-ghost btn-sm">התנתק</button>
+    </div>
+    {% endif %}
+  </div>
+</header>

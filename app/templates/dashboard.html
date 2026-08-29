@@ -1,80 +1,188 @@
 {% extends "base.html" %}
 {% block title %}הערוץ שלי — SignalFlow{% endblock %}
 {% block content %}
-<div class="max-w-5xl mx-auto px-6 py-8">
-  <div class="flex items-center justify-between mb-8">
-    <h1 class="text-2xl font-bold">SignalFlow</h1>
-    <div class="flex items-center gap-4">
-      <span class="text-sm text-slate-400" dir="ltr">{{ user.email }}</span>
-      {% if user.is_admin %}<a href="/admin" class="text-sm px-3 py-1.5 rounded-lg border border-brand-600 text-brand-400 hover:border-brand-400">ניהול</a>{% endif %}
-      <button id="logout-btn" class="text-sm px-3 py-1.5 rounded-lg border border-slate-700 hover:border-slate-500">התנתק</button>
-    </div>
+<main class="app-main">
+  <div id="sleep-banner" class="quiet-banner">
+    השרת החינמי נרדם אחרי בערך 15 דקות בלי פעילות. התראה ראשונה עלולה לקחת כ־20 שניות. שרת שתמיד ער עולה כ־7 דולר לחודש.
   </div>
 
-  <div id="sleep-banner" class="rounded-xl bg-amber-500/10 border border-amber-500/40 p-4 mb-6 text-sm">
-    <p class="font-semibold text-amber-200 mb-1">חשוב לדעת על השרת החינמי</p>
-    <p class="text-slate-300 leading-relaxed">אחרי בערך 15 דקות בלי פעילות השרת נרדם. ההתראה הבאה מ-TradingView עלולה לקחת כ־20 שניות, או לא להגיע אם TradingView לא מחכה. שרת שתמיד ער עולה כ־7 דולר לחודש ב-Render.</p>
-  </div>
-
-  <div id="plan-card" class="rounded-xl bg-slate-900 border border-slate-800 p-5 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <section class="panel" id="plan-card" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center">
     <div>
-      <p class="text-sm text-slate-400 mb-1">התוכנית שלכם</p>
-      <p id="plan-summary" class="font-semibold">טוען…</p>
-      <p id="plan-remaining" class="text-sm text-slate-400 mt-1"></p>
+      <p class="preview-kicker">התוכנית שלכם</p>
+      <p id="plan-summary" style="font-weight:800;margin:4px 0">טוען…</p>
+      <p id="plan-remaining" class="hint" style="margin:0"></p>
     </div>
-    <div class="flex items-center gap-3">
-      <button id="want-pro-btn" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold text-sm">רוצה פרו</button>
-      <p id="want-pro-msg" class="text-sm text-emerald-400 hidden"></p>
+    <div>
+      <button type="button" id="want-pro-btn" class="btn btn-gold btn-sm">רוצה פרו</button>
+      <p id="want-pro-msg" class="note note-ok hidden" style="margin:0"></p>
     </div>
+  </section>
+
+  <div class="checklist">
+    <a class="check-item" href="/guides#whatsapp">
+      <span class="check-num">1</span>
+      <div><strong>מחברים יעד</strong><span>וואטסאפ לטלפון, טלגרם או דיסקורד</span></div>
+    </a>
+    <a class="check-item" href="#endpoints-list">
+      <span class="check-num">2</span>
+      <div><strong>מעתיקים קישור</strong><span>לחיצה אחת על העתק קישור</span></div>
+    </a>
+    <a class="check-item" href="/guides#tradingview">
+      <span class="check-num">3</span>
+      <div><strong>וי ב-TradingView</strong><span>Notifications → Webhook URL</span></div>
+    </a>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-    <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-      <div class="w-8 h-8 mb-2 rounded-full bg-brand-600 flex items-center justify-center font-bold">1</div>
-      <h2 class="font-semibold mb-1">לאן לשלוח</h2>
-      <p class="text-sm text-slate-400">מחברים טלגרם, דיסקורד או וואטסאפ לטלפון שלכם. משם תקבלו את ההתראות.</p>
-    </div>
-    <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-      <div class="w-8 h-8 mb-2 rounded-full bg-brand-600 flex items-center justify-center font-bold">2</div>
-      <h2 class="font-semibold mb-1">מעתיקים את הקישור</h2>
-      <p class="text-sm text-slate-400">לחיצה אחת על «העתק קישור». זה הכל.</p>
-    </div>
-    <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/40">
-      <div class="w-8 h-8 mb-2 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">3</div>
-      <h2 class="font-semibold mb-1">מסמנים וי ב-TradingView</h2>
-      <p class="text-sm text-slate-400">בכל התראה חדשה: Notifications, וי ליד Webhook URL, מדביקים, שומרים.</p>
-    </div>
-  </div>
+  <section class="panel channel-card">
+    <h2>הערוץ</h2>
+    <p class="hint">החיבור שלכם ליעד. מעתיקים את הקישור ל-TradingView.</p>
+    <div id="endpoints-list"><p class="hint">טוען…</p></div>
+  </section>
 
-  <div class="rounded-xl bg-slate-900 border border-emerald-500/40 p-5 mb-8">
-    <h2 class="font-semibold mb-1">השלב החשוב ב-TradingView</h2>
-    <p class="text-sm text-slate-400 mb-4">בלי הסימון הזה ההתראה נשארת רק ב-TradingView ולא מגיעה אליכם. עושים את זה <span class="text-white font-semibold">על כל התראה</span> שרוצים שתגיע גם לכאן.</p>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
-      <ol class="list-decimal list-inside space-y-2 text-sm text-slate-300">
-        <li>בגרף, יוצרים התראה (שעון / Alert).</li>
-        <li>בחלון שנפתח גוללים ל-<span class="text-white font-semibold" dir="ltr">Notifications</span>.</li>
-        <li>מסמנים <span class="text-emerald-400 font-semibold">וי</span> ליד <span class="text-white font-semibold" dir="ltr">Webhook URL</span>.</li>
-        <li>מדביקים את הקישור שהעתקתם כאן, ולוחצים Save.</li>
+  <section class="panel">
+    <h2>חיבור חדש</h2>
+    <p class="hint">שם שתזהו (למשל «אסטרטגיית ביטקוין») ולאן לשלוח. <a href="/guides" style="color:var(--signal)">מדריך מצולם</a></p>
+    <form id="create-form" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="field">
+        <label>שם</label>
+        <input class="sf-input" name="name" required placeholder="אסטרטגיית ביטקוין" />
+      </div>
+      <div class="field">
+        <label>לאן לשלוח</label>
+        <select class="sf-input" name="target_type" id="target-type">
+          <option value="telegram">טלגרם</option>
+          <option value="discord">דיסקורד</option>
+          <option value="whatsapp">וואטסאפ</option>
+        </select>
+      </div>
+      <div id="telegram-fields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="field"><label>מספר הצ׳אט בטלגרם</label><input class="sf-input" name="chat_id" placeholder="למשל 123456789" dir="ltr" /></div>
+        <div class="field"><label>קוד הבוט (מוסתר)</label><input class="sf-input" name="bot_token" type="password" autocomplete="off" placeholder="הקוד שקיבלתם מ-BotFather" dir="ltr" /></div>
+      </div>
+      <div id="discord-fields" class="md:col-span-2 hidden field">
+        <label>קישור דיסקורד (Webhook)</label>
+        <input class="sf-input" name="discord_webhook_url" type="password" autocomplete="off" placeholder="מדביקים כאן את הקישור מערוץ הדיסקורד" dir="ltr" />
+      </div>
+      <div id="whatsapp-fields" class="md:col-span-2 hidden space-y-3">
+        <div class="field">
+          <label>איך לחבר</label>
+          <select class="sf-input" name="wa_provider" id="wa-provider">
+            <option value="callmebot" selected>הדרך הקלה — לטלפון שלי</option>
+            <option value="green_api">דרך מתקדמת — Green-API</option>
+            <option value="meta">דרך מתקדמת — Meta</option>
+          </select>
+        </div>
+        <p id="wa-own-phone-note">ההתראות מגיעות <strong>לוואטסאפ שלכם</strong> — אותו מספר שמפעילים כאן. בלי מכשיר שני ובלי סריקת QR.</p>
+        <div id="wa-callmebot-fields" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="field"><label>מספר טלפון</label><input class="sf-input" name="wa_phone" placeholder="972501234567" dir="ltr" /></div>
+          <div class="field"><label>קוד שקיבלתם בואטסאפ</label><input class="sf-input" name="wa_apikey" type="password" autocomplete="off" placeholder="הקוד מההודעה של הבוט" dir="ltr" /></div>
+        </div>
+        <div id="wa-green-fields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="field"><label>מזהה המופע</label><input class="sf-input" name="id_instance" placeholder="idInstance" dir="ltr" /></div>
+          <div class="field"><label>הקוד (מוסתר)</label><input class="sf-input" name="api_token" type="password" autocomplete="off" placeholder="apiTokenInstance" dir="ltr" /></div>
+          <div class="field"><label>מספר שיקבל (למשל 9725…)</label><input class="sf-input" name="wa_chat_id" placeholder="972501234567" dir="ltr" /></div>
+        </div>
+        <div id="wa-meta-fields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="field"><label>מזהה מספר</label><input class="sf-input" name="phone_number_id" placeholder="phone_number_id" dir="ltr" /></div>
+          <div class="field"><label>קוד גישה (מוסתר)</label><input class="sf-input" name="access_token" type="password" autocomplete="off" placeholder="access token" dir="ltr" /></div>
+          <div class="field"><label>נמען (E.164)</label><input class="sf-input" name="wa_to" placeholder="+972501234567" dir="ltr" /></div>
+        </div>
+      </div>
+
+      <div id="extra-dest-wrap" class="md:col-span-2 hidden panel" style="padding:14px;margin:0">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" id="enable-extra" />
+          יעד נוסף (פרו בלבד) — אותה התראה תישלח גם לשם
+        </label>
+        <div id="extra-fields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+          <div class="md:col-span-2 field">
+            <label>יעד נוסף</label>
+            <select class="sf-input" id="extra-type">
+              <option value="telegram">טלגרם</option>
+              <option value="discord">דיסקורד</option>
+              <option value="whatsapp">וואטסאפ</option>
+            </select>
+          </div>
+          <div id="extra-telegram" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input class="sf-input" id="extra-chat-id" placeholder="מספר צ׳אט טלגרם" dir="ltr" />
+            <input class="sf-input" id="extra-bot-token" type="password" placeholder="קוד בוט (מוסתר)" dir="ltr" />
+          </div>
+          <div id="extra-discord" class="md:col-span-2 hidden">
+            <input class="sf-input" id="extra-discord-url" type="password" placeholder="קישור Webhook דיסקורד" dir="ltr" />
+          </div>
+          <div id="extra-whatsapp" class="md:col-span-2 hidden space-y-3">
+            <select class="sf-input" id="extra-wa-provider">
+              <option value="callmebot" selected>הדרך הקלה — לטלפון שלי</option>
+              <option value="green_api">דרך מתקדמת — Green-API</option>
+              <option value="meta">דרך מתקדמת — Meta</option>
+            </select>
+            <div id="extra-wa-callmebot" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <input class="sf-input" id="extra-wa-phone" placeholder="מספר טלפון 972501234567" dir="ltr" />
+              <input class="sf-input" id="extra-wa-apikey" type="password" placeholder="קוד שקיבלתם בואטסאפ" dir="ltr" />
+            </div>
+            <div id="extra-wa-green" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+              <input class="sf-input" id="extra-wa-instance" placeholder="idInstance" dir="ltr" />
+              <input class="sf-input" id="extra-wa-token" type="password" placeholder="api token" dir="ltr" />
+              <input class="sf-input" id="extra-wa-chat" placeholder="9725…" dir="ltr" />
+            </div>
+            <div id="extra-wa-meta" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+              <input class="sf-input" id="extra-wa-phone-id" placeholder="phone_number_id" dir="ltr" />
+              <input class="sf-input" id="extra-wa-access" type="password" placeholder="access token" dir="ltr" />
+              <input class="sf-input" id="extra-wa-to" placeholder="+972501234567" dir="ltr" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="md:col-span-2"><button type="submit" class="btn btn-primary">שמירה</button></div>
+    </form>
+    <p id="create-error" class="form-error hidden"></p>
+
+    <details id="telegram-help" class="mt-4" open>
+      <summary>איך מוצאים את מספר הצ׳אט וקוד הבוט</summary>
+      <ol class="list-decimal list-inside mt-2 space-y-1" style="color:var(--muted);font-size:0.9rem">
+        <li>בטלגרם פותחים את <a href="https://t.me/BotFather" target="_blank" style="color:var(--signal)">BotFather</a> ושולחים /newbot.</li>
+        <li>נותנים שם לבוט. הוא מחזיר קוד ארוך — זה קוד הבוט. מעתיקים לכאן.</li>
+        <li>פותחים את הבוט החדש ולוחצים Start, או מוסיפים אותו לקבוצה ושולחים הודעה.</li>
+        <li>מספר הצ׳אט: אחרי הודעה לבוט, פותחים בדפדפן את הכתובת <span dir="ltr" class="font-mono text-xs">https://api.telegram.org/botהקוד/getUpdates</span> ומחפשים את המספר ליד id.</li>
       </ol>
-      <div class="rounded-lg bg-[#1e222d] border border-slate-600 p-4" dir="ltr" style="text-align:left">
-        <div class="text-[11px] uppercase tracking-wide text-slate-400 mb-3">Notifications</div>
-        <label class="flex items-center gap-2 text-sm text-slate-300 px-2 py-1.5">
-          <span class="w-4 h-4 rounded border border-slate-500"></span> Notify on app
-        </label>
-        <label class="flex items-center gap-2 text-sm text-white px-2 py-2 mt-1 rounded-lg bg-emerald-500/15 ring-2 ring-emerald-400">
-          <span class="w-4 h-4 rounded bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-bold">✓</span>
-          <span class="font-semibold">Webhook URL</span>
-        </label>
-        <div class="mt-2 mx-2 h-8 rounded bg-slate-800 border border-slate-600 text-[11px] text-slate-500 flex items-center px-2 font-mono truncate">https://…/api/v1/webhook/…</div>
+    </details>
+    <details id="discord-help" class="mt-4 hidden" open>
+      <summary>איך מחלצים קישור מדיסקורד</summary>
+      <ol class="list-decimal list-inside mt-2 space-y-1" style="color:var(--muted);font-size:0.9rem">
+        <li>פותחים דיסקורד במחשב ונכנסים לשרת.</li>
+        <li>עומדים על הערוץ, לוחצים על גלגל השיניים ליד שם הערוץ.</li>
+        <li>בתפריט משמאל: <strong dir="ltr">Integrations</strong> → <strong dir="ltr">Webhooks</strong>.</li>
+        <li>לוחצים <strong dir="ltr">New Webhook</strong> (או בוחרים אחד קיים).</li>
+        <li>לוחצים <strong dir="ltr">Copy Webhook URL</strong> ומדביקים כאן למעלה.</li>
+      </ol>
+      <p class="hint">הקישור צריך להיראות כך: <span dir="ltr" class="font-mono">https://discord.com/api/webhooks/…</span></p>
+    </details>
+    <details id="whatsapp-help" class="mt-4 hidden" open>
+      <summary>איך מקבלים התראות לוואטסאפ שלכם (בלי סריקת QR)</summary>
+      <div class="mt-2 space-y-3" style="color:var(--muted);font-size:0.9rem">
+        <p>זה שולח <strong style="color:var(--text)">לטלפון שלכם</strong> — לא למכשיר שני, ולא צריך לסרוק כלום בדף הבית.</p>
+        <ol class="list-decimal list-inside space-y-1">
+          <li>בוואטסאפ מוסיפים איש קשר: <span dir="ltr" class="font-mono">+34 694 23 41 84</span> (אפשר לקרוא לו SignalFlow / CallMeBot).</li>
+          <li>שולחים לו בדיוק: <span dir="ltr" class="font-mono">I allow callmebot to send me messages</span></li>
+          <li>מחכים לתשובה עם קוד (APIKEY). אם אין תשובה תוך שתי דקות, מנסים שוב מחר (מגבלת הבוט).</li>
+          <li>מדביקים כאן את המספר שלכם בפורמט <span dir="ltr" class="font-mono">9725…</span> ואת הקוד.</li>
+          <li>לוחצים בדיקה מהירה — ההודעה צריכה להגיע לאותו וואטסאפ.</li>
+        </ol>
+        <details class="panel" style="padding:12px;margin:0">
+          <summary>דרך מתקדמת — Green-API (לא חובה)</summary>
+          <p class="hint" style="margin-top:8px">רק אם כבר משתמשים בזה: נכנסים ל־<a href="https://console.green-api.com" target="_blank" style="color:var(--signal)">console.green-api.com</a> → Create instance → ממתינים כשתי דקות → Get QR. בוואטסאפ: Linked devices → Link a device. אין QR בדף הבית של Green-API.</p>
+        </details>
       </div>
+    </details>
+  </section>
+
+  <section class="panel">
+    <div class="flex items-center justify-between gap-3 mb-2">
+      <h3 style="margin:0;font-size:1rem">תבנית JSON ל-TradingView</h3>
+      <button type="button" id="copy-tv-json" class="btn btn-ghost btn-sm">העתק תבנית</button>
     </div>
-    <div class="mt-5 pt-5 border-t border-slate-800">
-      <div class="flex items-center justify-between gap-3 mb-2">
-        <h3 class="font-semibold text-sm">תבנית JSON ל-TradingView</h3>
-        <button type="button" id="copy-tv-json" class="text-xs px-3 py-1.5 rounded-lg border border-emerald-700 text-emerald-300 hover:border-emerald-500">העתק תבנית</button>
-      </div>
-      <p class="text-xs text-slate-500 mb-2">מדביקים את זה בשדה ההודעה של ההתראה ב-TradingView.</p>
-      <pre id="tv-json-template" dir="ltr" class="text-left text-xs font-mono bg-slate-950 border border-slate-800 rounded-lg p-3 overflow-x-auto text-slate-300">{% raw %}{
+    <p class="hint">מדביקים בשדה ההודעה של ההתראה.</p>
+    <pre id="tv-json-template" dir="ltr" class="preview-url" style="white-space:pre-wrap">{% raw %}{
   "ticker": "{{ticker}}",
   "action": "BUY",
   "price": "{{close}}",
@@ -84,247 +192,52 @@
   "strategy_name": "EMA Cross",
   "message": "Bullish crossover confirmed"
 }{% endraw %}</pre>
-    </div>
-  </div>
+  </section>
 
-  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
-    <h2 class="font-semibold mb-1">שלב 1 — לאן ההתראות יגיעו</h2>
-    <p class="text-sm text-slate-400 mb-4">בחרו שם שתזהו (למשל «אסטרטגיית ביטקוין») ולאן לשלוח.</p>
-    <form id="create-form" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      <div>
-        <label class="block text-xs text-slate-400 mb-1">שם</label>
-        <input name="name" required placeholder="אסטרטגיית ביטקוין" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
-      </div>
-      <div>
-        <label class="block text-xs text-slate-400 mb-1">לאן לשלוח</label>
-        <select name="target_type" id="target-type" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm">
-          <option value="telegram">טלגרם</option>
-          <option value="discord">דיסקורד</option>
-          <option value="whatsapp">וואטסאפ</option>
-        </select>
-      </div>
-      <div id="telegram-fields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">מספר הצ׳אט בטלגרם</label>
-          <input name="chat_id" placeholder="למשל 123456789" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">קוד הבוט (מוסתר)</label>
-          <input name="bot_token" type="password" autocomplete="off" placeholder="הקוד שקיבלתם מ-BotFather" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
-        </div>
-      </div>
-      <div id="discord-fields" class="md:col-span-2 hidden">
-        <label class="block text-xs text-slate-400 mb-1">קישור דיסקורד (Webhook)</label>
-        <input name="discord_webhook_url" type="password" autocomplete="off" placeholder="מדביקים כאן את הקישור מערוץ הדיסקורד" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
-      </div>
-      <div id="whatsapp-fields" class="md:col-span-2 hidden space-y-3">
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">איך לחבר</label>
-          <select name="wa_provider" id="wa-provider" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
-            <option value="callmebot" selected>הדרך הקלה — לטלפון שלי</option>
-            <option value="green_api">דרך מתקדמת — Green-API</option>
-            <option value="meta">דרך מתקדמת — Meta</option>
-          </select>
-        </div>
-        <p id="wa-own-phone-note" class="text-sm text-slate-300">ההתראות מגיעות <span class="text-white font-semibold">לוואטסאפ שלכם</span> — אותו מספר שמפעילים כאן. בלי מכשיר שני ובלי סריקת QR.</p>
-        <div id="wa-callmebot-fields" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">מספר טלפון</label>
-            <input name="wa_phone" placeholder="972501234567" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">קוד שקיבלתם בואטסאפ</label>
-            <input name="wa_apikey" type="password" autocomplete="off" placeholder="הקוד מההודעה של הבוט" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-        </div>
-        <div id="wa-green-fields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">מזהה המופע</label>
-            <input name="id_instance" placeholder="idInstance" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">הקוד (מוסתר)</label>
-            <input name="api_token" type="password" autocomplete="off" placeholder="apiTokenInstance" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">מספר שיקבל (למשל 9725…)</label>
-            <input name="wa_chat_id" placeholder="972501234567" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-        </div>
-        <div id="wa-meta-fields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">מזהה מספר</label>
-            <input name="phone_number_id" placeholder="phone_number_id" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">קוד גישה (מוסתר)</label>
-            <input name="access_token" type="password" autocomplete="off" placeholder="access token" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">נמען (E.164)</label>
-            <input name="wa_to" placeholder="+972501234567" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-        </div>
-      </div>
-
-      <div id="extra-dest-wrap" class="md:col-span-2 hidden rounded-lg border border-slate-800 p-3 space-y-3">
-        <label class="flex items-center gap-2 text-sm text-slate-300">
-          <input type="checkbox" id="enable-extra" class="rounded" />
-          יעד נוסף (פרו בלבד) — אותה התראה תישלח גם לשם
-        </label>
-        <div id="extra-fields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div class="md:col-span-2">
-            <label class="block text-xs text-slate-400 mb-1">יעד נוסף</label>
-            <select id="extra-type" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
-              <option value="telegram">טלגרם</option>
-              <option value="discord">דיסקורד</option>
-              <option value="whatsapp">וואטסאפ</option>
-            </select>
-          </div>
-          <div id="extra-telegram" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
-            <input id="extra-chat-id" placeholder="מספר צ׳אט טלגרם" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-            <input id="extra-bot-token" type="password" placeholder="קוד בוט (מוסתר)" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-          <div id="extra-discord" class="md:col-span-2 hidden">
-            <input id="extra-discord-url" type="password" placeholder="קישור Webhook דיסקורד" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-          </div>
-          <div id="extra-whatsapp" class="md:col-span-2 hidden space-y-3">
-            <select id="extra-wa-provider" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
-              <option value="callmebot" selected>הדרך הקלה — לטלפון שלי</option>
-              <option value="green_api">דרך מתקדמת — Green-API</option>
-              <option value="meta">דרך מתקדמת — Meta</option>
-            </select>
-            <div id="extra-wa-callmebot" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input id="extra-wa-phone" placeholder="מספר טלפון 972501234567" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-              <input id="extra-wa-apikey" type="password" placeholder="קוד שקיבלתם בואטסאפ" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-            </div>
-            <div id="extra-wa-green" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
-              <input id="extra-wa-instance" placeholder="idInstance" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-              <input id="extra-wa-token" type="password" placeholder="api token" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-              <input id="extra-wa-chat" placeholder="9725…" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-            </div>
-            <div id="extra-wa-meta" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
-              <input id="extra-wa-phone-id" placeholder="phone_number_id" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-              <input id="extra-wa-access" type="password" placeholder="access token" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-              <input id="extra-wa-to" placeholder="+972501234567" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="md:col-span-2">
-        <button type="submit" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold text-sm">שמירה</button>
-      </div>
-    </form>
-    <p id="create-error" class="text-red-400 text-sm mt-2 hidden"></p>
-    <details id="telegram-help" class="mt-4 text-sm text-slate-400" open>
-      <summary class="cursor-pointer hover:text-slate-300">איך מוצאים את מספר הצ׳אט וקוד הבוט</summary>
-      <ol class="list-decimal list-inside mt-2 space-y-1">
-        <li>בטלגרם פותחים את <a href="https://t.me/BotFather" target="_blank" class="text-brand-500 hover:underline">BotFather</a> ושולחים /newbot.</li>
-        <li>נותנים שם לבוט. הוא מחזיר קוד ארוך — זה קוד הבוט. מעתיקים לכאן.</li>
-        <li>פותחים את הבוט החדש ולוחצים Start, או מוסיפים אותו לקבוצה ושולחים הודעה.</li>
-        <li>מספר הצ׳אט: אחרי הודעה לבוט, פותחים בדפדפן את הכתובת <span dir="ltr" class="font-mono text-xs text-slate-300">https://api.telegram.org/botהקוד/getUpdates</span> ומחפשים את המספר ליד id.</li>
-      </ol>
-    </details>
-    <details id="discord-help" class="mt-4 text-sm text-slate-400 hidden" open>
-      <summary class="cursor-pointer hover:text-slate-300">איך מחלצים קישור מדיסקורד</summary>
-      <ol class="list-decimal list-inside mt-2 space-y-1">
-        <li>פותחים דיסקורד במחשב (יותר קל מאשר בטלפון) ונכנסים לשרת.</li>
-        <li>עומדים על הערוץ שרוצים לקבל בו הודעות, לוחצים על גלגל השיניים ליד שם הערוץ.</li>
-        <li>בתפריט משמאל: <span class="text-white font-semibold" dir="ltr">Integrations</span> → <span class="text-white font-semibold" dir="ltr">Webhooks</span>.</li>
-        <li>לוחצים <span class="text-white font-semibold" dir="ltr">New Webhook</span> (או בוחרים אחד קיים).</li>
-        <li>לוחצים <span class="text-white font-semibold" dir="ltr">Copy Webhook URL</span> ומדביקים כאן למעלה.</li>
-      </ol>
-      <p class="mt-2 text-xs text-slate-500">הקישור צריך להיראות בערך כך: <span dir="ltr" class="font-mono">https://discord.com/api/webhooks/…</span> — לא הכתובת הרגילה של הערוץ.</p>
-    </details>
-    <details id="whatsapp-help" class="mt-4 text-sm text-slate-400 hidden" open>
-      <summary class="cursor-pointer hover:text-slate-300">איך מקבלים התראות לוואטסאפ שלכם (בלי סריקת QR)</summary>
-      <div class="mt-2 space-y-3">
-        <p class="text-slate-300">זה שולח <span class="text-white font-semibold">לטלפון שלכם</span> — לא למכשיר שני, ולא צריך לסרוק כלום בדף הבית.</p>
-        <ol class="list-decimal list-inside space-y-1">
-          <li>בוואטסאפ מוסיפים איש קשר: <span dir="ltr" class="font-mono text-slate-200">+34 694 23 41 84</span> (אפשר לקרוא לו SignalFlow / CallMeBot).</li>
-          <li>שולחים לו בדיוק: <span dir="ltr" class="font-mono text-slate-200">I allow callmebot to send me messages</span></li>
-          <li>מחכים לתשובה עם קוד (APIKEY). אם אין תשובה תוך שתי דקות, מנסים שוב מחר (מגבלת הבוט).</li>
-          <li>מדביקים כאן את המספר שלכם בפורמט <span dir="ltr" class="font-mono">9725…</span> ואת הקוד.</li>
-          <li>לוחצים בדיקה מהירה — ההודעה צריכה להגיע לאותו וואטסאפ.</li>
-        </ol>
-        <details class="mt-2 rounded-lg border border-slate-800 p-3">
-          <summary class="cursor-pointer hover:text-slate-300">דרך מתקדמת — Green-API (לא חובה)</summary>
-          <p class="mt-2 text-xs leading-relaxed">רק אם כבר משתמשים בזה: נכנסים ל־<a href="https://console.green-api.com" target="_blank" class="text-brand-500 hover:underline">console.green-api.com</a> → Create instance → ממתינים כשתי דקות → Get QR. בוואטסאפ: Linked devices → Link a device. אין QR בדף הבית של Green-API.</p>
-        </details>
-      </div>
-    </details>
-  </div>
-
-  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
-    <h2 class="font-semibold mb-1">שלב 2 — הקישור שלכם</h2>
-    <p class="text-sm text-slate-400 mb-4">מעתיקים ומדביקים ב-TradingView אחרי שמסמנים Webhook URL.</p>
-    <div id="endpoints-list" class="space-y-3">
-      <p class="text-sm text-slate-500">טוען…</p>
-    </div>
-  </div>
-
-  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
-    <h2 class="font-semibold mb-1">בדיקה מהירה</h2>
-    <p class="text-sm text-slate-400 mb-4">שולחים התראה מדומה, בלי TradingView, כדי לראות שההודעה מגיעה.</p>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <section class="panel">
+      <h2>בדיקה מהירה</h2>
+      <p class="hint">שולחים התראה מדומה, בלי TradingView.</p>
       <div class="space-y-3">
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">לאן לשלוח</label>
-          <select id="test-endpoint" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm"></select>
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">סימול / מניה</label>
-          <input id="test-ticker" value="BTCUSDT" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-        </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">קנייה / מכירה</label>
-          <select id="test-action" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
+        <div class="field"><label>לאן לשלוח</label><select class="sf-input" id="test-endpoint"></select></div>
+        <div class="field"><label>סימול / מניה</label><input class="sf-input" id="test-ticker" value="BTCUSDT" dir="ltr" /></div>
+        <div class="field">
+          <label>קנייה / מכירה</label>
+          <select class="sf-input" id="test-action">
             <option value="BUY">קנייה</option>
             <option value="SELL">מכירה</option>
             <option value="ALERT">התראה</option>
           </select>
         </div>
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">מחיר</label>
-          <input id="test-price" value="67250" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
-        </div>
-        <details class="text-sm text-slate-400">
-          <summary class="cursor-pointer hover:text-slate-300">מתקדם — JSON</summary>
-          <textarea id="test-payload" rows="8" dir="ltr" class="mt-2 w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm font-mono"></textarea>
+        <div class="field"><label>מחיר</label><input class="sf-input" id="test-price" value="67250" dir="ltr" /></div>
+        <details>
+          <summary>מתקדם — JSON</summary>
+          <textarea id="test-payload" rows="8" dir="ltr" class="sf-input mt-2 font-mono"></textarea>
         </details>
-        <button id="send-test" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold text-sm">שלחו בדיקה</button>
+        <button type="button" id="send-test" class="btn btn-primary">שלחו בדיקה</button>
+        <pre id="test-result" class="preview-url" style="min-height:80px;white-space:pre-wrap">עוד לא נשלחה בדיקה.</pre>
       </div>
-      <div>
-        <label class="block text-xs text-slate-400 mb-1">תוצאה</label>
-        <pre id="test-result" class="w-full min-h-[220px] px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-sm overflow-auto text-slate-400">עוד לא נשלחה בדיקה.</pre>
+    </section>
+    <section class="panel">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <h2 style="margin:0">מה הגיע</h2>
+        <select id="logs-endpoint" class="sf-input" style="width:auto;min-width:140px"></select>
       </div>
-    </div>
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr><th>סטטוס</th><th>זמן תגובה</th><th>תצוגה</th><th>מתי</th></tr>
+          </thead>
+          <tbody id="logs-body">
+            <tr><td colspan="4" style="color:var(--muted)">בחרו חיבור כדי לראות מה הגיע.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
-
-  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-    <div class="flex items-center justify-between mb-4 gap-3">
-      <h2 class="font-semibold">מה הגיע</h2>
-      <select id="logs-endpoint" class="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm"></select>
-    </div>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="text-right text-slate-400 border-b border-slate-800">
-            <th class="py-2 pe-4">סטטוס</th>
-            <th class="py-2 pe-4">זמן תגובה</th>
-            <th class="py-2 pe-4">תצוגה</th>
-            <th class="py-2 pe-4">מתי</th>
-          </tr>
-        </thead>
-        <tbody id="logs-body">
-          <tr><td colspan="4" class="py-4 text-slate-500">בחרו חיבור כדי לראות מה הגיע.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
+</main>
+{% endblock %}
+{% block scripts %}
 <script>
 const targetType = document.getElementById('target-type');
 const telegramFields = document.getElementById('telegram-fields');
@@ -401,7 +314,6 @@ function defaultPayload() {
     message: 'התראת בדיקה מ-SignalFlow'
   };
 }
-
 function syncPayloadBox() {
   document.getElementById('test-payload').value = JSON.stringify(defaultPayload(), null, 2);
 }
@@ -415,6 +327,12 @@ function renderPlan() {
   if (!me) return;
   const isPro = me.tier === 'pro';
   document.getElementById('plan-summary').textContent = isPro ? 'פרו — בלי הגבלה' : 'חינם';
+  const pill = document.getElementById('nav-plan-pill');
+  if (pill) {
+    pill.textContent = isPro ? 'פרו' : 'חינם';
+    pill.classList.toggle('pro', isPro);
+    pill.classList.toggle('free', !isPro);
+  }
   if (isPro) {
     document.getElementById('plan-remaining').textContent = 'ערוצים והתראות ללא הגבלה. בלי חתימת SignalFlow בהודעות.';
     extraWrap.classList.remove('hidden');
@@ -427,7 +345,7 @@ function renderPlan() {
   if (me.upgrade_requested_at) {
     document.getElementById('want-pro-btn').classList.add('hidden');
     const msg = document.getElementById('want-pro-msg');
-    msg.textContent = 'רשמנו את הבקשה. אין חיוב — ניצור קשר.';
+    msg.textContent = 'ביקשת פרו, נפעיל ידנית. אין חיוב בכרטיס.';
     msg.classList.remove('hidden');
   }
 }
@@ -451,23 +369,23 @@ async function loadEndpoints() {
 function renderEndpoints() {
   const container = document.getElementById('endpoints-list');
   if (endpointsCache.length === 0) {
-    container.innerHTML = '<p class="text-sm text-slate-500">עוד אין חיבור. שמרו אחד למעלה.</p>';
+    container.innerHTML = '<p class="hint">עוד אין חיבור. שמרו אחד למטה.</p>';
     return;
   }
   container.innerHTML = endpointsCache.map(ep => `
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-lg bg-slate-950 border border-slate-800">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl" style="background:#070a12;border:1px solid var(--line)">
       <div>
-        <div class="font-medium">${ep.name}
-          <span class="text-xs px-2 py-0.5 rounded-full ${ep.is_active ? 'bg-green-600/20 text-green-400' : 'bg-slate-700/40 text-slate-400'}">${ep.is_active ? 'פעיל' : 'כבוי'}</span>
-          <span class="text-xs px-2 py-0.5 rounded-full bg-brand-600/20 text-brand-400">${destLabel(ep.target_type)}</span>
-          ${ep.extra_target_type ? `<span class="text-xs px-2 py-0.5 rounded-full bg-slate-700/40 text-slate-300">+ ${destLabel(ep.extra_target_type)}</span>` : ''}
+        <div class="font-semibold">${ep.name}
+          <span class="ok-pill" style="${ep.is_active ? '' : 'color:var(--muted);background:rgba(255,255,255,0.06)'}">${ep.is_active ? 'פעיל' : 'כבוי'}</span>
+          <span class="dest-chip" style="margin-inline-start:6px">${destLabel(ep.target_type)}</span>
+          ${ep.extra_target_type ? `<span class="dest-chip">+ ${destLabel(ep.extra_target_type)}</span>` : ''}
         </div>
-        <div class="text-xs text-slate-400 mt-1 font-mono break-all" dir="ltr">${ep.webhook_url}</div>
+        <div class="preview-url" style="margin-top:8px">${ep.webhook_url}</div>
       </div>
       <div class="flex gap-2 shrink-0">
-        <button onclick="copyUrl(this, '${ep.webhook_url}')" class="text-xs px-3 py-1.5 rounded-lg border border-emerald-700 text-emerald-300 hover:border-emerald-500">העתק קישור</button>
-        <button onclick="toggleEndpoint(${ep.id})" class="text-xs px-3 py-1.5 rounded-lg border border-slate-700 hover:border-slate-500">${ep.is_active ? 'השהה' : 'הפעל'}</button>
-        <button onclick="deleteEndpoint(${ep.id})" class="text-xs px-3 py-1.5 rounded-lg border border-red-900 text-red-400 hover:border-red-700">מחק</button>
+        <button onclick="copyUrl(this, '${ep.webhook_url}')" class="btn btn-primary btn-sm">העתק קישור</button>
+        <button onclick="toggleEndpoint(${ep.id})" class="btn btn-ghost btn-sm">${ep.is_active ? 'השהה' : 'הפעל'}</button>
+        <button onclick="deleteEndpoint(${ep.id})" class="btn btn-danger btn-sm">מחק</button>
       </div>
     </div>
   `).join('');
@@ -502,7 +420,6 @@ async function toggleEndpoint(id) {
   await fetch(`/api/v1/endpoints/${id}/toggle`, { method: 'PATCH' });
   loadEndpoints();
 }
-
 async function deleteEndpoint(id) {
   if (!confirm('למחוק את החיבור הזה?')) return;
   await fetch(`/api/v1/endpoints/${id}`, { method: 'DELETE' });
@@ -511,35 +428,19 @@ async function deleteEndpoint(id) {
 
 function buildWhatsAppConfig(form) {
   if (form.wa_provider.value === 'meta') {
-    return {
-      provider: 'meta',
-      phone_number_id: form.phone_number_id.value,
-      access_token: form.access_token.value,
-      to: form.wa_to.value
-    };
+    return { provider: 'meta', phone_number_id: form.phone_number_id.value, access_token: form.access_token.value, to: form.wa_to.value };
   }
   if (form.wa_provider.value === 'green_api') {
-    return {
-      provider: 'green_api',
-      id_instance: form.id_instance.value,
-      api_token: form.api_token.value,
-      chat_id: form.wa_chat_id.value
-    };
+    return { provider: 'green_api', id_instance: form.id_instance.value, api_token: form.api_token.value, chat_id: form.wa_chat_id.value };
   }
-  return {
-    provider: 'callmebot',
-    phone: form.wa_phone.value,
-    apikey: form.wa_apikey.value
-  };
+  return { provider: 'callmebot', phone: form.wa_phone.value, apikey: form.wa_apikey.value };
 }
-
 function buildPrimaryConfig(form) {
   const type = form.target_type.value;
   if (type === 'telegram') return { chat_id: form.chat_id.value, bot_token: form.bot_token.value || null };
   if (type === 'discord') return { discord_webhook_url: form.discord_webhook_url.value };
   return buildWhatsAppConfig(form);
 }
-
 function buildExtraConfig() {
   if (!enableExtra.checked) return null;
   const type = extraType.value;
@@ -547,28 +448,13 @@ function buildExtraConfig() {
   if (type === 'discord') return { discord_webhook_url: document.getElementById('extra-discord-url').value };
   const extraProvider = document.getElementById('extra-wa-provider').value;
   if (extraProvider === 'meta') {
-    return {
-      provider: 'meta',
-      phone_number_id: document.getElementById('extra-wa-phone-id').value,
-      access_token: document.getElementById('extra-wa-access').value,
-      to: document.getElementById('extra-wa-to').value
-    };
+    return { provider: 'meta', phone_number_id: document.getElementById('extra-wa-phone-id').value, access_token: document.getElementById('extra-wa-access').value, to: document.getElementById('extra-wa-to').value };
   }
   if (extraProvider === 'green_api') {
-    return {
-      provider: 'green_api',
-      id_instance: document.getElementById('extra-wa-instance').value,
-      api_token: document.getElementById('extra-wa-token').value,
-      chat_id: document.getElementById('extra-wa-chat').value
-    };
+    return { provider: 'green_api', id_instance: document.getElementById('extra-wa-instance').value, api_token: document.getElementById('extra-wa-token').value, chat_id: document.getElementById('extra-wa-chat').value };
   }
-  return {
-    provider: 'callmebot',
-    phone: document.getElementById('extra-wa-phone').value,
-    apikey: document.getElementById('extra-wa-apikey').value
-  };
+  return { provider: 'callmebot', phone: document.getElementById('extra-wa-phone').value, apikey: document.getElementById('extra-wa-apikey').value };
 }
-
 function hebrewDetail(data, fallback) {
   if (typeof data.detail === 'string' && data.detail.trim()) return data.detail;
   if (Array.isArray(data.detail) && data.detail[0] && data.detail[0].msg) return 'בדקו שמילאתם את כל השדות.';
@@ -604,15 +490,15 @@ async function loadLogs(endpointId) {
   if (!endpointId) return;
   const res = await fetch(`/api/v1/endpoints/${endpointId}/logs`);
   const tbody = document.getElementById('logs-body');
-  if (!res.ok) { tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-slate-500">לא הצלחנו לטעון.</td></tr>'; return; }
+  if (!res.ok) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">לא הצלחנו לטעון.</td></tr>'; return; }
   const logs = await res.json();
-  if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-slate-500">עוד לא הגיעו התראות.</td></tr>'; return; }
+  if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">עוד לא הגיעו התראות.</td></tr>'; return; }
   tbody.innerHTML = logs.map(l => `
-    <tr class="border-b border-slate-800/60">
-      <td class="py-2 pe-4"><span class="px-2 py-0.5 rounded-full text-xs ${l.status === 'delivered' ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}">${l.status === 'delivered' ? 'הגיע' : 'לא הגיע'}</span></td>
-      <td class="py-2 pe-4">${Number(l.latency_ms).toFixed(0)} ms</td>
-      <td class="py-2 pe-4 font-mono text-xs text-slate-400 max-w-xs truncate">${(l.payload_raw || '').replace(/</g, '&lt;').slice(0, 80)}</td>
-      <td class="py-2 pe-4 text-slate-500 text-xs">${new Date(l.created_at).toLocaleString('he-IL')}</td>
+    <tr>
+      <td><span class="ok-pill" style="${l.status === 'delivered' ? '' : 'color:#ffb4b8;background:var(--danger-dim)'}">${l.status === 'delivered' ? 'הגיע' : 'לא הגיע'}</span></td>
+      <td>${Number(l.latency_ms).toFixed(0)} ms</td>
+      <td class="font-mono text-xs" style="color:var(--muted);max-width:12rem;overflow:hidden;text-overflow:ellipsis">${(l.payload_raw || '').replace(/</g, '&lt;').slice(0, 80)}</td>
+      <td style="color:var(--faint);font-size:0.75rem">${new Date(l.created_at).toLocaleString('he-IL')}</td>
     </tr>
   `).join('');
 }
@@ -645,7 +531,7 @@ document.getElementById('want-pro-btn').addEventListener('click', async () => {
   const res = await fetch('/api/v1/auth/request-pro', { method: 'POST' });
   if (!res.ok) return;
   const msg = document.getElementById('want-pro-msg');
-  msg.textContent = 'רשמנו את הבקשה. אין חיוב — ניצור קשר.';
+  msg.textContent = 'ביקשת פרו, נפעיל ידנית. אין חיוב בכרטיס.';
   msg.classList.remove('hidden');
   document.getElementById('want-pro-btn').classList.add('hidden');
   loadMe();

@@ -86,6 +86,20 @@ async def test_pro_unlimited_channels_and_alerts(client, fake_http, session_fact
     assert len(fake_http.calls) == 4
 
 
+async def test_signup_plan_pro_sets_waitlist(client):
+    res = await client.post(
+        "/api/v1/auth/signup",
+        json={"email": "wantpro@example.com", "password": "password1", "plan": "pro"},
+    )
+    assert res.status_code == 201, res.text
+    body = res.json()
+    assert body["tier"] == "free"
+    assert body["upgrade_requested_at"]
+    me = (await client.get("/api/v1/auth/me")).json()
+    assert me["tier"] == "free"
+    assert me["upgrade_requested_at"]
+
+
 async def test_request_pro_waitlist(client):
     await signup(client)
     res = await client.post("/api/v1/auth/request-pro")
