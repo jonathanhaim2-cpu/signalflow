@@ -36,7 +36,7 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; color-scheme: dark; }
 
 body.sf-body {
   margin: 0;
@@ -720,6 +720,13 @@ button { cursor: pointer; }
     grid-template-columns: 1fr;
   }
   .auth-plans { border-inline-end: 0; border-bottom: 1px solid var(--line); }
-  .nav-links { display: none; }
+  .nav-inner { flex-wrap: wrap; }
+  .nav-links {
+    display: flex;
+    width: 100%;
+    order: 3;
+    padding-bottom: 8px;
+  }
   .hero { padding-top: 36px; gap: 28px; }
+  .auth-plans, .auth-form-col { padding: 28px 20px 36px; }
 }
