@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     ALLOW_PRO_EMAILS: str = ""
     # Comma-separated owner emails. jonathanhaim2@gmail.com is always treated as owner.
     ADMIN_EMAILS: str = "jonathanhaim2@gmail.com"
+    # PayPlus (Israeli clearing). Never commit live keys.
+    PAYPLUS_API_KEY: str = ""
+    PAYPLUS_SECRET_KEY: str = ""
+    PAYPLUS_PAYMENT_PAGE_UID: str = ""
+    PAYPLUS_TERMINAL_UID: str = ""
+    PAYPLUS_USE_STAGING: bool = False
 
 
 @lru_cache

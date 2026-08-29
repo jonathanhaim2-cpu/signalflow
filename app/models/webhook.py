@@ -27,6 +27,7 @@ class WebhookEndpoint(Base):
     target_config: Mapped[dict] = mapped_column(JSON, default=dict)
     extra_target_type: Mapped[str | None] = mapped_column(String(20), nullable=True)
     extra_target_config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    destinations: Mapped[list | None] = mapped_column(JSON, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)

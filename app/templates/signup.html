@@ -11,11 +11,11 @@
     <p class="lede" style="margin-bottom:22px">בוחרים תוכנית לפני הטופס. אפשר להתחיל בחינם.</p>
     <button type="button" class="plan-pick is-on" id="pick-free" aria-pressed="true" data-plan="free">
       <h3>חינם · 0₪</h3>
-      <p>ערוץ אחד, 3 התראות ביום, עם חתימת SignalFlow.</p>
+      <p>קישור אחד, 3 התראות ביום, עם חתימת SignalFlow.</p>
     </button>
     <button type="button" class="plan-pick pro" id="pick-pro" aria-pressed="false" data-plan="pro">
       <h3>פרו · ₪39 לחודש</h3>
-      <p>בלי הגבלה, יעד נוסף, ניסיונות חוזרים. אין סליקה — נפעיל ידנית.</p>
+      <p>בלי הגבלה, ניסיונות חוזרים. אשראי או ביט דרך PayPlus. ביטול בכל עת.</p>
     </button>
   </section>
   <section class="auth-form-col">
@@ -33,7 +33,7 @@
         <p style="color:var(--faint);font-size:0.75rem;margin:6px 0 0">לפחות 8 תווים</p>
       </div>
       <p id="error" class="form-error hidden"></p>
-      <p id="pro-note" class="note note-warn hidden">ביקשת פרו, נפעיל ידנית. החשבון נפתח כחינם עד שנאשר.</p>
+      <p id="pro-note" class="note note-warn hidden">₪39 לחודש. אשראי או ביט דרך PayPlus. ביטול בכל עת. אחרי ההרשמה תעברו לתשלום מאובטח.</p>
       <button type="submit" class="btn btn-primary" style="width:100%">הרשמה</button>
       <p style="color:var(--muted);font-size:0.88rem;margin-top:16px;text-align:center">כבר יש חשבון? <a id="login-link" href="/login" style="color:var(--signal)">כניסה</a></p>
     </form>
@@ -55,7 +55,7 @@ function setPlan(plan) {
   document.getElementById('pick-free').setAttribute('aria-pressed', plan === 'free');
   document.getElementById('pick-pro').setAttribute('aria-pressed', plan === 'pro');
   document.getElementById('plan-caption').textContent = plan === 'pro'
-    ? 'נרשמים ומבקשים פרו. אין חיוב בכרטיס.'
+    ? 'נרשמים ואז עוברים לתשלום ₪39 לחודש ב-PayPlus.'
     : 'נרשמים לתוכנית חינם.';
   document.getElementById('pro-note').classList.toggle('hidden', plan !== 'pro');
 }
@@ -95,7 +95,19 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
   const res = await fetch('/api/v1/auth/signup', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
   });
-  if (res.ok) { window.location.href = nextPath; }
+  if (res.ok) {
+    if (form.plan.value === 'pro') {
+      const checkout = await fetch('/api/v1/billing/checkout', { method: 'POST' });
+      const pay = await checkout.json().catch(() => ({}));
+      if (checkout.ok && pay.url) { window.location.href = pay.url; return; }
+      errorEl.textContent = (typeof pay.detail === 'string' && pay.detail.trim())
+        ? pay.detail
+        : 'סליקה לא הוגדרה עדיין';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    window.location.href = nextPath;
+  }
   else {
     const data = await res.json().catch(() => ({}));
     errorEl.textContent = heError(data.detail, 'ההרשמה נכשלה');

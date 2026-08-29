@@ -13,9 +13,8 @@ FREE_ALERTS_PER_DAY = 3
 FREE_CHANNEL_LIMIT = 1
 SIGNALFLOW_FOOTER = "— SignalFlow"
 
-MSG_CHANNEL_LIMIT = "בתוכנית החינמית אפשר לחבר ערוץ אחד בלבד. לשדרוג לחצו «רוצה פרו»."
+MSG_CHANNEL_LIMIT = "בתוכנית החינמית אפשר לחבר קישור אחד בלבד. לשדרוג: ₪39 לחודש."
 MSG_ALERT_LIMIT = "הגעתם למכסת 3 ההתראות היומית בתוכנית החינמית. נסו שוב מחר או שדרגו לפרו."
-MSG_EXTRA_DEST = "יעד שני זמין רק בתוכנית פרו."
 
 
 def parse_allow_pro_emails() -> set[str]:
@@ -47,6 +46,8 @@ async def grant_pro(db: AsyncSession, email: str) -> User | None:
     if not user:
         return None
     user.tier = UserTier.PRO.value
+    user.manual_pro = True
+    user.upgrade_requested_at = None
     await db.commit()
     await db.refresh(user)
     return user
@@ -98,11 +99,6 @@ async def enforce_channel_limit(db: AsyncSession, user: User) -> None:
         return
     if await count_channels(db, user.id) >= FREE_CHANNEL_LIMIT:
         raise HTTPException(status_code=403, detail=MSG_CHANNEL_LIMIT)
-
-
-async def enforce_extra_destination(user: User, extra_target_type: str | None) -> None:
-    if extra_target_type and not is_pro(user):
-        raise HTTPException(status_code=403, detail=MSG_EXTRA_DEST)
 
 
 async def enforce_alert_quota(db: AsyncSession, user: User) -> None:

@@ -41,6 +41,7 @@ async def persist_privileges(db: AsyncSession, user: User) -> User:
     email = user.email.lower()
     if email in parse_allow_pro_emails() and user.tier != UserTier.PRO.value:
         user.tier = UserTier.PRO.value
+        user.manual_pro = True
         changed = True
     if email in parse_admin_emails():
         if not user.is_admin:
@@ -48,6 +49,7 @@ async def persist_privileges(db: AsyncSession, user: User) -> User:
             changed = True
         if user.tier != UserTier.PRO.value:
             user.tier = UserTier.PRO.value
+            user.manual_pro = True
             changed = True
     if changed:
         await db.commit()
@@ -57,6 +59,7 @@ async def persist_privileges(db: AsyncSession, user: User) -> User:
 
 async def set_user_tier(db: AsyncSession, user: User, tier: str) -> User:
     user.tier = tier
+    user.manual_pro = tier == UserTier.PRO.value
     if tier == UserTier.PRO.value:
         user.upgrade_requested_at = None
     await db.commit()
@@ -134,6 +137,7 @@ async def redeem_invite(db: AsyncSession, code: str, user: User) -> tuple[bool, 
     if status == "expired":
         return False, "פג תוקף הקוד. בקשו מהבעלים קוד חדש."
     user.tier = UserTier.PRO.value
+    user.manual_pro = True
     user.upgrade_requested_at = None
     invite.redeemed_at = datetime.now(timezone.utc)
     invite.redeemed_by_user_id = user.id

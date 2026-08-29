@@ -4,10 +4,30 @@ A lightweight webhook relay that receives TradingView alerts, formats them, and 
 
 ## Plans
 
-- **Free:** 1 channel, 3 alerts per UTC day, SignalFlow footer on outbound messages.
-- **Pro:** unlimited channels and alerts, no footer, one retry after ~3s on Telegram/Discord/WhatsApp 5xx or timeout. Optional second destination per channel.
+- **Free:** 1 webhook URL, 3 alerts per UTC day, SignalFlow footer on outbound messages. That one URL may fan out to WhatsApp, Telegram, and Discord together.
+- **Pro:** ₪39 / month (ILS). Unlimited webhook URLs and alerts, no footer, one retry after ~3s on Telegram/Discord/WhatsApp 5xx or timeout.
 
-There is no Stripe and no payment keys. A free user clicks «רוצה פרו» to join a waitlist (`upgrade_requested_at`). Grant Pro with:
+### PayPlus billing (Israeli clearing)
+
+Pro checkout uses [PayPlus](https://www.payplus.co.il/) payment pages — credit card or Bit — not Stripe.
+
+1. Open a PayPlus account at [payplus.co.il](https://www.payplus.co.il/).
+2. Create a payment page and copy its UID.
+3. On Render, set these environment variables (never commit secrets):
+
+```
+PAYPLUS_API_KEY=...
+PAYPLUS_SECRET_KEY=...
+PAYPLUS_PAYMENT_PAGE_UID=...
+PAYPLUS_TERMINAL_UID=          # optional, sent when the terminal requires it
+PAYPLUS_USE_STAGING=true       # use restapidev.payplus.co.il while testing
+```
+
+`POST /api/v1/billing/checkout` (logged-in) calls `PaymentPages/generateLink` with `charge_method=3` (recurring), `currency_code=ILS`, amount **39**, monthly unlimited (`recurring_type=2`, `recurring_range=1`, `number_of_charges=0`). Success/failure return to `/dashboard`; IPN goes to `POST /api/v1/billing/payplus`.
+
+If the keys are missing the API returns Hebrew `סליקה לא הוגדרה עדיין` (HTTP 503). The dashboard «רוצה פרו» button is hidden when the user is already Pro.
+
+Admin / allowlist / invite-code Pro grants still work and are not revoked by a later PayPlus failure.
 
 ```bash
 ALLOW_PRO_EMAILS=you@example.com
@@ -63,7 +83,7 @@ The container listens on `$PORT` (default 8000) for Render.
 
 ## Connecting TradingView
 
-1. Create a webhook endpoint (Telegram, Discord, or WhatsApp).
+1. Create a webhook endpoint. One URL can include WhatsApp, Telegram, and Discord together.
 2. Copy the generated webhook URL. On Render it looks like `https://signalflow-cl0v.onrender.com/api/v1/webhook/<token>` — never localhost. Set `APP_BASE_URL` only if you need to override host detection.
 3. In TradingView: Alert → **Notifications** → check **Webhook URL** → paste → Save.
 4. Use the dashboard copy button for the JSON template, e.g.:
@@ -107,17 +127,19 @@ Telegram: BotFather token + chat id. Discord: Channel Settings → Integrations 
 - `POST /api/v1/webhook/{endpoint_token}` — public TradingView receiver
 - `POST /api/v1/webhook/{endpoint_token}/test` — dashboard tester
 - `GET /api/v1/health` — health check
-- `GET /api/v1/auth/me`, `POST /api/v1/auth/request-pro` — plan + waitlist
+- `GET /api/v1/auth/me` — plan snapshot
+- `POST /api/v1/billing/checkout` — PayPlus recurring payment page (₪39 / month)
+- `POST /api/v1/billing/payplus` — PayPlus IPN / callback
 - `POST /api/v1/auth/signup`, `/login`, `/logout`
-- `GET/POST /api/v1/endpoints`, `DELETE /api/v1/endpoints/{id}`, `PATCH /api/v1/endpoints/{id}/toggle`
+- `GET/POST /api/v1/endpoints` — `destinations: [{type, config}, …]` (legacy `target_type` / `extra_target_*` still work)
+- `DELETE /api/v1/endpoints/{id}`, `PATCH /api/v1/endpoints/{id}/toggle`
 - `GET /api/v1/endpoints/{id}/logs`
 
 ## Production (Render)
 
 - The Dockerfile runs `sh -c "uvicorn … --port ${PORT:-8000}"`.
 - Public webhook URLs are built from the request host (`X-Forwarded-Host` / `Host`). Set `APP_BASE_URL` only to override.
-- Set a strong `SECRET_KEY`. Do not commit `.env`.
-- Free Render sleeps after ~15 minutes idle; the dashboard explains this in Hebrew.
+- Set a strong `SECRET_KEY`. Do not commit `.env` or PayPlus keys.
 - Swap `DATABASE_URL` to Postgres when you want persistence across deploys.
 
 ## Tests

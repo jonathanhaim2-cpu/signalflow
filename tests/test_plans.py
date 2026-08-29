@@ -20,7 +20,7 @@ async def test_free_blocked_on_second_channel(client):
 
     second = await _create_telegram(client, name="ערוץ שני")
     assert second.status_code == 403
-    assert "ערוץ אחד" in second.json()["detail"]
+    assert "קישור אחד" in second.json()["detail"]
 
 
 async def test_free_blocked_on_fourth_alert(client, fake_http):
@@ -46,7 +46,7 @@ async def test_free_blocked_on_fourth_alert(client, fake_http):
     assert len(fake_http.calls) == 3
 
 
-async def test_free_extra_destination_forbidden(client):
+async def test_free_extra_destination_allowed(client):
     await signup(client)
     res = await client.post(
         "/api/v1/endpoints",
@@ -58,8 +58,10 @@ async def test_free_extra_destination_forbidden(client):
             "extra_target_config": {"discord_webhook_url": "https://discord.com/api/webhooks/1/abc"},
         },
     )
-    assert res.status_code == 403
-    assert "יעד שני" in res.json()["detail"]
+    assert res.status_code == 201, res.text
+    body = res.json()
+    assert len(body["destinations"]) == 2
+    assert body["extra_target_type"] == "discord"
 
 
 async def test_pro_unlimited_channels_and_alerts(client, fake_http, session_factory):

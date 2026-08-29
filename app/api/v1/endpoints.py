@@ -9,9 +9,10 @@ from app.core.urls import webhook_url_for
 from app.models.alert_log import AlertLog
 from app.models.user import User
 from app.models.webhook import WebhookEndpoint
-from app.schemas.webhook import AlertLogOut, EndpointCreate, EndpointOut
+from app.schemas.webhook import AlertLogOut, DestinationOut, EndpointCreate, EndpointOut
+from app.services.destinations import apply_destinations, destinations_of, normalize_destinations
 from app.services.dispatcher import normalize_callmebot_phone, normalize_discord_webhook
-from app.services.plans import enforce_channel_limit, enforce_extra_destination
+from app.services.plans import enforce_channel_limit
 
 router = APIRouter(prefix="/endpoints", tags=["endpoints"])
 
@@ -32,6 +33,7 @@ def _normalize_config(target_type: str, config: dict) -> dict:
 
 
 def _to_out(endpoint: WebhookEndpoint, request: Request) -> EndpointOut:
+    dests = destinations_of(endpoint)
     extra_config = endpoint.extra_target_config
     return EndpointOut(
         id=endpoint.id,
@@ -41,6 +43,9 @@ def _to_out(endpoint: WebhookEndpoint, request: Request) -> EndpointOut:
         target_config=mask_config(endpoint.target_config),
         extra_target_type=endpoint.extra_target_type,
         extra_target_config=mask_config(extra_config) if extra_config else None,
+        destinations=[
+            DestinationOut(type=d["type"], config=mask_config(d.get("config") or {})) for d in dests
+        ],
         is_active=endpoint.is_active,
         created_at=endpoint.created_at,
         webhook_url=webhook_url_for(endpoint.token, request),
@@ -67,20 +72,20 @@ async def create_endpoint(
     user: User = Depends(get_current_user),
 ) -> EndpointOut:
     await enforce_channel_limit(db, user)
-    await enforce_extra_destination(user, payload.extra_target_type)
-
-    endpoint = WebhookEndpoint(
-        user_id=user.id,
-        name=payload.name,
+    dests = normalize_destinations(
+        destinations=[d.model_dump() for d in payload.destinations] if payload.destinations else None,
         target_type=payload.target_type,
-        target_config=_normalize_config(payload.target_type, payload.target_config),
+        target_config=payload.target_config,
         extra_target_type=payload.extra_target_type,
-        extra_target_config=(
-            _normalize_config(payload.extra_target_type, payload.extra_target_config)
-            if payload.extra_target_type and payload.extra_target_config
-            else None
-        ),
+        extra_target_config=payload.extra_target_config,
     )
+    dests = [
+        {"type": d["type"], "config": _normalize_config(d["type"], d["config"])}
+        for d in dests
+    ]
+
+    endpoint = WebhookEndpoint(user_id=user.id, name=payload.name)
+    apply_destinations(endpoint, dests)
     db.add(endpoint)
     await db.commit()
     await db.refresh(endpoint)
