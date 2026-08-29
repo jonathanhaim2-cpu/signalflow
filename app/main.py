@@ -23,14 +23,17 @@ async def lifespan(app: FastAPI):
     logger.info("SignalFlow shut down")
 
 
-app = FastAPI(title="SignalFlow", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="SignalFlow", version="1.0.0", lifespan=lifespan)
 
 app.state.limiter = limiter
 
 
 @app.exception_handler(RateLimitExceeded)
 async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
-    return JSONResponse(status_code=429, content={"detail": "Rate limit exceeded. Please slow down."})
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "יותר מדי בקשות. נסו שוב בעוד רגע."},
+    )
 
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")

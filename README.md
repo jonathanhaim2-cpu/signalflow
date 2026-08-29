@@ -1,6 +1,21 @@
 # SignalFlow
 
-A lightweight webhook relay that receives TradingView alerts, formats them into rich messages, and forwards them instantly to Telegram and Discord.
+A lightweight webhook relay that receives TradingView alerts, formats them, and forwards them to Telegram, Discord, and WhatsApp. The dashboard is Hebrew RTL for non-technical traders.
+
+## Plans
+
+- **Free:** 1 channel, 3 alerts per UTC day, SignalFlow footer on outbound messages.
+- **Pro:** unlimited channels and alerts, no footer, one retry after ~3s on Telegram/Discord/WhatsApp 5xx or timeout. Optional second destination per channel.
+
+There is no Stripe and no payment keys. A free user clicks «רוצה פרו» to join a waitlist (`upgrade_requested_at`). Grant Pro with:
+
+```bash
+ALLOW_PRO_EMAILS=you@example.com
+# and/or
+python scripts/grant_pro.py you@example.com
+```
+
+API limit errors are Hebrew `403` / `429`.
 
 ## Stack
 
@@ -12,13 +27,12 @@ A lightweight webhook relay that receives TradingView alerts, formats them into 
 ## Local setup (virtualenv)
 
 ```bash
-cd signalflow
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
 cp .env.example .env
-# edit .env: set SECRET_KEY, optionally TELEGRAM_DEFAULT_BOT_TOKEN
+# set SECRET_KEY; optionally ALLOW_PRO_EMAILS / APP_BASE_URL
 
 uvicorn app.main:app --reload
 ```
@@ -32,14 +46,14 @@ cp .env.example .env
 docker compose up --build
 ```
 
-The app is available at http://localhost:8000. SQLite data persists in `./signalflow.db` on the host.
+The container listens on `$PORT` (default 8000) for Render.
 
 ## Connecting TradingView
 
-1. In the SignalFlow dashboard, create a webhook endpoint (choose Telegram or Discord as the target).
-2. Copy the generated webhook URL, e.g. `https://your-domain.com/api/v1/webhook/<token>`.
-3. In TradingView, open your alert's settings → **Notifications** → **Webhook URL**, and paste the URL.
-4. Set the alert message to JSON matching SignalFlow's schema, e.g.:
+1. Create a webhook endpoint (Telegram, Discord, or WhatsApp).
+2. Copy the generated webhook URL. On Render it looks like `https://signalflow-cl0v.onrender.com/api/v1/webhook/<token>` — never localhost. Set `APP_BASE_URL` only if you need to override host detection.
+3. In TradingView: Alert → **Notifications** → check **Webhook URL** → paste → Save.
+4. Use the dashboard copy button for the JSON template, e.g.:
 
 ```json
 {
@@ -54,32 +68,39 @@ The app is available at http://localhost:8000. SQLite data persists in `./signal
 }
 ```
 
-If TradingView sends plain text instead of JSON (or the JSON is malformed), SignalFlow falls back to forwarding the raw text as the alert message — delivery never fails silently, and every attempt is logged.
+Plain text still forwards; every attempt is logged as הגיע / לא הגיע.
 
-## Telegram bot setup
+## WhatsApp
 
-1. Message [@BotFather](https://t.me/BotFather), run `/newbot`, and copy the bot token.
-2. Start a chat with your bot (or add it to a group) and send any message.
-3. Visit `https://api.telegram.org/bot<TOKEN>/getUpdates` and read the `chat.id` field — that's your `chat_id`.
-4. Enter the bot token and chat_id when creating a webhook endpoint in SignalFlow (or leave the token blank to use `TELEGRAM_DEFAULT_BOT_TOKEN` from `.env`).
+**Easy path (Green-API):** create an account, scan the QR, copy `idInstance` + `apiTokenInstance`, paste the recipient phone (e.g. `9725…`). SignalFlow POSTs to `https://api.green-api.com/waInstance{id}/sendMessage/{token}`.
 
-## Discord setup
+**Meta Cloud API:** `phone_number_id` + `access_token` + recipient `to` (E.164). Secrets are masked in the UI.
 
-1. In your Discord server, go to Channel Settings → Integrations → Webhooks → New Webhook.
-2. Copy the webhook URL and paste it when creating a Discord-target endpoint in SignalFlow.
+## Telegram / Discord
 
-## API reference
+Telegram: BotFather token + chat id. Discord: Channel Settings → Integrations → Webhooks → Copy Webhook URL. `discordapp.com` and `http://` URLs are normalized.
 
-- `POST /api/v1/webhook/{endpoint_token}` — public receiver for TradingView alerts (JSON or plain text).
-- `POST /api/v1/webhook/{endpoint_token}/test` — auth-only, sends a simulated alert (used by the dashboard's payload tester).
-- `GET /api/v1/health` — health check.
-- `POST /api/v1/auth/signup`, `/login`, `/logout` — session auth via HTTP-only cookie.
-- `GET/POST /api/v1/endpoints`, `DELETE /api/v1/endpoints/{id}`, `PATCH /api/v1/endpoints/{id}/toggle` — manage webhook endpoints.
-- `GET /api/v1/endpoints/{id}/logs` — recent delivery logs for an endpoint.
+## API
 
-## Production notes
+- `POST /api/v1/webhook/{endpoint_token}` — public TradingView receiver
+- `POST /api/v1/webhook/{endpoint_token}/test` — dashboard tester
+- `GET /api/v1/health` — health check
+- `GET /api/v1/auth/me`, `POST /api/v1/auth/request-pro` — plan + waitlist
+- `POST /api/v1/auth/signup`, `/login`, `/logout`
+- `GET/POST /api/v1/endpoints`, `DELETE /api/v1/endpoints/{id}`, `PATCH /api/v1/endpoints/{id}/toggle`
+- `GET /api/v1/endpoints/{id}/logs`
 
-- Swap `DATABASE_URL` to a Postgres DSN (e.g. `postgresql+asyncpg://user:pass@host/db`) — models are ORM-only, no SQLite-specific code.
-- Set a strong random `SECRET_KEY`.
-- Put SignalFlow behind a reverse proxy (Caddy/Nginx) with TLS; TradingView requires HTTPS webhook URLs.
-- The webhook receiver never raises on malformed input — it always logs a delivery attempt (delivered/failed) so nothing is lost silently.
+## Production (Render)
+
+- The Dockerfile runs `sh -c "uvicorn … --port ${PORT:-8000}"`.
+- Public webhook URLs are built from the request host (`X-Forwarded-Host` / `Host`). Set `APP_BASE_URL` only to override.
+- Set a strong `SECRET_KEY`. Do not commit `.env`.
+- Free Render sleeps after ~15 minutes idle; the dashboard explains this in Hebrew.
+- Swap `DATABASE_URL` to Postgres when you want persistence across deploys.
+
+## Tests
+
+```bash
+pip install -r requirements.txt
+pytest
+```

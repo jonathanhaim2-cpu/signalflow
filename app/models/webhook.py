@@ -11,6 +11,7 @@ from app.core.database import Base
 class TargetType(str, Enum):
     TELEGRAM = "telegram"
     DISCORD = "discord"
+    WHATSAPP = "whatsapp"
 
 
 class WebhookEndpoint(Base):
@@ -24,6 +25,8 @@ class WebhookEndpoint(Base):
     )
     target_type: Mapped[str] = mapped_column(String(20), default=TargetType.TELEGRAM.value)
     target_config: Mapped[dict] = mapped_column(JSON, default=dict)
+    extra_target_type: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    extra_target_config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)

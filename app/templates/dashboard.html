@@ -10,11 +10,28 @@
     </div>
   </div>
 
+  <div id="sleep-banner" class="rounded-xl bg-amber-500/10 border border-amber-500/40 p-4 mb-6 text-sm">
+    <p class="font-semibold text-amber-200 mb-1">חשוב לדעת על השרת החינמי</p>
+    <p class="text-slate-300 leading-relaxed">אחרי בערך 15 דקות בלי פעילות השרת נרדם. ההתראה הבאה מ-TradingView עלולה לקחת כ־20 שניות, או לא להגיע אם TradingView לא מחכה. שרת שתמיד ער עולה כ־7 דולר לחודש ב-Render.</p>
+  </div>
+
+  <div id="plan-card" class="rounded-xl bg-slate-900 border border-slate-800 p-5 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <p class="text-sm text-slate-400 mb-1">התוכנית שלכם</p>
+      <p id="plan-summary" class="font-semibold">טוען…</p>
+      <p id="plan-remaining" class="text-sm text-slate-400 mt-1"></p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button id="want-pro-btn" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold text-sm">רוצה פרו</button>
+      <p id="want-pro-msg" class="text-sm text-emerald-400 hidden"></p>
+    </div>
+  </div>
+
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
     <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
       <div class="w-8 h-8 mb-2 rounded-full bg-brand-600 flex items-center justify-center font-bold">1</div>
       <h2 class="font-semibold mb-1">לאן לשלוח</h2>
-      <p class="text-sm text-slate-400">מחברים טלגרם או דיסקורד. משם תקבלו את ההתראות.</p>
+      <p class="text-sm text-slate-400">מחברים טלגרם, דיסקורד או וואטסאפ. משם תקבלו את ההתראות.</p>
     </div>
     <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
       <div class="w-8 h-8 mb-2 rounded-full bg-brand-600 flex items-center justify-center font-bold">2</div>
@@ -30,7 +47,7 @@
 
   <div class="rounded-xl bg-slate-900 border border-emerald-500/40 p-5 mb-8">
     <h2 class="font-semibold mb-1">השלב החשוב ב-TradingView</h2>
-    <p class="text-sm text-slate-400 mb-4">בלי הסימון הזה ההתראה נשארת רק ב-TradingView ולא מגיעה לטלגרם. עושים את זה <span class="text-white font-semibold">על כל התראה</span> שרוצים שתגיע גם לכאן.</p>
+    <p class="text-sm text-slate-400 mb-4">בלי הסימון הזה ההתראה נשארת רק ב-TradingView ולא מגיעה אליכם. עושים את זה <span class="text-white font-semibold">על כל התראה</span> שרוצים שתגיע גם לכאן.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
       <ol class="list-decimal list-inside space-y-2 text-sm text-slate-300">
         <li>בגרף, יוצרים התראה (שעון / Alert).</li>
@@ -50,6 +67,23 @@
         <div class="mt-2 mx-2 h-8 rounded bg-slate-800 border border-slate-600 text-[11px] text-slate-500 flex items-center px-2 font-mono truncate">https://…/api/v1/webhook/…</div>
       </div>
     </div>
+    <div class="mt-5 pt-5 border-t border-slate-800">
+      <div class="flex items-center justify-between gap-3 mb-2">
+        <h3 class="font-semibold text-sm">תבנית JSON ל-TradingView</h3>
+        <button type="button" id="copy-tv-json" class="text-xs px-3 py-1.5 rounded-lg border border-emerald-700 text-emerald-300 hover:border-emerald-500">העתק תבנית</button>
+      </div>
+      <p class="text-xs text-slate-500 mb-2">מדביקים את זה בשדה ההודעה של ההתראה ב-TradingView.</p>
+      <pre id="tv-json-template" dir="ltr" class="text-left text-xs font-mono bg-slate-950 border border-slate-800 rounded-lg p-3 overflow-x-auto text-slate-300">{% raw %}{
+  "ticker": "{{ticker}}",
+  "action": "BUY",
+  "price": "{{close}}",
+  "timeframe": "{{interval}}",
+  "stop_loss": "{{plot_0}}",
+  "take_profit": "{{plot_1}}",
+  "strategy_name": "EMA Cross",
+  "message": "Bullish crossover confirmed"
+}{% endraw %}</pre>
+    </div>
   </div>
 
   <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
@@ -65,6 +99,7 @@
         <select name="target_type" id="target-type" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm">
           <option value="telegram">טלגרם</option>
           <option value="discord">דיסקורד</option>
+          <option value="whatsapp">וואטסאפ</option>
         </select>
       </div>
       <div id="telegram-fields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -73,14 +108,81 @@
           <input name="chat_id" placeholder="למשל 123456789" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">קוד הבוט (לא חובה אם כבר הוגדר בשרת)</label>
-          <input name="bot_token" placeholder="הקוד שקיבלתם מ-BotFather" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
+          <label class="block text-xs text-slate-400 mb-1">קוד הבוט (מוסתר)</label>
+          <input name="bot_token" type="password" autocomplete="off" placeholder="הקוד שקיבלתם מ-BotFather" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
         </div>
       </div>
       <div id="discord-fields" class="md:col-span-2 hidden">
         <label class="block text-xs text-slate-400 mb-1">קישור דיסקורד (Webhook)</label>
-        <input name="discord_webhook_url" placeholder="מדביקים כאן את הקישור מערוץ הדיסקורד" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
+        <input name="discord_webhook_url" type="password" autocomplete="off" placeholder="מדביקים כאן את הקישור מערוץ הדיסקורד" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
       </div>
+      <div id="whatsapp-fields" class="md:col-span-2 hidden space-y-3">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">איך לחבר</label>
+          <select name="wa_provider" id="wa-provider" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
+            <option value="green_api">הדרך הקלה — Green-API (מומלץ)</option>
+            <option value="meta">דרך מתקדמת — Meta</option>
+          </select>
+        </div>
+        <div id="wa-green-fields" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">מזהה המופע</label>
+            <input name="id_instance" placeholder="idInstance" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">הקוד (מוסתר)</label>
+            <input name="api_token" type="password" autocomplete="off" placeholder="apiTokenInstance" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">מספר שיקבל (למשל 9725…)</label>
+            <input name="wa_chat_id" placeholder="972501234567" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+        </div>
+        <div id="wa-meta-fields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">מזהה מספר</label>
+            <input name="phone_number_id" placeholder="phone_number_id" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">קוד גישה (מוסתר)</label>
+            <input name="access_token" type="password" autocomplete="off" placeholder="access token" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">נמען (E.164)</label>
+            <input name="wa_to" placeholder="+972501234567" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <div id="extra-dest-wrap" class="md:col-span-2 hidden rounded-lg border border-slate-800 p-3 space-y-3">
+        <label class="flex items-center gap-2 text-sm text-slate-300">
+          <input type="checkbox" id="enable-extra" class="rounded" />
+          יעד נוסף (פרו בלבד) — אותה התראה תישלח גם לשם
+        </label>
+        <div id="extra-fields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="md:col-span-2">
+            <label class="block text-xs text-slate-400 mb-1">יעד נוסף</label>
+            <select id="extra-type" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
+              <option value="telegram">טלגרם</option>
+              <option value="discord">דיסקורד</option>
+              <option value="whatsapp">וואטסאפ</option>
+            </select>
+          </div>
+          <div id="extra-telegram" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input id="extra-chat-id" placeholder="מספר צ׳אט טלגרם" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+            <input id="extra-bot-token" type="password" placeholder="קוד בוט (מוסתר)" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+          <div id="extra-discord" class="md:col-span-2 hidden">
+            <input id="extra-discord-url" type="password" placeholder="קישור Webhook דיסקורד" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+          <div id="extra-whatsapp" class="md:col-span-2 hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input id="extra-wa-instance" placeholder="idInstance" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+            <input id="extra-wa-token" type="password" placeholder="api token" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+            <input id="extra-wa-chat" placeholder="9725…" dir="ltr" class="px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+          </div>
+        </div>
+      </div>
+
       <div class="md:col-span-2">
         <button type="submit" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold text-sm">שמירה</button>
       </div>
@@ -106,6 +208,20 @@
       </ol>
       <p class="mt-2 text-xs text-slate-500">הקישור צריך להיראות בערך כך: <span dir="ltr" class="font-mono">https://discord.com/api/webhooks/…</span> — לא הכתובת הרגילה של הערוץ.</p>
     </details>
+    <details id="whatsapp-help" class="mt-4 text-sm text-slate-400 hidden" open>
+      <summary class="cursor-pointer hover:text-slate-300">איך מחברים וואטסאפ בלי מושגים טכניים</summary>
+      <div class="mt-2 space-y-3">
+        <p class="text-slate-300 font-medium">הדרך הקלה (Green-API)</p>
+        <ol class="list-decimal list-inside space-y-1">
+          <li>נרשמים באתר <a href="https://green-api.com" target="_blank" class="text-brand-500 hover:underline">green-api.com</a> — יש מסלול חינמי להתחלה.</li>
+          <li>יוצרים מופע (instance) וסורקים קוד QR עם הוואטסאפ שלכם, כמו לחבר וואטסאפ במחשב.</li>
+          <li>במסך מופיעים שני ערכים: מזהה המופע (<span dir="ltr">idInstance</span>) והקוד (<span dir="ltr">apiTokenInstance</span>). מעתיקים אותם לכאן.</li>
+          <li>מדביקים גם את מספר הטלפון שיקבל את ההתראות, בפורמט בינלאומי בלי פלוס — למשל <span dir="ltr" class="font-mono">972501234567</span>.</li>
+        </ol>
+        <p class="text-slate-300 font-medium">דרך מתקדמת (Meta)</p>
+        <p>מי שכבר יש לו חשבון Meta Cloud API ממלא מזהה מספר, קוד גישה, ומספר נמען בפורמט בינלאומי.</p>
+      </div>
+    </details>
   </div>
 
   <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
@@ -130,7 +246,7 @@
           <input id="test-ticker" value="BTCUSDT" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">פעולה</label>
+          <label class="block text-xs text-slate-400 mb-1">קנייה / מכירה</label>
           <select id="test-action" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
             <option value="BUY">קנייה</option>
             <option value="SELL">מכירה</option>
@@ -181,19 +297,55 @@
 const targetType = document.getElementById('target-type');
 const telegramFields = document.getElementById('telegram-fields');
 const discordFields = document.getElementById('discord-fields');
+const whatsappFields = document.getElementById('whatsapp-fields');
 const telegramHelp = document.getElementById('telegram-help');
 const discordHelp = document.getElementById('discord-help');
-function syncDestination() {
-  const isTelegram = targetType.value === 'telegram';
-  telegramFields.classList.toggle('hidden', !isTelegram);
-  discordFields.classList.toggle('hidden', isTelegram);
-  telegramHelp.classList.toggle('hidden', !isTelegram);
-  discordHelp.classList.toggle('hidden', isTelegram);
-}
-targetType.addEventListener('change', syncDestination);
-syncDestination();
+const whatsappHelp = document.getElementById('whatsapp-help');
+const waProvider = document.getElementById('wa-provider');
+const extraWrap = document.getElementById('extra-dest-wrap');
+const enableExtra = document.getElementById('enable-extra');
+const extraFields = document.getElementById('extra-fields');
+const extraType = document.getElementById('extra-type');
 
+let me = null;
 let endpointsCache = [];
+
+function destLabel(type) {
+  if (type === 'telegram') return 'טלגרם';
+  if (type === 'whatsapp') return 'וואטסאפ';
+  return 'דיסקורד';
+}
+
+function syncDestination() {
+  const type = targetType.value;
+  telegramFields.classList.toggle('hidden', type !== 'telegram');
+  discordFields.classList.toggle('hidden', type !== 'discord');
+  whatsappFields.classList.toggle('hidden', type !== 'whatsapp');
+  telegramHelp.classList.toggle('hidden', type !== 'telegram');
+  discordHelp.classList.toggle('hidden', type !== 'discord');
+  whatsappHelp.classList.toggle('hidden', type !== 'whatsapp');
+}
+
+function syncWaProvider() {
+  const green = waProvider.value === 'green_api';
+  document.getElementById('wa-green-fields').classList.toggle('hidden', !green);
+  document.getElementById('wa-meta-fields').classList.toggle('hidden', green);
+}
+
+function syncExtra() {
+  extraFields.classList.toggle('hidden', !enableExtra.checked);
+  const type = extraType.value;
+  document.getElementById('extra-telegram').classList.toggle('hidden', type !== 'telegram');
+  document.getElementById('extra-discord').classList.toggle('hidden', type !== 'discord');
+  document.getElementById('extra-whatsapp').classList.toggle('hidden', type !== 'whatsapp');
+}
+
+targetType.addEventListener('change', syncDestination);
+waProvider.addEventListener('change', syncWaProvider);
+enableExtra.addEventListener('change', syncExtra);
+extraType.addEventListener('change', syncExtra);
+syncDestination();
+syncWaProvider();
 
 function defaultPayload() {
   return {
@@ -215,12 +367,41 @@ function syncPayloadBox() {
 });
 syncPayloadBox();
 
+function renderPlan() {
+  if (!me) return;
+  const isPro = me.tier === 'pro';
+  document.getElementById('plan-summary').textContent = isPro ? 'פרו — בלי הגבלה' : 'חינם';
+  if (isPro) {
+    document.getElementById('plan-remaining').textContent = 'ערוצים והתראות ללא הגבלה. בלי חתימת SignalFlow בהודעות.';
+    extraWrap.classList.remove('hidden');
+  } else {
+    const left = me.alerts_remaining_today ?? 0;
+    document.getElementById('plan-remaining').textContent =
+      'נשארו ' + left + ' התראות היום (מתוך 3). ערוץ אחד. בהודעות יופיע SignalFlow.';
+    extraWrap.classList.add('hidden');
+  }
+  if (me.upgrade_requested_at) {
+    document.getElementById('want-pro-btn').classList.add('hidden');
+    const msg = document.getElementById('want-pro-msg');
+    msg.textContent = 'רשמנו את הבקשה. אין חיוב — ניצור קשר.';
+    msg.classList.remove('hidden');
+  }
+}
+
+async function loadMe() {
+  const res = await fetch('/api/v1/auth/me');
+  if (!res.ok) return;
+  me = await res.json();
+  renderPlan();
+}
+
 async function loadEndpoints() {
   const res = await fetch('/api/v1/endpoints');
   if (!res.ok) return;
   endpointsCache = await res.json();
   renderEndpoints();
   populateSelects();
+  loadMe();
 }
 
 function renderEndpoints() {
@@ -234,7 +415,8 @@ function renderEndpoints() {
       <div>
         <div class="font-medium">${ep.name}
           <span class="text-xs px-2 py-0.5 rounded-full ${ep.is_active ? 'bg-green-600/20 text-green-400' : 'bg-slate-700/40 text-slate-400'}">${ep.is_active ? 'פעיל' : 'כבוי'}</span>
-          <span class="text-xs px-2 py-0.5 rounded-full bg-brand-600/20 text-brand-400">${ep.target_type === 'telegram' ? 'טלגרם' : 'דיסקורד'}</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-brand-600/20 text-brand-400">${destLabel(ep.target_type)}</span>
+          ${ep.extra_target_type ? `<span class="text-xs px-2 py-0.5 rounded-full bg-slate-700/40 text-slate-300">+ ${destLabel(ep.extra_target_type)}</span>` : ''}
         </div>
         <div class="text-xs text-slate-400 mt-1 font-mono break-all" dir="ltr">${ep.webhook_url}</div>
       </div>
@@ -262,6 +444,16 @@ function copyUrl(btn, url) {
   });
 }
 
+document.getElementById('copy-tv-json').addEventListener('click', function () {
+  const text = document.getElementById('tv-json-template').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-tv-json');
+    const prev = btn.textContent;
+    btn.textContent = 'הועתק!';
+    setTimeout(() => { btn.textContent = prev; }, 1600);
+  });
+});
+
 async function toggleEndpoint(id) {
   await fetch(`/api/v1/endpoints/${id}/toggle`, { method: 'PATCH' });
   loadEndpoints();
@@ -273,23 +465,68 @@ async function deleteEndpoint(id) {
   loadEndpoints();
 }
 
+function buildWhatsAppConfig(form) {
+  if (form.wa_provider.value === 'meta') {
+    return {
+      provider: 'meta',
+      phone_number_id: form.phone_number_id.value,
+      access_token: form.access_token.value,
+      to: form.wa_to.value
+    };
+  }
+  return {
+    provider: 'green_api',
+    id_instance: form.id_instance.value,
+    api_token: form.api_token.value,
+    chat_id: form.wa_chat_id.value
+  };
+}
+
+function buildPrimaryConfig(form) {
+  const type = form.target_type.value;
+  if (type === 'telegram') return { chat_id: form.chat_id.value, bot_token: form.bot_token.value || null };
+  if (type === 'discord') return { discord_webhook_url: form.discord_webhook_url.value };
+  return buildWhatsAppConfig(form);
+}
+
+function buildExtraConfig() {
+  if (!enableExtra.checked) return null;
+  const type = extraType.value;
+  if (type === 'telegram') return { chat_id: document.getElementById('extra-chat-id').value, bot_token: document.getElementById('extra-bot-token').value || null };
+  if (type === 'discord') return { discord_webhook_url: document.getElementById('extra-discord-url').value };
+  return {
+    provider: 'green_api',
+    id_instance: document.getElementById('extra-wa-instance').value,
+    api_token: document.getElementById('extra-wa-token').value,
+    chat_id: document.getElementById('extra-wa-chat').value
+  };
+}
+
+function hebrewDetail(data, fallback) {
+  if (typeof data.detail === 'string' && data.detail.trim()) return data.detail;
+  if (Array.isArray(data.detail) && data.detail[0] && data.detail[0].msg) return 'בדקו שמילאתם את כל השדות.';
+  return fallback;
+}
+
 document.getElementById('create-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
   const errorEl = document.getElementById('create-error');
   errorEl.classList.add('hidden');
   const type = form.target_type.value;
-  const target_config = type === 'telegram'
-    ? { chat_id: form.chat_id.value, bot_token: form.bot_token.value || null }
-    : { discord_webhook_url: form.discord_webhook_url.value };
-  const body = { name: form.name.value, target_type: type, target_config };
+  const body = { name: form.name.value, target_type: type, target_config: buildPrimaryConfig(form) };
+  const extraConfig = buildExtraConfig();
+  if (extraConfig) {
+    body.extra_target_type = extraType.value;
+    body.extra_target_config = extraConfig;
+  }
   const res = await fetch('/api/v1/endpoints', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
   });
-  if (res.ok) { form.reset(); loadEndpoints(); }
+  if (res.ok) { form.reset(); syncDestination(); syncWaProvider(); syncExtra(); loadEndpoints(); }
   else {
     const data = await res.json().catch(() => ({}));
-    errorEl.textContent = 'לא הצלחנו לשמור. בדקו שמילאתם שם ומספר צ׳אט / קישור דיסקורד.';
+    errorEl.textContent = hebrewDetail(data, 'לא הצלחנו לשמור. בדקו שמילאתם את כל השדות.');
     errorEl.classList.remove('hidden');
   }
 });
@@ -318,19 +555,33 @@ document.getElementById('send-test').addEventListener('click', async () => {
   const token = select.options[select.selectedIndex]?.dataset.token;
   const resultEl = document.getElementById('test-result');
   if (!token) { resultEl.textContent = 'קודם שומרים חיבור למעלה.'; return; }
-  let payload;
-  try { payload = JSON.parse(document.getElementById('test-payload').value); }
-  catch (err) { payload = defaultPayload(); }
+  const payload = defaultPayload();
   resultEl.textContent = 'שולח…';
   const res = await fetch(`/api/v1/webhook/${token}/test`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
   });
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 429 || res.status === 403) {
+    resultEl.textContent = typeof data.detail === 'string' ? data.detail : 'הגעתם למגבלה של התוכנית החינמית.';
+    loadMe();
+    return;
+  }
   const ok = data.status === 'delivered' || data.ok === true;
   resultEl.textContent = ok
-    ? 'נשלח. אם הטלגרם מחובר תראו הודעה שם, וגם שורה ב«מה הגיע».'
-    : ('נשלח לשרת, אבל לא הגיע ליעד. ' + (data.error_message || data.detail || 'בדקו קוד בוט / מספר צ׳אט.'));
+    ? 'נשלח. אם היעד מחובר תראו הודעה שם, וגם שורה ב«מה הגיע».'
+    : ('נשלח לשרת, אבל לא הגיע ליעד. ' + (data.error_message || (typeof data.detail === 'string' ? data.detail : 'בדקו את פרטי החיבור.')));
   loadLogs(select.value);
+  loadMe();
+});
+
+document.getElementById('want-pro-btn').addEventListener('click', async () => {
+  const res = await fetch('/api/v1/auth/request-pro', { method: 'POST' });
+  if (!res.ok) return;
+  const msg = document.getElementById('want-pro-msg');
+  msg.textContent = 'רשמנו את הבקשה. אין חיוב — ניצור קשר.';
+  msg.classList.remove('hidden');
+  document.getElementById('want-pro-btn').classList.add('hidden');
+  loadMe();
 });
 
 document.getElementById('logout-btn').addEventListener('click', async () => {
@@ -338,6 +589,7 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
   window.location.href = '/';
 });
 
+loadMe();
 loadEndpoints();
 </script>
 {% endblock %}

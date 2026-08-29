@@ -61,6 +61,28 @@ def format_discord_markdown(alert: TradingViewAlert) -> str:
     return "\n".join(lines)
 
 
+def format_whatsapp_text(alert: TradingViewAlert) -> str:
+    action = (alert.action or "ALERT").strip().upper()
+    emoji = _emoji_for_action(action)
+
+    lines = [f"{emoji} {action}" + (f" — {alert.ticker}" if alert.ticker else "")]
+
+    if alert.strategy_name:
+        lines.append(f"Strategy: {alert.strategy_name}")
+    if alert.timeframe:
+        lines.append(f"Timeframe: {alert.timeframe}")
+    if alert.price is not None:
+        lines.append(f"Price: {alert.price}")
+    if alert.stop_loss is not None:
+        lines.append(f"Stop Loss: {alert.stop_loss}")
+    if alert.take_profit is not None:
+        lines.append(f"Take Profit: {alert.take_profit}")
+    if alert.message:
+        lines.append(f"\n{alert.message}")
+
+    return "\n".join(lines)
+
+
 def parse_alert_payload(raw_body: bytes, content_type: str | None) -> TradingViewAlert:
     """Parse JSON payload; fall back to treating the whole body as a plain-text message."""
     import json

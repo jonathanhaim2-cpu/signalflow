@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -16,8 +18,17 @@ class UserOut(BaseModel):
     email: EmailStr
     api_token: str
     tier: str
+    upgrade_requested_at: datetime | None = None
 
     model_config = {"from_attributes": True}
+
+
+class MeOut(UserOut):
+    alerts_used_today: int = 0
+    alerts_limit: int | None = 3
+    alerts_remaining_today: int | None = 3
+    channels_used: int = 0
+    channel_limit: int | None = 1
 
 
 class Token(BaseModel):

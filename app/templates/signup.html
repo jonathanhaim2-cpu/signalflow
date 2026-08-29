@@ -22,7 +22,9 @@
 function heError(detail, fallback) {
   const map = {
     'Invalid email or password': 'אימייל או סיסמה שגויים',
+    'אימייל או סיסמה שגויים': 'אימייל או סיסמה שגויים',
     'Email already registered': 'האימייל הזה כבר רשום אצלנו',
+    'האימייל הזה כבר רשום אצלנו': 'האימייל הזה כבר רשום אצלנו',
     'Not authenticated': 'צריך להתחבר מחדש',
   };
   if (typeof detail === 'string' && map[detail]) return map[detail];

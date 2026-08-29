@@ -12,7 +12,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     ALGORITHM: str = "HS256"
     ENVIRONMENT: str = "development"
+    # Legacy fallback. Prefer APP_BASE_URL; otherwise the public host is taken from the request.
     BASE_URL: str = "http://localhost:8000"
+    APP_BASE_URL: str = ""
+    ALLOW_PRO_EMAILS: str = ""
 
 
 @lru_cache
