@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+{% block title %}הערוץ שלי — SignalFlow{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-8">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-2xl font-bold">SignalFlow</h1>
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-slate-400" dir="ltr">{{ user.email }}</span>
+      <button id="logout-btn" class="text-sm px-3 py-1.5 rounded-lg border border-slate-700 hover:border-slate-500">התנתק</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+      <div class="w-8 h-8 mb-2 rounded-full bg-brand-600 flex items-center justify-center font-bold">1</div>
+      <h2 class="font-semibold mb-1">לאן לשלוח</h2>
+      <p class="text-sm text-slate-400">מחברים טלגרם או דיסקורד. משם תקבלו את ההתראות.</p>
+    </div>
+    <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+      <div class="w-8 h-8 mb-2 rounded-full bg-brand-600 flex items-center justify-center font-bold">2</div>
+      <h2 class="font-semibold mb-1">מעתיקים את הקישור</h2>
+      <p class="text-sm text-slate-400">לחיצה אחת על «העתק קישור». זה הכל.</p>
+    </div>
+    <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/40">
+      <div class="w-8 h-8 mb-2 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold">3</div>
+      <h2 class="font-semibold mb-1">מסמנים וי ב-TradingView</h2>
+      <p class="text-sm text-slate-400">בכל התראה חדשה: Notifications, וי ליד Webhook URL, מדביקים, שומרים.</p>
+    </div>
+  </div>
+
+  <div class="rounded-xl bg-slate-900 border border-emerald-500/40 p-5 mb-8">
+    <h2 class="font-semibold mb-1">השלב החשוב ב-TradingView</h2>
+    <p class="text-sm text-slate-400 mb-4">בלי הסימון הזה ההתראה נשארת רק ב-TradingView ולא מגיעה לטלגרם. עושים את זה <span class="text-white font-semibold">על כל התראה</span> שרוצים שתגיע גם לכאן.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+      <ol class="list-decimal list-inside space-y-2 text-sm text-slate-300">
+        <li>בגרף, יוצרים התראה (שעון / Alert).</li>
+        <li>בחלון שנפתח גוללים ל-<span class="text-white font-semibold" dir="ltr">Notifications</span>.</li>
+        <li>מסמנים <span class="text-emerald-400 font-semibold">וי</span> ליד <span class="text-white font-semibold" dir="ltr">Webhook URL</span>.</li>
+        <li>מדביקים את הקישור שהעתקתם כאן, ולוחצים Save.</li>
+      </ol>
+      <div class="rounded-lg bg-[#1e222d] border border-slate-600 p-4" dir="ltr" style="text-align:left">
+        <div class="text-[11px] uppercase tracking-wide text-slate-400 mb-3">Notifications</div>
+        <label class="flex items-center gap-2 text-sm text-slate-300 px-2 py-1.5">
+          <span class="w-4 h-4 rounded border border-slate-500"></span> Notify on app
+        </label>
+        <label class="flex items-center gap-2 text-sm text-white px-2 py-2 mt-1 rounded-lg bg-emerald-500/15 ring-2 ring-emerald-400">
+          <span class="w-4 h-4 rounded bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-bold">✓</span>
+          <span class="font-semibold">Webhook URL</span>
+        </label>
+        <div class="mt-2 mx-2 h-8 rounded bg-slate-800 border border-slate-600 text-[11px] text-slate-500 flex items-center px-2 font-mono truncate">https://…/api/v1/webhook/…</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
+    <h2 class="font-semibold mb-1">שלב 1 — לאן ההתראות יגיעו</h2>
+    <p class="text-sm text-slate-400 mb-4">בחרו שם שתזהו (למשל «אסטרטגיית ביטקוין») ולאן לשלוח.</p>
+    <form id="create-form" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">שם</label>
+        <input name="name" required placeholder="אסטרטגיית ביטקוין" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
+      </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">לאן לשלוח</label>
+        <select name="target_type" id="target-type" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm">
+          <option value="telegram">טלגרם</option>
+          <option value="discord">דיסקורד</option>
+        </select>
+      </div>
+      <div id="telegram-fields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">מספר הצ׳אט בטלגרם</label>
+          <input name="chat_id" placeholder="למשל 123456789" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">קוד הבוט (לא חובה אם כבר הוגדר בשרת)</label>
+          <input name="bot_token" placeholder="הקוד שקיבלתם מ-BotFather" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
+        </div>
+      </div>
+      <div id="discord-fields" class="md:col-span-2 hidden">
+        <label class="block text-xs text-slate-400 mb-1">קישור דיסקורד (Webhook)</label>
+        <input name="discord_webhook_url" placeholder="מדביקים כאן את הקישור מערוץ הדיסקורד" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:border-brand-500 outline-none text-sm" />
+      </div>
+      <div class="md:col-span-2">
+        <button type="submit" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold text-sm">שמירה</button>
+      </div>
+    </form>
+    <p id="create-error" class="text-red-400 text-sm mt-2 hidden"></p>
+    <details id="telegram-help" class="mt-4 text-sm text-slate-400" open>
+      <summary class="cursor-pointer hover:text-slate-300">איך מוצאים את מספר הצ׳אט וקוד הבוט</summary>
+      <ol class="list-decimal list-inside mt-2 space-y-1">
+        <li>בטלגרם פותחים את <a href="https://t.me/BotFather" target="_blank" class="text-brand-500 hover:underline">BotFather</a> ושולחים /newbot.</li>
+        <li>נותנים שם לבוט. הוא מחזיר קוד ארוך — זה קוד הבוט. מעתיקים לכאן.</li>
+        <li>פותחים את הבוט החדש ולוחצים Start, או מוסיפים אותו לקבוצה ושולחים הודעה.</li>
+        <li>מספר הצ׳אט: אחרי הודעה לבוט, פותחים בדפדפן את הכתובת <span dir="ltr" class="font-mono text-xs text-slate-300">https://api.telegram.org/botהקוד/getUpdates</span> ומחפשים את המספר ליד id.</li>
+      </ol>
+    </details>
+    <details id="discord-help" class="mt-4 text-sm text-slate-400 hidden" open>
+      <summary class="cursor-pointer hover:text-slate-300">איך מחלצים קישור מדיסקורד</summary>
+      <ol class="list-decimal list-inside mt-2 space-y-1">
+        <li>פותחים דיסקורד במחשב (יותר קל מאשר בטלפון) ונכנסים לשרת.</li>
+        <li>עומדים על הערוץ שרוצים לקבל בו הודעות, לוחצים על גלגל השיניים ליד שם הערוץ.</li>
+        <li>בתפריט משמאל: <span class="text-white font-semibold" dir="ltr">Integrations</span> → <span class="text-white font-semibold" dir="ltr">Webhooks</span>.</li>
+        <li>לוחצים <span class="text-white font-semibold" dir="ltr">New Webhook</span> (או בוחרים אחד קיים).</li>
+        <li>לוחצים <span class="text-white font-semibold" dir="ltr">Copy Webhook URL</span> ומדביקים כאן למעלה.</li>
+      </ol>
+      <p class="mt-2 text-xs text-slate-500">הקישור צריך להיראות בערך כך: <span dir="ltr" class="font-mono">https://discord.com/api/webhooks/…</span> — לא הכתובת הרגילה של הערוץ.</p>
+    </details>
+  </div>
+
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
+    <h2 class="font-semibold mb-1">שלב 2 — הקישור שלכם</h2>
+    <p class="text-sm text-slate-400 mb-4">מעתיקים ומדביקים ב-TradingView אחרי שמסמנים Webhook URL.</p>
+    <div id="endpoints-list" class="space-y-3">
+      <p class="text-sm text-slate-500">טוען…</p>
+    </div>
+  </div>
+
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
+    <h2 class="font-semibold mb-1">בדיקה מהירה</h2>
+    <p class="text-sm text-slate-400 mb-4">שולחים התראה מדומה, בלי TradingView, כדי לראות שההודעה מגיעה.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">לאן לשלוח</label>
+          <select id="test-endpoint" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">סימול / מניה</label>
+          <input id="test-ticker" value="BTCUSDT" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">פעולה</label>
+          <select id="test-action" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm">
+            <option value="BUY">קנייה</option>
+            <option value="SELL">מכירה</option>
+            <option value="ALERT">התראה</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">מחיר</label>
+          <input id="test-price" value="67250" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm" />
+        </div>
+        <details class="text-sm text-slate-400">
+          <summary class="cursor-pointer hover:text-slate-300">מתקדם — JSON</summary>
+          <textarea id="test-payload" rows="8" dir="ltr" class="mt-2 w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm font-mono"></textarea>
+        </details>
+        <button id="send-test" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold text-sm">שלחו בדיקה</button>
+      </div>
+      <div>
+        <label class="block text-xs text-slate-400 mb-1">תוצאה</label>
+        <pre id="test-result" class="w-full min-h-[220px] px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-sm overflow-auto text-slate-400">עוד לא נשלחה בדיקה.</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div class="flex items-center justify-between mb-4 gap-3">
+      <h2 class="font-semibold">מה הגיע</h2>
+      <select id="logs-endpoint" class="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 outline-none text-sm"></select>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-right text-slate-400 border-b border-slate-800">
+            <th class="py-2 pe-4">סטטוס</th>
+            <th class="py-2 pe-4">זמן תגובה</th>
+            <th class="py-2 pe-4">תצוגה</th>
+            <th class="py-2 pe-4">מתי</th>
+          </tr>
+        </thead>
+        <tbody id="logs-body">
+          <tr><td colspan="4" class="py-4 text-slate-500">בחרו חיבור כדי לראות מה הגיע.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const targetType = document.getElementById('target-type');
+const telegramFields = document.getElementById('telegram-fields');
+const discordFields = document.getElementById('discord-fields');
+const telegramHelp = document.getElementById('telegram-help');
+const discordHelp = document.getElementById('discord-help');
+function syncDestination() {
+  const isTelegram = targetType.value === 'telegram';
+  telegramFields.classList.toggle('hidden', !isTelegram);
+  discordFields.classList.toggle('hidden', isTelegram);
+  telegramHelp.classList.toggle('hidden', !isTelegram);
+  discordHelp.classList.toggle('hidden', isTelegram);
+}
+targetType.addEventListener('change', syncDestination);
+syncDestination();
+
+let endpointsCache = [];
+
+function defaultPayload() {
+  return {
+    ticker: document.getElementById('test-ticker').value || 'BTCUSDT',
+    action: document.getElementById('test-action').value || 'BUY',
+    price: document.getElementById('test-price').value || '0',
+    timeframe: '15m',
+    strategy_name: 'בדיקה',
+    message: 'התראת בדיקה מ-SignalFlow'
+  };
+}
+
+function syncPayloadBox() {
+  document.getElementById('test-payload').value = JSON.stringify(defaultPayload(), null, 2);
+}
+['test-ticker','test-action','test-price'].forEach(id => {
+  document.getElementById(id).addEventListener('input', syncPayloadBox);
+  document.getElementById(id).addEventListener('change', syncPayloadBox);
+});
+syncPayloadBox();
+
+async function loadEndpoints() {
+  const res = await fetch('/api/v1/endpoints');
+  if (!res.ok) return;
+  endpointsCache = await res.json();
+  renderEndpoints();
+  populateSelects();
+}
+
+function renderEndpoints() {
+  const container = document.getElementById('endpoints-list');
+  if (endpointsCache.length === 0) {
+    container.innerHTML = '<p class="text-sm text-slate-500">עוד אין חיבור. שמרו אחד למעלה.</p>';
+    return;
+  }
+  container.innerHTML = endpointsCache.map(ep => `
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-lg bg-slate-950 border border-slate-800">
+      <div>
+        <div class="font-medium">${ep.name}
+          <span class="text-xs px-2 py-0.5 rounded-full ${ep.is_active ? 'bg-green-600/20 text-green-400' : 'bg-slate-700/40 text-slate-400'}">${ep.is_active ? 'פעיל' : 'כבוי'}</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-brand-600/20 text-brand-400">${ep.target_type === 'telegram' ? 'טלגרם' : 'דיסקורד'}</span>
+        </div>
+        <div class="text-xs text-slate-400 mt-1 font-mono break-all" dir="ltr">${ep.webhook_url}</div>
+      </div>
+      <div class="flex gap-2 shrink-0">
+        <button onclick="copyUrl(this, '${ep.webhook_url}')" class="text-xs px-3 py-1.5 rounded-lg border border-emerald-700 text-emerald-300 hover:border-emerald-500">העתק קישור</button>
+        <button onclick="toggleEndpoint(${ep.id})" class="text-xs px-3 py-1.5 rounded-lg border border-slate-700 hover:border-slate-500">${ep.is_active ? 'השהה' : 'הפעל'}</button>
+        <button onclick="deleteEndpoint(${ep.id})" class="text-xs px-3 py-1.5 rounded-lg border border-red-900 text-red-400 hover:border-red-700">מחק</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function populateSelects() {
+  const options = endpointsCache.map(ep => `<option value="${ep.id}" data-token="${ep.token}">${ep.name}</option>`).join('');
+  document.getElementById('test-endpoint').innerHTML = options || '<option value="">אין חיבור עדיין</option>';
+  document.getElementById('logs-endpoint').innerHTML = options || '<option value="">אין חיבור עדיין</option>';
+  if (endpointsCache.length > 0) loadLogs(endpointsCache[0].id);
+}
+
+function copyUrl(btn, url) {
+  navigator.clipboard.writeText(url).then(() => {
+    const prev = btn.textContent;
+    btn.textContent = 'הועתק!';
+    setTimeout(() => { btn.textContent = prev; }, 1600);
+  });
+}
+
+async function toggleEndpoint(id) {
+  await fetch(`/api/v1/endpoints/${id}/toggle`, { method: 'PATCH' });
+  loadEndpoints();
+}
+
+async function deleteEndpoint(id) {
+  if (!confirm('למחוק את החיבור הזה?')) return;
+  await fetch(`/api/v1/endpoints/${id}`, { method: 'DELETE' });
+  loadEndpoints();
+}
+
+document.getElementById('create-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const errorEl = document.getElementById('create-error');
+  errorEl.classList.add('hidden');
+  const type = form.target_type.value;
+  const target_config = type === 'telegram'
+    ? { chat_id: form.chat_id.value, bot_token: form.bot_token.value || null }
+    : { discord_webhook_url: form.discord_webhook_url.value };
+  const body = { name: form.name.value, target_type: type, target_config };
+  const res = await fetch('/api/v1/endpoints', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  if (res.ok) { form.reset(); loadEndpoints(); }
+  else {
+    const data = await res.json().catch(() => ({}));
+    errorEl.textContent = 'לא הצלחנו לשמור. בדקו שמילאתם שם ומספר צ׳אט / קישור דיסקורד.';
+    errorEl.classList.remove('hidden');
+  }
+});
+
+document.getElementById('logs-endpoint').addEventListener('change', (e) => loadLogs(e.target.value));
+
+async function loadLogs(endpointId) {
+  if (!endpointId) return;
+  const res = await fetch(`/api/v1/endpoints/${endpointId}/logs`);
+  const tbody = document.getElementById('logs-body');
+  if (!res.ok) { tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-slate-500">לא הצלחנו לטעון.</td></tr>'; return; }
+  const logs = await res.json();
+  if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-slate-500">עוד לא הגיעו התראות.</td></tr>'; return; }
+  tbody.innerHTML = logs.map(l => `
+    <tr class="border-b border-slate-800/60">
+      <td class="py-2 pe-4"><span class="px-2 py-0.5 rounded-full text-xs ${l.status === 'delivered' ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}">${l.status === 'delivered' ? 'הגיע' : 'לא הגיע'}</span></td>
+      <td class="py-2 pe-4">${Number(l.latency_ms).toFixed(0)} ms</td>
+      <td class="py-2 pe-4 font-mono text-xs text-slate-400 max-w-xs truncate">${(l.payload_raw || '').replace(/</g, '&lt;').slice(0, 80)}</td>
+      <td class="py-2 pe-4 text-slate-500 text-xs">${new Date(l.created_at).toLocaleString('he-IL')}</td>
+    </tr>
+  `).join('');
+}
+
+document.getElementById('send-test').addEventListener('click', async () => {
+  const select = document.getElementById('test-endpoint');
+  const token = select.options[select.selectedIndex]?.dataset.token;
+  const resultEl = document.getElementById('test-result');
+  if (!token) { resultEl.textContent = 'קודם שומרים חיבור למעלה.'; return; }
+  let payload;
+  try { payload = JSON.parse(document.getElementById('test-payload').value); }
+  catch (err) { payload = defaultPayload(); }
+  resultEl.textContent = 'שולח…';
+  const res = await fetch(`/api/v1/webhook/${token}/test`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  const ok = data.status === 'delivered' || data.ok === true;
+  resultEl.textContent = ok
+    ? 'נשלח. אם הטלגרם מחובר תראו הודעה שם, וגם שורה ב«מה הגיע».'
+    : ('נשלח לשרת, אבל לא הגיע ליעד. ' + (data.error_message || data.detail || 'בדקו קוד בוט / מספר צ׳אט.'));
+  loadLogs(select.value);
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await fetch('/api/v1/auth/logout', { method: 'POST' });
+  window.location.href = '/';
+});
+
+loadEndpoints();
+</script>
+{% endblock %}

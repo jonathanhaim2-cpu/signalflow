@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}הרשמה — SignalFlow{% endblock %}
+{% block content %}
+<div class="max-w-sm mx-auto px-6 py-24">
+  <h1 class="text-2xl font-bold mb-6 text-center">הרשמה</h1>
+  <form id="signup-form" class="space-y-4">
+    <div>
+      <label class="block text-sm text-slate-400 mb-1">אימייל</label>
+      <input type="email" name="email" required autocomplete="email" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:border-brand-500 outline-none" />
+    </div>
+    <div>
+      <label class="block text-sm text-slate-400 mb-1">סיסמה</label>
+      <input type="password" name="password" required minlength="8" autocomplete="new-password" dir="ltr" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 focus:border-brand-500 outline-none" />
+      <p class="text-xs text-slate-500 mt-1">לפחות 8 תווים</p>
+    </div>
+    <p id="error" class="text-red-400 text-sm hidden"></p>
+    <button type="submit" class="w-full py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold transition">הרשמה</button>
+  </form>
+  <p class="text-sm text-slate-400 mt-4 text-center">כבר יש חשבון? <a href="/login" class="text-brand-500 hover:underline">כניסה</a></p>
+</div>
+<script>
+function heError(detail, fallback) {
+  const map = {
+    'Invalid email or password': 'אימייל או סיסמה שגויים',
+    'Email already registered': 'האימייל הזה כבר רשום אצלנו',
+    'Not authenticated': 'צריך להתחבר מחדש',
+  };
+  if (typeof detail === 'string' && map[detail]) return map[detail];
+  if (typeof detail === 'string' && detail.trim()) return detail;
+  if (Array.isArray(detail) && detail[0]) {
+    const msg = (detail[0].msg || '').toLowerCase();
+    if (msg.includes('email')) return 'כתובת האימייל לא תקינה';
+    if (msg.includes('at least 8') || msg.includes('min_length') || msg.includes('too_short')) return 'הסיסמה חייבת להכיל לפחות 8 תווים';
+    return 'משהו לא תקין בפרטים. בדקו ונסו שוב.';
+  }
+  return fallback;
+}
+document.getElementById('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const errorEl = document.getElementById('error');
+  errorEl.classList.add('hidden');
+  if ((form.password.value || '').length < 8) {
+    errorEl.textContent = 'הסיסמה חייבת להכיל לפחות 8 תווים';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  const body = { email: form.email.value, password: form.password.value };
+  const res = await fetch('/api/v1/auth/signup', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  if (res.ok) { window.location.href = '/dashboard'; }
+  else {
+    const data = await res.json().catch(() => ({}));
+    errorEl.textContent = heError(data.detail, 'ההרשמה נכשלה');
+    errorEl.classList.remove('hidden');
+  }
+});
+</script>
+{% endblock %}

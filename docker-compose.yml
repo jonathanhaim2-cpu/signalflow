@@ -1,0 +1,10 @@
+services:
+  signalflow:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./signalflow.db:/app/signalflow.db
+    restart: unless-stopped
