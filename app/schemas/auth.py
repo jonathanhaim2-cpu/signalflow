@@ -18,6 +18,7 @@ class UserOut(BaseModel):
     email: EmailStr
     api_token: str
     tier: str
+    is_admin: bool = False
     upgrade_requested_at: datetime | None = None
 
     model_config = {"from_attributes": True}

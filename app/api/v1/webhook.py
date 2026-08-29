@@ -27,6 +27,8 @@ async def _load_endpoint(db: AsyncSession, endpoint_token: str) -> WebhookEndpoi
         raise HTTPException(status_code=404, detail="חיבור לא מוכר")
     if not endpoint.is_active:
         raise HTTPException(status_code=403, detail="החיבור כבוי")
+    if endpoint.user and endpoint.user.is_disabled:
+        raise HTTPException(status_code=403, detail="החשבון מושבת")
     return endpoint
 
 

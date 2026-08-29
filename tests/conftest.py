@@ -10,7 +10,7 @@ from sqlalchemy.pool import StaticPool
 from app.core.database import Base, get_db
 from app.core.config import get_settings
 from app.main import app
-from app.models import AlertLog, User, WebhookEndpoint  # noqa: F401
+from app.models import AlertLog, InviteCode, User, WebhookEndpoint  # noqa: F401
 
 
 @dataclass

@@ -26,6 +26,8 @@ async def get_current_user(
     user = result.scalar_one_or_none()
     if not user:
         raise credentials_exception
+    if user.is_disabled:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="החשבון מושבת")
     return await persist_allowlist_pro(db, user)
 
 
@@ -40,6 +42,6 @@ async def get_current_user_optional(
         return None
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
-    if not user:
+    if not user or user.is_disabled:
         return None
     return await persist_allowlist_pro(db, user)

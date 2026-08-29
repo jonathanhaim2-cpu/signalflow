@@ -15,6 +15,19 @@ ALLOW_PRO_EMAILS=you@example.com
 python scripts/grant_pro.py you@example.com
 ```
 
+## Owner admin
+
+Jonathan (`jonathanhaim2@gmail.com`) is the owner. On first signup/login that email becomes **admin + Pro**. Additional admins: `ADMIN_EMAILS` (comma-separated).
+
+Hebrew SSR at `/admin` (non-admins get 404 / login redirect):
+
+- User list: email, חינם/פרו, date, alerts today, upgrade requested
+- «הפוך לפרו» / «הורד לחינם» / השבת
+- Create a user (email + temp password, shown once)
+- One-time Pro invite codes with a large code + QR PNG (`/redeem/{code}`). Default expiry 7 days; unused codes can be revoked or printed («הדפס / שמור»).
+
+Set on Render: `ADMIN_EMAILS=jonathanhaim2@gmail.com`.
+
 API limit errors are Hebrew `403` / `429`.
 
 ## Stack

@@ -36,11 +36,9 @@ def effective_tier(user: User) -> str:
 
 
 async def persist_allowlist_pro(db: AsyncSession, user: User) -> User:
-    if user.tier != UserTier.PRO.value and user.email.lower() in parse_allow_pro_emails():
-        user.tier = UserTier.PRO.value
-        await db.commit()
-        await db.refresh(user)
-    return user
+    from app.services.admin import persist_privileges
+
+    return await persist_privileges(db, user)
 
 
 async def grant_pro(db: AsyncSession, email: str) -> User | None:

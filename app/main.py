@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from slowapi.errors import RateLimitExceeded
 
+from app.api.admin import router as admin_router
 from app.api.dashboard import router as dashboard_router
 from app.api.v1.router import api_router
 from app.core.database import init_db
@@ -39,4 +40,5 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(api_router)
+app.include_router(admin_router)
 app.include_router(dashboard_router)

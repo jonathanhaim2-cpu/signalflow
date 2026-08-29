@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     BASE_URL: str = "http://localhost:8000"
     APP_BASE_URL: str = ""
     ALLOW_PRO_EMAILS: str = ""
+    # Comma-separated owner emails. jonathanhaim2@gmail.com is always treated as owner.
+    ADMIN_EMAILS: str = "jonathanhaim2@gmail.com"
 
 
 @lru_cache

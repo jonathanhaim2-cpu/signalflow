@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}הדפסת קוד — SignalFlow{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto px-6 py-10 text-center">
+  <div class="mb-6 print:hidden flex justify-between items-center">
+    <a href="/admin" class="text-sm px-3 py-1.5 rounded-lg border border-slate-700">חזרה לניהול</a>
+    <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold text-sm">הדפס / שמור</button>
+  </div>
+  <p class="text-sm text-slate-400 mb-2">הזמנה ל-SignalFlow פרו</p>
+  <p class="text-5xl font-mono font-bold tracking-widest my-6" dir="ltr">{{ invite.code }}</p>
+  <img src="/admin/invites/{{ invite.id }}/qr.png" alt="QR" class="mx-auto w-64 h-64 bg-white p-3 rounded-xl" />
+  <p class="text-slate-300 mt-6">סרקו את הקוד, או היכנסו לקישור:</p>
+  <p class="font-mono text-sm mt-2 break-all" dir="ltr">{{ redeem_url }}</p>
+  <p class="text-xs text-slate-500 mt-4">חד־פעמי{% if invite.expires_at %} · בתוקף עד {{ invite.expires_at.strftime('%d.%m.%Y') }}{% endif %}{% if status != 'unused' %} · {{ status }}{% endif %}</p>
+</div>
+<style>
+  @media print {
+    body { background: white !important; color: black !important; }
+    .print\\:hidden { display: none !important; }
+  }
+</style>
+{% endblock %}

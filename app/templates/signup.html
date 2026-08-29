@@ -16,9 +16,14 @@
     <p id="error" class="text-red-400 text-sm hidden"></p>
     <button type="submit" class="w-full py-2 rounded-lg bg-brand-600 hover:bg-brand-700 font-semibold transition">הרשמה</button>
   </form>
-  <p class="text-sm text-slate-400 mt-4 text-center">כבר יש חשבון? <a href="/login" class="text-brand-500 hover:underline">כניסה</a></p>
+  <p class="text-sm text-slate-400 mt-4 text-center">כבר יש חשבון? <a id="login-link" href="/login" class="text-brand-500 hover:underline">כניסה</a></p>
 </div>
 <script>
+const nextPath = (() => {
+  const n = new URLSearchParams(location.search).get('next') || '';
+  return (n.startsWith('/') && !n.startsWith('//')) ? n : '/dashboard';
+})();
+document.getElementById('login-link').href = '/login?next=' + encodeURIComponent(nextPath);
 function heError(detail, fallback) {
   const map = {
     'Invalid email or password': 'אימייל או סיסמה שגויים',
@@ -51,7 +56,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
   const res = await fetch('/api/v1/auth/signup', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
   });
-  if (res.ok) { window.location.href = '/dashboard'; }
+  if (res.ok) { window.location.href = nextPath; }
   else {
     const data = await res.json().catch(() => ({}));
     errorEl.textContent = heError(data.detail, 'ההרשמה נכשלה');

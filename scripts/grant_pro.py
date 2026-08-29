@@ -3,6 +3,8 @@
 
 Usage:
     python scripts/grant_pro.py email@x.com
+
+The owner can also flip Pro from the Hebrew /admin dashboard.
 """
 
 from __future__ import annotations

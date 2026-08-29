@@ -6,6 +6,7 @@
     <h1 class="text-2xl font-bold">SignalFlow</h1>
     <div class="flex items-center gap-4">
       <span class="text-sm text-slate-400" dir="ltr">{{ user.email }}</span>
+      {% if user.is_admin %}<a href="/admin" class="text-sm px-3 py-1.5 rounded-lg border border-brand-600 text-brand-400 hover:border-brand-400">ניהול</a>{% endif %}
       <button id="logout-btn" class="text-sm px-3 py-1.5 rounded-lg border border-slate-700 hover:border-slate-500">התנתק</button>
     </div>
   </div>

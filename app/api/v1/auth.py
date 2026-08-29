@@ -49,6 +49,8 @@ async def login(payload: UserLogin, response: Response, db: AsyncSession = Depen
     user = result.scalar_one_or_none()
     if not user or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="אימייל או סיסמה שגויים")
+    if user.is_disabled:
+        raise HTTPException(status_code=401, detail="החשבון מושבת. פנו לבעלים.")
 
     user = await persist_allowlist_pro(db, user)
     token = _set_session_cookie(response, user.email)
@@ -69,6 +71,7 @@ async def me(db: AsyncSession = Depends(get_db), user: User = Depends(get_curren
         email=user.email,
         api_token=user.api_token,
         tier=snap["tier"],
+        is_admin=user.is_admin,
         upgrade_requested_at=snap["upgrade_requested_at"],
         alerts_used_today=snap["alerts_used_today"],
         alerts_limit=snap["alerts_limit"],

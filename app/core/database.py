@@ -34,6 +34,11 @@ def _add_missing_columns(sync_conn) -> None:
         sync_conn.execute(text(f"ALTER TABLE users ADD COLUMN upgrade_requested_at {datetime_type}"))
     if user_cols and "tier" not in user_cols:
         sync_conn.execute(text("ALTER TABLE users ADD COLUMN tier VARCHAR(20) DEFAULT 'free'"))
+    bool_type = "BOOLEAN DEFAULT FALSE" if dialect == "postgresql" else "BOOLEAN DEFAULT 0"
+    if user_cols and "is_admin" not in user_cols:
+        sync_conn.execute(text(f"ALTER TABLE users ADD COLUMN is_admin {bool_type}"))
+    if user_cols and "is_disabled" not in user_cols:
+        sync_conn.execute(text(f"ALTER TABLE users ADD COLUMN is_disabled {bool_type}"))
 
     endpoint_cols = _existing_columns(sync_conn, "webhook_endpoints")
     if endpoint_cols and "extra_target_type" not in endpoint_cols:
@@ -44,7 +49,7 @@ def _add_missing_columns(sync_conn) -> None:
 
 async def init_db() -> None:
     # Ensure models are registered on Base.metadata before create_all.
-    from app.models import AlertLog, User, WebhookEndpoint  # noqa: F401
+    from app.models import AlertLog, InviteCode, User, WebhookEndpoint  # noqa: F401
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
