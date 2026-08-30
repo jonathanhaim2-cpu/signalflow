@@ -10,12 +10,12 @@
     <h1 style="font-size:2rem;letter-spacing:-0.03em;margin:10px 0 18px">איך מתחילים?</h1>
     <p class="lede" style="margin-bottom:22px">בוחרים תוכנית לפני הטופס. אפשר להתחיל בחינם.</p>
     <button type="button" class="plan-pick is-on" id="pick-free" aria-pressed="true" data-plan="free">
-      <h3>חינם · 0₪</h3>
+      <h3>חינם · $0</h3>
       <p>קישור אחד, 3 התראות ביום, עם חתימת SignalFlow.</p>
     </button>
     <button type="button" class="plan-pick pro" id="pick-pro" aria-pressed="false" data-plan="pro">
-      <h3>פרו · ₪39 לחודש</h3>
-      <p>בלי הגבלה, ניסיונות חוזרים. אשראי או ביט דרך PayPlus. ביטול בכל עת.</p>
+      <h3>פרו · $9 לחודש</h3>
+      <p>בלי הגבלה, ניסיונות חוזרים. Paddle מוציא קבלה מחו״ל. ביטול בכל עת.</p>
     </button>
   </section>
   <section class="auth-form-col">
@@ -33,7 +33,7 @@
         <p style="color:var(--faint);font-size:0.75rem;margin:6px 0 0">לפחות 8 תווים</p>
       </div>
       <p id="error" class="form-error hidden"></p>
-      <p id="pro-note" class="note note-warn hidden">₪39 לחודש. אשראי או ביט דרך PayPlus. ביטול בכל עת. אחרי ההרשמה תעברו לתשלום מאובטח.</p>
+      <p id="pro-note" class="note note-warn hidden">$9 לחודש. Paddle מוציא קבלה מחו״ל. ביטול בכל עת. אחרי ההרשמה תעברו לתשלום מאובטח.</p>
       <button type="submit" class="btn btn-primary" style="width:100%">הרשמה</button>
       <p style="color:var(--muted);font-size:0.88rem;margin-top:16px;text-align:center">כבר יש חשבון? <a id="login-link" href="/login" style="color:var(--signal)">כניסה</a></p>
     </form>
@@ -55,7 +55,7 @@ function setPlan(plan) {
   document.getElementById('pick-free').setAttribute('aria-pressed', plan === 'free');
   document.getElementById('pick-pro').setAttribute('aria-pressed', plan === 'pro');
   document.getElementById('plan-caption').textContent = plan === 'pro'
-    ? 'נרשמים ואז עוברים לתשלום ₪39 לחודש ב-PayPlus.'
+    ? 'נרשמים ואז עוברים לתשלום $9 לחודש ב-Paddle.'
     : 'נרשמים לתוכנית חינם.';
   document.getElementById('pro-note').classList.toggle('hidden', plan !== 'pro');
 }

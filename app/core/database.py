@@ -41,12 +41,12 @@ def _add_missing_columns(sync_conn) -> None:
         sync_conn.execute(text(f"ALTER TABLE users ADD COLUMN is_disabled {bool_type}"))
     if user_cols and "manual_pro" not in user_cols:
         sync_conn.execute(text(f"ALTER TABLE users ADD COLUMN manual_pro {bool_type}"))
-    if user_cols and "payplus_customer_uid" not in user_cols:
-        sync_conn.execute(text("ALTER TABLE users ADD COLUMN payplus_customer_uid VARCHAR(64)"))
-    if user_cols and "payplus_recurring_uid" not in user_cols:
-        sync_conn.execute(text("ALTER TABLE users ADD COLUMN payplus_recurring_uid VARCHAR(64)"))
-    if user_cols and "payplus_page_request_uid" not in user_cols:
-        sync_conn.execute(text("ALTER TABLE users ADD COLUMN payplus_page_request_uid VARCHAR(64)"))
+    if user_cols and "paddle_customer_id" not in user_cols:
+        sync_conn.execute(text("ALTER TABLE users ADD COLUMN paddle_customer_id VARCHAR(64)"))
+    if user_cols and "paddle_subscription_id" not in user_cols:
+        sync_conn.execute(text("ALTER TABLE users ADD COLUMN paddle_subscription_id VARCHAR(64)"))
+    if user_cols and "paddle_transaction_id" not in user_cols:
+        sync_conn.execute(text("ALTER TABLE users ADD COLUMN paddle_transaction_id VARCHAR(64)"))
 
     endpoint_cols = _existing_columns(sync_conn, "webhook_endpoints")
     if endpoint_cols and "extra_target_type" not in endpoint_cols:

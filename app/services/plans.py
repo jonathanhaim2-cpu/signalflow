@@ -13,7 +13,7 @@ FREE_ALERTS_PER_DAY = 3
 FREE_CHANNEL_LIMIT = 1
 SIGNALFLOW_FOOTER = "— SignalFlow"
 
-MSG_CHANNEL_LIMIT = "בתוכנית החינמית אפשר לחבר קישור אחד בלבד. לשדרוג: ₪39 לחודש."
+MSG_CHANNEL_LIMIT = "בתוכנית החינמית אפשר לחבר קישור אחד בלבד. לשדרוג: $9 לחודש."
 MSG_ALERT_LIMIT = "הגעתם למכסת 3 ההתראות היומית בתוכנית החינמית. נסו שוב מחר או שדרגו לפרו."
 
 

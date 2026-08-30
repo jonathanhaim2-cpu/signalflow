@@ -27,9 +27,9 @@ class User(Base):
     is_disabled: Mapped[bool] = mapped_column(Boolean, default=False)
     upgrade_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     manual_pro: Mapped[bool] = mapped_column(Boolean, default=False)
-    payplus_customer_uid: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    payplus_recurring_uid: Mapped[str | None] = mapped_column(String(64), nullable=True)
-    payplus_page_request_uid: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    paddle_customer_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    paddle_subscription_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    paddle_transaction_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

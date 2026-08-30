@@ -33,12 +33,13 @@ async def test_login_plan_cards_and_rtl_css(client):
     page = await client.get("/login")
     assert page.status_code == 200
     html = page.text
-    assert "₪39" in html
-    assert "0₪" in html
+    assert "$9" in html
+    assert "$0" in html
     assert "הרשמה כחינם" in html
     assert "הרשמה כפרו" in html
     assert "אין סליקה" not in html
-    assert "$9" not in html
+    assert "₪" not in html
+    assert "PayPlus" not in html
     css = await client.get("/static/css/app.css")
     assert css.status_code == 200
     assert "overflow-x: clip" in css.text
@@ -55,10 +56,12 @@ async def test_landing_mentions_whatsapp(client):
     assert "פרו" in html
     assert "מדריכים" in html
     assert "מחירים" in html
-    assert "₪39" in html
-    assert "0₪" in html
-    assert "PayPlus" in html
-    assert "$9" not in html
+    assert "$9" in html
+    assert "$0" in html
+    assert "Paddle" in html
+    assert "קבלה מחו״ל" in html
+    assert "₪" not in html
+    assert "PayPlus" not in html
     assert "אין סליקה" not in html
     assert "מושגים" not in html
     assert 'href="/static/css/app.css"' in html
