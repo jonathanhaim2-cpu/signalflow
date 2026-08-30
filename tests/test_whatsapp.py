@@ -79,7 +79,7 @@ async def test_whatsapp_callmebot_plus972_and_pro_no_footer(client, fake_http, s
     assert "— SignalFlow" not in query["text"][0]
 
 
-async def test_whatsapp_callmebot_missing_apikey_hebrew(client):
+async def test_whatsapp_callmebot_missing_apikey(client):
     await signup(client)
     res = await client.post(
         "/api/v1/endpoints",
@@ -90,8 +90,8 @@ async def test_whatsapp_callmebot_missing_apikey_hebrew(client):
         },
     )
     assert res.status_code == 422
-    assert "קוד" in res.text
-    assert "ואטסאפ" in res.text
+    assert "activation code" in res.text
+    assert "WhatsApp" in res.text
 
 
 async def test_whatsapp_callmebot_body_error_on_http_200(client, fake_http):
@@ -115,7 +115,7 @@ async def test_whatsapp_callmebot_body_error_on_http_200(client, fake_http):
     body = sent.json()
     assert body["status"] == "failed"
     assert body["error_message"]
-    assert any(ch >= "א" for ch in body["error_message"])
+    assert "CallMeBot" in body["error_message"]
 
 
 async def test_whatsapp_green_api_real_http(client, fake_http):
@@ -218,13 +218,12 @@ async def test_pro_retries_whatsapp_on_5xx(client, fake_http, session_factory):
     assert len(fake_http.calls) == 2
 
 
-async def test_callmebot_dispatch_missing_credentials_hebrew():
+async def test_callmebot_dispatch_missing_credentials():
     from app.services.dispatcher import send_whatsapp
 
     result = await send_whatsapp({}, "בדיקה")
     assert result.success is False
     assert result.error_message
-    assert "טלפון" in result.error_message
-    assert "קוד" in result.error_message
-    assert "WhatsApp" not in result.error_message
+    assert "Phone number" in result.error_message
+    assert "activation code" in result.error_message
     assert "apikey" not in result.error_message.lower()

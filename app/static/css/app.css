@@ -161,6 +161,34 @@ button { cursor: pointer; }
   min-width: 0;
 }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-inline-start: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.03);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+.lang-switch a {
+  color: var(--muted);
+  padding: 2px 4px;
+  border-radius: 6px;
+}
+
+.lang-switch a:hover { color: var(--text); }
+
+.lang-switch a.is-on {
+  color: var(--signal);
+  font-weight: 700;
+}
+
+.lang-switch-sep { color: var(--faint); user-select: none; }
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -829,6 +857,30 @@ button { cursor: pointer; }
 .phone-notch {
   width: 88px; height: 10px; border-radius: 0 0 10px 10px;
   background: #1a1f28; margin: 0 auto 8px;
+}
+
+.guide-ol {
+  margin: 10px 0 0;
+  padding-inline-start: 1.25rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.guide-ol li { margin: 10px 0; line-height: 1.5; }
+.guide-ol li::marker { color: var(--signal); font-weight: 700; }
+
+.guide-block {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #070a12;
+}
+
+.guide-block h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: var(--text);
 }
 
 .hidden { display: none !important; }

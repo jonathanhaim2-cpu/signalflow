@@ -28,11 +28,15 @@ async def test_checkout_requires_auth(client):
     assert res.status_code == 401
 
 
-async def test_checkout_missing_keys_hebrew_error(client):
+async def test_checkout_missing_keys_error(client):
     await signup(client)
     res = await client.post("/api/v1/billing/checkout")
     assert res.status_code == 503
-    assert res.json()["detail"] == "סליקה לא הוגדרה עדיין"
+    assert res.json()["detail"] == "Billing is not configured yet."
+
+    he = await client.post("/api/v1/billing/checkout", params={"lang": "he"})
+    assert he.status_code == 503
+    assert he.json()["detail"] == "סליקה לא הוגדרה עדיין"
 
 
 async def test_checkout_creates_paddle_transaction(client, monkeypatch, clear_settings):
@@ -171,7 +175,7 @@ async def test_bad_signature_rejected(client, monkeypatch, clear_settings):
         headers={"Content-Type": "application/json", "Paddle-Signature": "ts=1;h1=deadbeef"},
     )
     assert res.status_code == 400
-    assert "חתימה" in res.json()["detail"]
+    assert "signature" in res.json()["detail"].lower()
 
 
 async def test_already_pro_cannot_checkout(client, monkeypatch, clear_settings, session_factory):
@@ -183,4 +187,4 @@ async def test_already_pro_cannot_checkout(client, monkeypatch, clear_settings, 
         await grant_pro(db, "haspro@example.com")
     res = await client.post("/api/v1/billing/checkout")
     assert res.status_code == 400
-    assert "פרו" in res.json()["detail"]
+    assert "Pro" in res.json()["detail"]

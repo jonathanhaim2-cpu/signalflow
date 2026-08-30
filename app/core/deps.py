@@ -1,19 +1,21 @@
-from fastapi import Cookie, Depends, HTTPException, status
+from fastapi import Cookie, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.security import decode_access_token
+from app.i18n import api_message
 from app.models.user import User
 from app.services.plans import persist_allowlist_pro
 
 
 async def get_current_user(
+    request: Request,
     access_token: str | None = Cookie(default=None),
     db: AsyncSession = Depends(get_db),
 ) -> User:
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED, detail="צריך להתחבר מחדש"
+        status_code=status.HTTP_401_UNAUTHORIZED, detail=api_message(request, "api.reauth")
     )
     if not access_token:
         raise credentials_exception
@@ -27,7 +29,10 @@ async def get_current_user(
     if not user:
         raise credentials_exception
     if user.is_disabled:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="החשבון מושבת")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=api_message(request, "api.account_disabled_short"),
+        )
     return await persist_allowlist_pro(db, user)
 
 

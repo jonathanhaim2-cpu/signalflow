@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% block title %}הדפסת קוד — SignalFlow{% endblock %}
+{% block title %}{{ t('print.title') }}{% endblock %}
 {% block chrome %}{% endblock %}
 {% block after %}{% endblock %}
 {% block content %}
 <main class="wrap" style="padding:40px 0;text-align:center;max-width:36rem">
   <div class="mb-6 print:hidden flex justify-between items-center">
-    <a href="/admin" class="btn btn-ghost btn-sm">חזרה לניהול</a>
-    <button onclick="window.print()" class="btn btn-primary btn-sm">הדפס / שמור</button>
+    <a href="/admin" class="btn btn-ghost btn-sm">{{ t('print.back') }}</a>
+    <button onclick="window.print()" class="btn btn-primary btn-sm">{{ t('print.print') }}</button>
   </div>
-  <p class="eyebrow">הזמנה ל-SignalFlow פרו</p>
+  <p class="eyebrow">{{ t('print.eyebrow') }}</p>
   <p class="font-mono font-bold tracking-widest my-6" style="font-size:2.8rem" dir="ltr">{{ invite.code }}</p>
   <img src="/admin/invites/{{ invite.id }}/qr.png" alt="QR" class="mx-auto w-64 h-64 bg-white p-3 rounded-xl" />
-  <p style="margin-top:22px">סרקו את הקוד, או היכנסו לקישור:</p>
+  <p style="margin-top:22px">{{ t('print.scan') }}</p>
   <p class="font-mono text-sm mt-2 break-all" dir="ltr">{{ redeem_url }}</p>
-  <p style="color:var(--faint);font-size:0.75rem;margin-top:16px">חד־פעמי{% if invite.expires_at %} · בתוקף עד {{ invite.expires_at.strftime('%d.%m.%Y') }}{% endif %}{% if status != 'unused' %} · {{ status }}{% endif %}</p>
+  <p style="color:var(--faint);font-size:0.75rem;margin-top:16px">{{ t('print.once') }}{% if invite.expires_at %} · {{ t('print.until', date=invite.expires_at.strftime('%d.%m.%Y')) }}{% endif %}{% if status != 'unused' %} · {{ status }}{% endif %}</p>
 </main>
 <style>
   @media print {

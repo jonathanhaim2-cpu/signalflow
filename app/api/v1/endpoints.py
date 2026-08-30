@@ -6,6 +6,7 @@ from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.core.secrets import mask_config
 from app.core.urls import webhook_url_for
+from app.i18n import api_message
 from app.models.alert_log import AlertLog
 from app.models.user import User
 from app.models.webhook import WebhookEndpoint
@@ -71,7 +72,7 @@ async def create_endpoint(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ) -> EndpointOut:
-    await enforce_channel_limit(db, user)
+    await enforce_channel_limit(db, user, request)
     dests = normalize_destinations(
         destinations=[d.model_dump() for d in payload.destinations] if payload.destinations else None,
         target_type=payload.target_type,
@@ -92,7 +93,9 @@ async def create_endpoint(
     return _to_out(endpoint, request)
 
 
-async def _get_owned_endpoint(endpoint_id: int, db: AsyncSession, user: User) -> WebhookEndpoint:
+async def _get_owned_endpoint(
+    endpoint_id: int, db: AsyncSession, user: User, request: Request | None = None
+) -> WebhookEndpoint:
     result = await db.execute(
         select(WebhookEndpoint).where(
             WebhookEndpoint.id == endpoint_id, WebhookEndpoint.user_id == user.id
@@ -100,7 +103,7 @@ async def _get_owned_endpoint(endpoint_id: int, db: AsyncSession, user: User) ->
     )
     endpoint = result.scalar_one_or_none()
     if not endpoint:
-        raise HTTPException(status_code=404, detail="החיבור לא נמצא")
+        raise HTTPException(status_code=404, detail=api_message(request, "api.connection_missing"))
     return endpoint
 
 

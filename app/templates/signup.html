@@ -1,47 +1,51 @@
 {% extends "base.html" %}
 {% set nav_mode = 'auth' %}
 {% set auth_alt = 'login' %}
-{% set auth_alt_label = 'כניסה' %}
-{% block title %}הרשמה — SignalFlow{% endblock %}
+{% block title %}{{ t('signup.title') }}{% endblock %}
 {% block content %}
 <div class="auth-shell">
   <section class="auth-plans">
-    <p class="eyebrow">בחירת תוכנית</p>
-    <h1 style="font-size:2rem;letter-spacing:-0.03em;margin:10px 0 18px">איך מתחילים?</h1>
-    <p class="lede" style="margin-bottom:22px">בוחרים תוכנית לפני הטופס. אפשר להתחיל בחינם.</p>
+    <p class="eyebrow">{{ t('signup.eyebrow') }}</p>
+    <h1 style="font-size:2rem;letter-spacing:-0.03em;margin:10px 0 18px">{{ t('signup.h1') }}</h1>
+    <p class="lede" style="margin-bottom:22px">{{ t('signup.lede') }}</p>
     <button type="button" class="plan-pick is-on" id="pick-free" aria-pressed="true" data-plan="free">
-      <h3>חינם · $0</h3>
-      <p>קישור אחד, 3 התראות ביום, עם חתימת SignalFlow.</p>
+      <h3>{{ t('signup.free_h') }}</h3>
+      <p>{{ t('signup.free_p') }}</p>
     </button>
     <button type="button" class="plan-pick pro" id="pick-pro" aria-pressed="false" data-plan="pro">
-      <h3>פרו · $9 לחודש</h3>
-      <p>בלי הגבלה, ניסיונות חוזרים. Paddle מוציא קבלה מחו״ל. ביטול בכל עת.</p>
+      <h3>{{ t('signup.pro_h') }}</h3>
+      <p>{{ t('signup.pro_p') }}</p>
     </button>
   </section>
   <section class="auth-form-col">
     <form id="signup-form" class="auth-form">
-      <h2 style="margin:0 0 8px">הרשמה</h2>
-      <p class="hint" id="plan-caption" style="color:var(--muted);margin:0 0 20px">נרשמים לתוכנית חינם.</p>
+      <h2 style="margin:0 0 8px">{{ t('signup.h2') }}</h2>
+      <p class="hint" id="plan-caption" style="color:var(--muted);margin:0 0 20px" data-free="{{ t('signup.caption_free') }}" data-pro="{{ t('signup.caption_pro') }}">{{ t('signup.caption_free') }}</p>
       <input type="hidden" name="plan" id="plan-input" value="free" />
       <div class="field">
-        <label>אימייל</label>
+        <label>{{ t('common.email') }}</label>
         <input type="email" name="email" required autocomplete="email" dir="ltr" />
       </div>
       <div class="field">
-        <label>סיסמה</label>
+        <label>{{ t('common.password') }}</label>
         <input type="password" name="password" required minlength="8" autocomplete="new-password" dir="ltr" />
-        <p style="color:var(--faint);font-size:0.75rem;margin:6px 0 0">לפחות 8 תווים</p>
+        <p style="color:var(--faint);font-size:0.75rem;margin:6px 0 0">{{ t('signup.pw_hint') }}</p>
       </div>
       <p id="error" class="form-error hidden"></p>
-      <p id="pro-note" class="note note-warn hidden">$9 לחודש. Paddle מוציא קבלה מחו״ל. ביטול בכל עת. אחרי ההרשמה תעברו לתשלום מאובטח.</p>
-      <button type="submit" class="btn btn-primary" style="width:100%">הרשמה</button>
-      <p style="color:var(--muted);font-size:0.88rem;margin-top:16px;text-align:center">כבר יש חשבון? <a id="login-link" href="/login" style="color:var(--signal)">כניסה</a></p>
+      <p id="pro-note" class="note note-warn hidden">{{ t('signup.pro_note') }}</p>
+      <button type="submit" class="btn btn-primary" style="width:100%">{{ t('signup.submit') }}</button>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:16px;text-align:center">{{ t('signup.have_account') }} <a id="login-link" href="/login" style="color:var(--signal)">{{ t('signup.login') }}</a></p>
     </form>
   </section>
 </div>
 {% endblock %}
+{% block i18n_js %}
+<script>window.SF_I18N = {{ i18n_js_json | safe }};</script>
+{% endblock %}
 {% block scripts %}
 <script>
+const T = window.SF_I18N || {};
+const caption = document.getElementById('plan-caption');
 const nextPath = (() => {
   const n = new URLSearchParams(location.search).get('next') || '';
   return (n.startsWith('/') && !n.startsWith('//')) ? n : '/dashboard';
@@ -55,8 +59,8 @@ function setPlan(plan) {
   document.getElementById('pick-free').setAttribute('aria-pressed', plan === 'free');
   document.getElementById('pick-pro').setAttribute('aria-pressed', plan === 'pro');
   document.getElementById('plan-caption').textContent = plan === 'pro'
-    ? 'נרשמים ואז עוברים לתשלום $9 לחודש ב-Paddle.'
-    : 'נרשמים לתוכנית חינם.';
+    ? (caption.dataset.pro || T.caption_pro)
+    : (caption.dataset.free || T.caption_free);
   document.getElementById('pro-note').classList.toggle('hidden', plan !== 'pro');
 }
 document.getElementById('pick-free').addEventListener('click', () => setPlan('free'));
@@ -64,20 +68,23 @@ document.getElementById('pick-pro').addEventListener('click', () => setPlan('pro
 const q = new URLSearchParams(location.search).get('plan');
 if (q === 'pro' || q === 'free') setPlan(q);
 
-function heError(detail, fallback) {
+function locError(detail, fallback) {
   const map = {
-    'Invalid email or password': 'אימייל או סיסמה שגויים',
-    'Email already registered': 'האימייל הזה כבר רשום אצלנו',
-    'האימייל הזה כבר רשום אצלנו': 'האימייל הזה כבר רשום אצלנו',
-    'Not authenticated': 'צריך להתחבר מחדש',
+    'Invalid email or password': T.invalid_email_password,
+    'Email already registered': T.email_taken,
+    'That email is already registered': T.email_taken,
+    'האימייל הזה כבר רשום אצלנו': T.email_taken,
+    'Not authenticated': T.reauth,
+    'Please sign in again': T.reauth,
+    'צריך להתחבר מחדש': T.reauth,
   };
   if (typeof detail === 'string' && map[detail]) return map[detail];
   if (typeof detail === 'string' && detail.trim()) return detail;
   if (Array.isArray(detail) && detail[0]) {
     const msg = (detail[0].msg || '').toLowerCase();
-    if (msg.includes('email')) return 'כתובת האימייל לא תקינה';
-    if (msg.includes('at least 8') || msg.includes('min_length') || msg.includes('too_short')) return 'הסיסמה חייבת להכיל לפחות 8 תווים';
-    return 'משהו לא תקין בפרטים. בדקו ונסו שוב.';
+    if (msg.includes('email')) return T.bad_email;
+    if (msg.includes('at least 8') || msg.includes('min_length') || msg.includes('too_short')) return T.pw_short;
+    return T.bad_fields;
   }
   return fallback;
 }
@@ -87,7 +94,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
   const errorEl = document.getElementById('error');
   errorEl.classList.add('hidden');
   if ((form.password.value || '').length < 8) {
-    errorEl.textContent = 'הסיסמה חייבת להכיל לפחות 8 תווים';
+    errorEl.textContent = T.pw_short;
     errorEl.classList.remove('hidden');
     return;
   }
@@ -102,7 +109,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
       if (checkout.ok && pay.url) { window.location.href = pay.url; return; }
       errorEl.textContent = (typeof pay.detail === 'string' && pay.detail.trim())
         ? pay.detail
-        : 'סליקה לא הוגדרה עדיין';
+        : T.billing_unconfigured;
       errorEl.classList.remove('hidden');
       return;
     }
@@ -110,7 +117,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
   }
   else {
     const data = await res.json().catch(() => ({}));
-    errorEl.textContent = heError(data.detail, 'ההרשמה נכשלה');
+    errorEl.textContent = locError(data.detail, T.signup_failed);
     errorEl.classList.remove('hidden');
   }
 });

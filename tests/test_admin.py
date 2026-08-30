@@ -41,16 +41,16 @@ async def test_admin_list_and_toggle_tier(client):
     page = await client.get("/admin")
     assert page.status_code == 200
     html = page.text
-    assert "ניהול" in html
-    assert "הפוך לפרו" in html
+    assert "Admin" in html
+    assert "Make Pro" in html
     assert "trader2@example.com" in html
-    assert "חינם" in html
+    assert "Free" in html
 
     # trader2 is id 1, owner is id 2
     res = await client.post("/admin/users/1/pro", follow_redirects=False)
     assert res.status_code == 303
     page = await client.get("/admin")
-    assert "הורד לחינם" in page.text
+    assert "Move to Free" in page.text
 
     res = await client.post("/admin/users/1/free", follow_redirects=False)
     assert res.status_code == 303
@@ -64,7 +64,7 @@ async def test_admin_create_user_shows_password_once(client):
     )
     assert res.status_code == 200
     assert "newtrader@example.com" in res.text
-    assert "המשתמש נוצר" in res.text
+    assert "User created" in res.text
     assert "font-mono" in res.text
 
 
@@ -83,7 +83,7 @@ async def test_invite_qr_and_single_use_redeem(client):
 
     print_page = await client.get(f"/admin/invites/{invite_id}/print")
     assert print_page.status_code == 200
-    assert "הדפס / שמור" in print_page.text
+    assert "Print / save" in print_page.text
     assert "SF-" in print_page.text
 
     admin = await client.get("/admin")
@@ -101,13 +101,13 @@ async def test_invite_qr_and_single_use_redeem(client):
 
     redeemed = await client.get(f"/redeem/{code}")
     assert redeemed.status_code == 200
-    assert "שודרג לפרו" in redeemed.text
+    assert "upgraded to Pro" in redeemed.text
     me = (await client.get("/api/v1/auth/me")).json()
     assert me["tier"] == "pro"
 
     await signup(client, email="second@example.com")
     again = await client.get(f"/redeem/{code}")
-    assert "כבר מומש" in again.text
+    assert "already been redeemed" in again.text
     me = (await client.get("/api/v1/auth/me")).json()
     assert me["tier"] == "free"
 
@@ -121,7 +121,7 @@ async def test_redeem_logged_out_then_login(client):
     code = re.search(r"SF-[0-9A-F]{4}-[0-9A-F]{4}", admin.text).group(0)
     await client.post("/api/v1/auth/logout")
     page = await client.get(f"/redeem/{code}")
-    assert "להירשם או להיכנס" in page.text
+    assert "Sign up or log in" in page.text
     assert f"/signup?next=/redeem/{code}" in page.text
 
 
@@ -131,7 +131,7 @@ async def test_revoke_unused_code(client):
     invite_id = created.headers["location"].split("/")[3]
     await client.post(f"/admin/invites/{invite_id}/revoke")
     admin = await client.get("/admin")
-    assert "אין קודים פתוחים" in admin.text or "בטל קוד" not in admin.text
+    assert "No open codes" in admin.text or "Revoke code" not in admin.text
 
 
 async def test_disable_user_blocks_login(client):
@@ -144,7 +144,7 @@ async def test_disable_user_blocks_login(client):
         json={"email": "blocked@example.com", "password": "password1"},
     )
     assert res.status_code == 401
-    assert "מושבת" in res.json()["detail"]
+    assert "disabled" in res.json()["detail"].lower()
 
 
 async def test_grant_pro_script_still_works(client, session_factory):

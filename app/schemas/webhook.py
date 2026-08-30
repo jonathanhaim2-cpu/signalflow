@@ -3,6 +3,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from app.i18n import t
+
 
 TargetLiteral = Literal["telegram", "discord", "whatsapp"]
 
@@ -54,13 +56,13 @@ class WhatsAppTargetConfig(BaseModel):
             phone = self.phone or self.chat_id or self.to
             key = self.apikey or self.api_token
             if not (phone and key):
-                raise ValueError("חסרים מספר טלפון וקוד שקיבלתם בואטסאפ")
+                raise ValueError(t("en", "api.wa_need_phone_code"))
         elif self.provider == "green_api":
             if not (self.id_instance and self.api_token and self.chat_id):
-                raise ValueError("חסרים פרטי Green-API: מזהה מופע, קוד, ומספר טלפון")
+                raise ValueError(t("en", "api.wa_need_green"))
         elif self.provider == "meta":
             if not (self.phone_number_id and self.access_token and self.to):
-                raise ValueError("חסרים פרטי Meta: מזהה מספר, קוד גישה, ומספר נמען")
+                raise ValueError(t("en", "api.wa_need_meta"))
         return self
 
 
@@ -71,7 +73,7 @@ def validate_target_config(target_type: str, config: dict[str, Any]) -> dict[str
         return DiscordTargetConfig(**config).model_dump()
     if target_type == "whatsapp":
         return WhatsAppTargetConfig(**config).model_dump()
-    raise ValueError("סוג יעד לא נתמך")
+    raise ValueError(t("en", "api.bad_dest"))
 
 
 class DestinationIn(BaseModel):
@@ -94,7 +96,7 @@ class EndpointCreate(BaseModel):
                 validate_target_config(dest.type, dest.config)
             return self
         if not self.target_type:
-            raise ValueError("בחרו לפחות יעד אחד")
+            raise ValueError(t("en", "api.need_dest_short"))
         validate_target_config(self.target_type, self.target_config or {})
         if self.extra_target_type:
             validate_target_config(self.extra_target_type, self.extra_target_config or {})

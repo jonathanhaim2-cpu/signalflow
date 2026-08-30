@@ -1,23 +1,23 @@
 {% extends "base.html" %}
-{% block title %}מימוש קוד — SignalFlow{% endblock %}
+{% block title %}{{ t('redeem.title') }}{% endblock %}
 {% block content %}
 <main class="wrap" style="padding:72px 0;max-width:32rem;text-align:center">
-  <p class="eyebrow">פרו</p>
-  <h1 style="font-size:2rem;margin:10px 0">מימוש קוד פרו</h1>
+  <p class="eyebrow">{{ t('nav.pro') }}</p>
+  <h1 style="font-size:2rem;margin:10px 0">{{ t('redeem.h1') }}</h1>
   <p class="font-mono text-2xl tracking-wider mb-6" dir="ltr">{{ code }}</p>
   {% if logged_in %}
     {% if ok %}
     <p class="note note-ok" style="margin-bottom:22px">{{ message }}</p>
-    <a href="/dashboard" class="btn btn-primary">לערוץ שלי</a>
+    <a href="/dashboard" class="btn btn-primary">{{ t('redeem.to_channel') }}</a>
     {% else %}
     <p class="form-error" style="margin-bottom:22px">{{ message }}</p>
-    <a href="/dashboard" class="btn btn-ghost">חזרה</a>
+    <a href="/dashboard" class="btn btn-ghost">{{ t('redeem.back') }}</a>
     {% endif %}
   {% else %}
     <p class="lede" style="margin:0 auto 24px">{{ message }}</p>
     <div class="flex justify-center gap-3 flex-wrap">
-      <a href="/signup?next={{ next }}" class="btn btn-primary">הרשמה</a>
-      <a href="/login?next={{ next }}" class="btn btn-ghost">כניסה</a>
+      <a href="/signup?next={{ next }}" class="btn btn-primary">{{ t('nav.signup') }}</a>
+      <a href="/login?next={{ next }}" class="btn btn-ghost">{{ t('nav.login') }}</a>
     </div>
   {% endif %}
 </main>

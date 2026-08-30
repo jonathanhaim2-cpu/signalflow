@@ -1,65 +1,118 @@
 {% extends "base.html" %}
-{% block title %}מדריכים — SignalFlow{% endblock %}
+{% block title %}{{ t('guides.title') }}{% endblock %}
 {% block content %}
 <main class="wrap" style="padding:48px 0 72px">
-  <p class="eyebrow">מדריכים</p>
-  <h1 style="font-size:clamp(2rem,4vw,3rem);letter-spacing:-0.03em;margin:8px 0 10px">מדריכי התחברות</h1>
-  <p class="lede">וואטסאפ, טלגרם, דיסקורד ו-TradingView — שלב אחרי שלב.</p>
+  <p class="eyebrow">{{ t('guides.eyebrow') }}</p>
+  <h1 style="font-size:clamp(2rem,4vw,3rem);letter-spacing:-0.03em;margin:8px 0 10px">{{ t('guides.h1') }}</h1>
+  <p class="lede">{{ t('guides.lede') }}</p>
 
-  <nav class="guide-toc" aria-label="נושאים">
-    <a class="toc-card" href="#whatsapp">
-      <span class="dest-chip"><i class="dest-dot wa"></i> וואטסאפ</span>
-      <h3>לטלפון שלכם</h3>
-      <p>מוסיפים איש קשר, מקבלים קוד.</p>
-    </a>
+  <nav class="guide-toc" aria-label="{{ t('guides.toc_label') }}">
     <a class="toc-card" href="#telegram">
-      <span class="dest-chip"><i class="dest-dot tg"></i> טלגרם</span>
-      <h3>בוט אישי</h3>
-      <p>BotFather ואז מספר צ׳אט.</p>
+      <span class="dest-chip"><i class="dest-dot tg"></i> {{ t('landing.chip_tg') }}</span>
+      <h3>{{ t('guides.toc_tg_h') }}</h3>
+      <p>{{ t('guides.toc_tg_p') }}</p>
+    </a>
+    <a class="toc-card" href="#whatsapp">
+      <span class="dest-chip"><i class="dest-dot wa"></i> {{ t('landing.chip_wa') }}</span>
+      <h3>{{ t('guides.toc_wa_h') }}</h3>
+      <p>{{ t('guides.toc_wa_p') }}</p>
     </a>
     <a class="toc-card" href="#discord">
-      <span class="dest-chip"><i class="dest-dot dc"></i> דיסקורד</span>
-      <h3>קישור לערוץ</h3>
-      <p>Integrations → Webhooks.</p>
+      <span class="dest-chip"><i class="dest-dot dc"></i> {{ t('landing.chip_dc') }}</span>
+      <h3>{{ t('guides.toc_dc_h') }}</h3>
+      <p>{{ t('guides.toc_dc_p') }}</p>
     </a>
     <a class="toc-card" href="#tradingview">
       <span class="dest-chip"><i class="dest-dot tv"></i> TradingView</span>
-      <h3>סימון הווי</h3>
-      <p>Notifications → Webhook URL.</p>
+      <h3>{{ t('guides.toc_tv_h') }}</h3>
+      <p>{{ t('guides.toc_tv_p') }}</p>
     </a>
   </nav>
 
-  <article class="tutorial" id="whatsapp" data-tutorial>
+  <article class="tutorial" id="telegram" data-tutorial>
     <div class="tutorial-head">
-      <p class="eyebrow">וואטסאפ</p>
-      <h2>הדרך הקלה — לטלפון שלי</h2>
-      <p class="lede">זה שולח לאותו וואטסאפ שהפעלתם. בלי מכשיר שני, בלי סריקת QR.</p>
+      <p class="eyebrow">{{ t('guides.tg_eyebrow') }}</p>
+      <h2>{{ t('guides.tg_h2') }}</h2>
     </div>
     <div class="steps">
       <div class="step-list">
         <button type="button" class="step is-on" data-step>
-          <b>1. מוסיפים איש קשר</b>
-          <p>בוואטסאפ מוסיפים <span dir="ltr">+34 694 23 41 84</span>. קוראים לו SignalFlow / CallMeBot.</p>
+          <b>{{ t('guides.tg_s1_h') }}</b>
+          <p>{{ t('guides.tg_s1_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>2. שולחים בדיוק את המשפט</b>
+          <b>{{ t('guides.tg_s2_h') }}</b>
+          <p>{{ t('guides.tg_s2_p') }}</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>{{ t('guides.tg_s3_h') }}</b>
+          <p>{{ t('guides.tg_s3_p') }}</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>{{ t('guides.tg_s4_h') }}</b>
+          <p>{{ t('guides.tg_s4_p') }}</p>
+        </button>
+      </div>
+      <div class="shot-stage">
+        <div data-shot>
+          <div class="frame frame-tg">
+            <div class="frame-bar" style="color:#2aabee">BotFather</div>
+            <div class="bubble" style="background:#182533">/newbot</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tg">
+            <div class="frame-bar" style="color:#2aabee">BotFather</div>
+            <div class="bubble">Use this token to access the HTTP API:<br><span dir="ltr">7123:AA-xxxx</span></div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tg">
+            <div class="frame-bar" style="color:#2aabee">{{ t('guides.tg_shot3') }}</div>
+            <div class="tv-check" style="background:rgba(42,171,238,0.18);box-shadow:0 0 0 2px #2aabee">Start</div>
+          </div>
+        </div>
+        <div class="hidden" data-shot>
+          <div class="frame frame-tg" dir="ltr" style="text-align:left">
+            <div class="frame-bar">api.telegram.org/…/getUpdates</div>
+            <pre style="padding:12px;font-size:0.72rem;color:#9ad4f5;margin:0">"chat": {"id": 123456789}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="tutorial" id="whatsapp" data-tutorial>
+    <div class="tutorial-head">
+      <p class="eyebrow">{{ t('guides.wa_eyebrow') }}</p>
+      <h2>{{ t('guides.wa_h2') }}</h2>
+      <p class="lede">{{ t('guides.wa_lede') }}</p>
+    </div>
+    <div class="steps">
+      <div class="step-list">
+        <button type="button" class="step is-on" data-step>
+          <b>{{ t('guides.wa_s1_h') }}</b>
+          <p>{{ t('guides.wa_s1_p') }}</p>
+        </button>
+        <button type="button" class="step" data-step>
+          <b>{{ t('guides.wa_s2_h') }}</b>
           <p dir="ltr">I allow callmebot to send me messages</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>3. מחכים לקוד</b>
-          <p>מגיעה תשובה עם APIKEY. אם אין תשובה תוך שתי דקות — מנסים שוב מחר.</p>
+          <b>{{ t('guides.wa_s3_h') }}</b>
+          <p>{{ t('guides.wa_s3_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>4. מדביקים במערכת</b>
-          <p>המספר בפורמט 9725… ואת הקוד. אחר כך בדיקה מהירה.</p>
+          <b>{{ t('guides.wa_s4_h') }}</b>
+          <p>{{ t('guides.wa_s4_p') }}</p>
         </button>
       </div>
       <div class="shot-stage">
         <div data-shot>
           <div class="phone">
             <div class="phone-notch"></div>
-            <div class="frame-bar" style="background:#075e54;color:#fff">איש קשר חדש</div>
-            <p style="padding:16px;color:#d1d7db;font-size:0.88rem">שם: SignalFlow<br><span dir="ltr">+34 694 23 41 84</span></p>
+            <div class="frame-bar" style="background:#075e54;color:#fff">{{ t('guides.wa_shot1_bar') }}</div>
+            <p style="padding:16px;color:#d1d7db;font-size:0.88rem">{{ t('guides.wa_shot1_name') }}<br><span dir="ltr">+34 694 23 41 84</span></p>
           </div>
         </div>
         <div class="hidden" data-shot>
@@ -79,65 +132,65 @@
         <div class="hidden" data-shot>
           <div class="frame" style="background:#0c111c;min-height:240px">
             <div class="frame-bar">SignalFlow</div>
-            <p style="padding:16px;font-size:0.88rem">מספר טלפון<br><span class="preview-url" style="margin-top:8px">972501234567</span></p>
-            <p style="padding:0 16px 16px;font-size:0.88rem">קוד שקיבלתם בואטסאפ<br><span class="preview-url" style="margin-top:8px">••••123</span></p>
+            <p style="padding:16px;font-size:0.88rem">{{ t('guides.wa_shot4_phone') }}<br><span class="preview-url" style="margin-top:8px">972501234567</span></p>
+            <p style="padding:0 16px 16px;font-size:0.88rem">{{ t('guides.wa_shot4_code') }}<br><span class="preview-url" style="margin-top:8px">••••123</span></p>
           </div>
         </div>
       </div>
     </div>
-    <details class="panel" style="margin-top:18px">
-      <summary style="cursor:pointer">דרך מתקדמת — Green-API (לא חובה)</summary>
-      <p class="hint" style="margin-top:10px">רק אם כבר משתמשים בזה: <a href="https://console.green-api.com" target="_blank" style="color:var(--signal)">console.green-api.com</a> → Create instance → ממתינים כשתי דקות → Get QR. בוואטסאפ: Linked devices → Link a device. אין QR בדף הבית של Green-API.</p>
-    </details>
   </article>
 
-  <article class="tutorial" id="telegram" data-tutorial>
+  <article class="tutorial" id="green-api" data-tutorial>
     <div class="tutorial-head">
-      <p class="eyebrow">טלגרם</p>
-      <h2>בוט אישי ומספר צ׳אט</h2>
+      <p class="eyebrow">{{ t('guides.ga_eyebrow') }}</p>
+      <h2>{{ t('guides.ga_h2') }}</h2>
+      <p class="lede">{{ t('guides.ga_lede') }}</p>
     </div>
     <div class="steps">
       <div class="step-list">
         <button type="button" class="step is-on" data-step>
-          <b>1. BotFather</b>
-          <p>פותחים את BotFather ושולחים /newbot.</p>
+          <b>{{ t('guides.ga_s1_h') }}</b>
+          <p>{{ t('guides.ga_s1_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>2. מעתיקים את הקוד</b>
-          <p>הבוט מחזיר קוד ארוך — זה קוד הבוט.</p>
+          <b>{{ t('guides.ga_s2_h') }}</b>
+          <p>{{ t('guides.ga_s2_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>3. Start</b>
-          <p>פותחים את הבוט החדש ולוחצים Start, או מוסיפים לקבוצה.</p>
+          <b>{{ t('guides.ga_s3_h') }}</b>
+          <p>{{ t('guides.ga_s3_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>4. מספר הצ׳אט</b>
-          <p>אחרי הודעה, פותחים getUpdates ומחפשים id.</p>
+          <b>{{ t('guides.ga_s4_h') }}</b>
+          <p>{{ t('guides.ga_s4_p') }}</p>
         </button>
       </div>
       <div class="shot-stage">
         <div data-shot>
-          <div class="frame frame-tg">
-            <div class="frame-bar" style="color:#2aabee">BotFather</div>
-            <div class="bubble" style="background:#182533">/newbot</div>
+          <div class="frame" style="background:#0c111c;min-height:240px">
+            <div class="frame-bar">Green-API</div>
+            <p style="padding:16px;color:var(--text-soft);font-size:0.88rem">console.green-api.com</p>
+            <div style="margin:0 12px 14px" class="ok-pill">{{ t('guides.ga_shot1') }}</div>
           </div>
         </div>
         <div class="hidden" data-shot>
-          <div class="frame frame-tg">
-            <div class="frame-bar" style="color:#2aabee">BotFather</div>
-            <div class="bubble">Use this token to access the HTTP API:<br><span dir="ltr">7123:AA-xxxx</span></div>
+          <div class="frame" style="background:#0c111c;min-height:240px">
+            <div class="frame-bar">Green-API</div>
+            <div class="tv-check" style="background:var(--signal-dim);box-shadow:0 0 0 2px var(--signal)">{{ t('guides.ga_shot2') }}</div>
           </div>
         </div>
         <div class="hidden" data-shot>
-          <div class="frame frame-tg">
-            <div class="frame-bar" style="color:#2aabee">הבוט שלכם</div>
-            <div class="tv-check" style="background:rgba(42,171,238,0.18);box-shadow:0 0 0 2px #2aabee">Start</div>
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="frame-bar" style="background:#075e54;color:#fff">WhatsApp</div>
+            <p style="padding:16px;color:#d1d7db;font-size:0.88rem">{{ t('guides.ga_shot3') }}<br>Link a device</p>
           </div>
         </div>
         <div class="hidden" data-shot>
-          <div class="frame frame-tg" dir="ltr" style="text-align:left">
-            <div class="frame-bar">api.telegram.org/…/getUpdates</div>
-            <pre style="padding:12px;font-size:0.72rem;color:#9ad4f5;margin:0">"chat": {"id": 123456789}</pre>
+          <div class="frame" style="background:#0c111c;min-height:240px">
+            <div class="frame-bar">SignalFlow</div>
+            <p style="padding:16px;font-size:0.88rem">{{ t('guides.ga_shot4_id') }}<br><span class="preview-url" style="margin-top:8px">1101823456</span></p>
+            <p style="padding:0 16px 16px;font-size:0.88rem">{{ t('guides.ga_shot4_token') }}<br><span class="preview-url" style="margin-top:8px">••••oken</span></p>
           </div>
         </div>
       </div>
@@ -146,33 +199,33 @@
 
   <article class="tutorial" id="discord" data-tutorial>
     <div class="tutorial-head">
-      <p class="eyebrow">דיסקורד</p>
-      <h2>קישור Webhook מהערוץ</h2>
+      <p class="eyebrow">{{ t('guides.dc_eyebrow') }}</p>
+      <h2>{{ t('guides.dc_h2') }}</h2>
     </div>
     <div class="steps">
       <div class="step-list">
         <button type="button" class="step is-on" data-step>
-          <b>1. גלגל ליד הערוץ</b>
-          <p>במחשב, לוחצים על גלגל השיניים ליד שם הערוץ.</p>
+          <b>{{ t('guides.dc_s1_h') }}</b>
+          <p>{{ t('guides.dc_s1_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>2. Integrations</b>
-          <p>בתפריט: Integrations → Webhooks.</p>
+          <b>{{ t('guides.dc_s2_h') }}</b>
+          <p>{{ t('guides.dc_s2_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>3. New Webhook</b>
-          <p>יוצרים או בוחרים קישור קיים.</p>
+          <b>{{ t('guides.dc_s3_h') }}</b>
+          <p>{{ t('guides.dc_s3_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>4. Copy Webhook URL</b>
-          <p>חייבים קישור שנראה כמו discord.com/api/webhooks/ — לא כתובת הערוץ.</p>
+          <b>{{ t('guides.dc_s4_h') }}</b>
+          <p>{{ t('guides.dc_s4_p') }}</p>
         </button>
       </div>
       <div class="shot-stage">
         <div data-shot>
           <div class="frame frame-dc">
             <div class="frame-bar" style="color:#fff"># alerts  ⚙</div>
-            <p style="padding:16px;color:#b5bac1;font-size:0.85rem">הגדרות ערוץ</p>
+            <p style="padding:16px;color:#b5bac1;font-size:0.85rem">{{ t('guides.dc_shot1') }}</p>
           </div>
         </div>
         <div class="hidden" data-shot>
@@ -199,34 +252,34 @@
 
   <article class="tutorial" id="tradingview" data-tutorial>
     <div class="tutorial-head">
-      <p class="eyebrow">TradingView</p>
-      <h2>חובה לסמן Webhook URL</h2>
-      <p class="lede">בלי הסימון הזה ההתראה נשארת רק ב-TradingView.</p>
+      <p class="eyebrow">{{ t('guides.tv_eyebrow') }}</p>
+      <h2>{{ t('guides.tv_h2') }}</h2>
+      <p class="lede">{{ t('guides.tv_lede') }}</p>
     </div>
     <div class="steps">
       <div class="step-list">
         <button type="button" class="step is-on" data-step>
-          <b>1. יוצרים התראה</b>
-          <p>בגרף: שעון / Alert.</p>
+          <b>{{ t('guides.tv_s1_h') }}</b>
+          <p>{{ t('guides.tv_s1_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>2. Notifications</b>
-          <p>גוללים לחלק Notifications.</p>
+          <b>{{ t('guides.tv_s2_h') }}</b>
+          <p>{{ t('guides.tv_s2_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>3. וי ליד Webhook URL</b>
-          <p>חובה לסמן וי, אחרת ההתראה נשארת ב-TradingView.</p>
+          <b>{{ t('guides.tv_s3_h') }}</b>
+          <p>{{ t('guides.tv_s3_p') }}</p>
         </button>
         <button type="button" class="step" data-step>
-          <b>4. מדביקים ושומרים</b>
-          <p>הקישור מ-SignalFlow + תבנית JSON בשדה ההודעה.</p>
+          <b>{{ t('guides.tv_s4_h') }}</b>
+          <p>{{ t('guides.tv_s4_p') }}</p>
         </button>
       </div>
       <div class="shot-stage">
         <div data-shot>
           <div class="frame frame-tv">
             <div class="frame-bar">Create Alert</div>
-            <p style="padding:16px;color:#9aa4b2;font-size:0.85rem">שעון על הגרף</p>
+            <p style="padding:16px;color:#9aa4b2;font-size:0.85rem">{{ t('guides.tv_shot1') }}</p>
           </div>
         </div>
         <div class="hidden" data-shot>

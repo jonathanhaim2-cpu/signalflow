@@ -1,10 +1,11 @@
 from datetime import datetime, timezone
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
+from app.i18n import api_message, t
 from app.models.alert_log import AlertLog
 from app.models.user import User, UserTier
 from app.models.webhook import WebhookEndpoint
@@ -13,8 +14,8 @@ FREE_ALERTS_PER_DAY = 3
 FREE_CHANNEL_LIMIT = 1
 SIGNALFLOW_FOOTER = "— SignalFlow"
 
-MSG_CHANNEL_LIMIT = "בתוכנית החינמית אפשר לחבר קישור אחד בלבד. לשדרוג: $9 לחודש."
-MSG_ALERT_LIMIT = "הגעתם למכסת 3 ההתראות היומית בתוכנית החינמית. נסו שוב מחר או שדרגו לפרו."
+MSG_CHANNEL_LIMIT = t("en", "api.channel_limit")
+MSG_ALERT_LIMIT = t("en", "api.alert_limit")
 
 
 def parse_allow_pro_emails() -> set[str]:
@@ -94,18 +95,22 @@ async def plan_snapshot(db: AsyncSession, user: User) -> dict:
     }
 
 
-async def enforce_channel_limit(db: AsyncSession, user: User) -> None:
+async def enforce_channel_limit(
+    db: AsyncSession, user: User, request: Request | None = None
+) -> None:
     if is_pro(user):
         return
     if await count_channels(db, user.id) >= FREE_CHANNEL_LIMIT:
-        raise HTTPException(status_code=403, detail=MSG_CHANNEL_LIMIT)
+        raise HTTPException(status_code=403, detail=api_message(request, "api.channel_limit"))
 
 
-async def enforce_alert_quota(db: AsyncSession, user: User) -> None:
+async def enforce_alert_quota(
+    db: AsyncSession, user: User, request: Request | None = None
+) -> None:
     if is_pro(user):
         return
     if await count_alerts_today(db, user.id) >= FREE_ALERTS_PER_DAY:
-        raise HTTPException(status_code=429, detail=MSG_ALERT_LIMIT)
+        raise HTTPException(status_code=429, detail=api_message(request, "api.alert_limit"))
 
 
 def apply_footer(text: str, user: User | None, *, html: bool = False) -> str:

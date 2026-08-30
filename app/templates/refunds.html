@@ -1,40 +1,40 @@
 {% extends "base.html" %}
-{% block title %}מדיניות החזרים — SignalFlow{% endblock %}
-{% block og_title %}מדיניות החזרים — SignalFlow{% endblock %}
-{% block description %}ביטול בכל עת, חיוב חודשי דרך Paddle, ואין החזר חלקי אחרי תחילת התקופה. רוכשים בפעם הראשונה יכולים לבקש החזר תוך 14 יום.{% endblock %}
+{% block title %}{{ t('refunds.title') }}{% endblock %}
+{% block og_title %}{{ t('refunds.og_title') }}{% endblock %}
+{% block description %}{{ t('refunds.description') }}{% endblock %}
 {% block content %}
 <main class="wrap legal-page">
-  <p class="eyebrow">החזרים</p>
-  <h1>מדיניות החזרים</h1>
-  <p class="lede">מנוי פרו מחויב מדי חודש דרך Paddle. אפשר לבטל בכל עת. ההחזר הכספי לכרטיס, אם מאושר, מתבצע על ידי Paddle — לא ישירות באתר.</p>
-  <p class="legal-meta">עודכן לאחרונה: 30 באוגוסט 2026 · מפעיל: ג׳ונתן חיימוף · <span dir="ltr">jonathanhaim2@gmail.com</span></p>
+  <p class="eyebrow">{{ t('refunds.eyebrow') }}</p>
+  <h1>{{ t('refunds.h1') }}</h1>
+  <p class="lede">{{ t('refunds.lede') }}</p>
+  <p class="legal-meta">{{ t('refunds.meta') }} <span dir="ltr">jonathanhaim2@gmail.com</span></p>
   {% include "partials/legal_nav.html" %}
 
   <div class="legal-prose">
-    <h2>1. ביטול המנוי</h2>
-    <p>אפשר לבטל את מנוי הפרו בכל עת. אחרי הביטול החשבון נשאר פרו עד תום התקופה שכבר שולמה, ואז חוזר לתוכנית החינם (ערוץ אחד, 3 התראות ביום). הביטול אינו מוחק את החשבון או את הגדרות הערוץ.</p>
+    <h2>{{ t('refunds.s1_h') }}</h2>
+    <p>{{ t('refunds.s1_p') }}</p>
 
-    <h2>2. אין החזר חלקי באמצע החודש</h2>
-    <p>חיוב פרו הוא חודשי מראש. אחרי שתקופת החיוב התחילה, לא ניתן החזר יחסי על הימים שנותרו בחודש, ולא זיכוי על תקופה שלא נוצלה במלואה. מי שמבטל באמצע החודש ממשיך להשתמש בפרו עד סוף התקופה ששולמה.</p>
+    <h2>{{ t('refunds.s2_h') }}</h2>
+    <p>{{ t('refunds.s2_p') }}</p>
 
-    <h2>3. החזר לרוכשים בפעם הראשונה — 14 יום</h2>
-    <p>אם זו הרכישה הראשונה של מנוי פרו, וניצלתם את השירות במידה מועטה בלבד, אפשר לבקש החזר מלא של החיוב הראשון תוך 14 יום מתאריך החיוב. שלחו בקשה אל <a href="mailto:jonathanhaim2@gmail.com" dir="ltr">jonathanhaim2@gmail.com</a> מכתובת האימייל של החשבון, וציינו את האימייל אצל Paddle אם הוא שונה.</p>
-    <p>«מידה מועטה» פירושה שהחשבון לא שימש כערוץ ייצור פעיל — למשל בלי נפח התראות חריג ובלי שימוש מתמשך אחרי הבדיקה הראשונית. בקשות שמוגשות אחרי 14 יום, או אחרי שימוש שוטף בשירות, יידחו לפי סעיף 2.</p>
+    <h2>{{ t('refunds.s3_h') }}</h2>
+    <p>{{ t('refunds.s3_p1') }} <a href="mailto:jonathanhaim2@gmail.com" dir="ltr">jonathanhaim2@gmail.com</a> {{ t('refunds.s3_p1b') }}</p>
+    <p>{{ t('refunds.s3_p2') }}</p>
 
-    <h2>4. מי מבצע את ההחזר</h2>
-    <p>SignalFlow אינו סולק כרטיסים בעצמו. Paddle היא הסוחר הרשמי (Merchant of Record): היא מחייבת את הכרטיס, מנפיקה את הקבלה, ומבצעת את הזיכוי לכרטיס אם הבקשה אושרה. זמן הזיכוי תלוי ב-Paddle ובמנפיק הכרטיס, ובדרך כלל נראה תוך כמה ימי עסקים.</p>
+    <h2>{{ t('refunds.s4_h') }}</h2>
+    <p>{{ t('refunds.s4_p') }}</p>
 
-    <h2>5. חיוב כפול, טעות או כשל מתמשך</h2>
-    <p>אם חויבתם פעמיים בטעות, או שהשירות לא פעל באופן מהותי במשך רוב תקופת החיוב מסיבה שתלויה בנו, כתבו אל אותה כתובת עם פרטי החיוב. נבדוק מול יומני השליחה ומול Paddle. החזר במקרים האלה הוא לפי שיקול דעת סביר, ואינו מחליף את סעיף 14 הימים לרוכשים חדשים.</p>
+    <h2>{{ t('refunds.s5_h') }}</h2>
+    <p>{{ t('refunds.s5_p') }}</p>
 
-    <h2>6. תוכנית חינם</h2>
-    <p>התוכנית החינמית אינה מחויבת. אין מה להחזיר עליה.</p>
+    <h2>{{ t('refunds.s6_h') }}</h2>
+    <p>{{ t('refunds.s6_p') }}</p>
 
-    <h2>7. מחיר וחשבונית</h2>
-    <p>מחיר הפרו הוא 9 דולר ארה״ב לחודש, כמפורט ב<a href="/pricing">דף המחירים</a>. הקבלה מגיעה מ-Paddle (חשבונית זרה). שאלות על מע״מ, כתובת בקבלה או אמצעי תשלום יש להפנות אלינו ונעביר ל-Paddle לפי הצורך, או ישירות לתמיכת Paddle אם הם פנו אליכם.</p>
+    <h2>{{ t('refunds.s7_h') }}</h2>
+    <p>{{ t('refunds.s7_p') }} <a href="/pricing">{{ t('refunds.s7_p_link') }}</a>. {{ t('refunds.s7_p2') }}</p>
 
-    <h2>8. יצירת קשר</h2>
-    <p>בקשות החזר, ביטול או בירור חיוב: <a href="mailto:jonathanhaim2@gmail.com" dir="ltr">jonathanhaim2@gmail.com</a>. ג׳ונתן חיימוף, מפעיל SignalFlow.</p>
+    <h2>{{ t('refunds.s8_h') }}</h2>
+    <p>{{ t('refunds.s8_p') }} <a href="mailto:jonathanhaim2@gmail.com" dir="ltr">jonathanhaim2@gmail.com</a>. {{ t('refunds.s8_p2') }}</p>
   </div>
 </main>
 {% endblock %}

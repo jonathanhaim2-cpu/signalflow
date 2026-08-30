@@ -1,6 +1,6 @@
-<nav class="legal-toc" aria-label="מסמכים משפטיים">
-  <a href="/pricing"{% if legal_current == 'pricing' %} aria-current="page"{% endif %}>מחירים</a>
-  <a href="/terms"{% if legal_current == 'terms' %} aria-current="page"{% endif %}>תנאי שימוש</a>
-  <a href="/privacy"{% if legal_current == 'privacy' %} aria-current="page"{% endif %}>מדיניות פרטיות</a>
-  <a href="/refunds"{% if legal_current == 'refunds' %} aria-current="page"{% endif %}>מדיניות החזרים</a>
+<nav class="legal-toc" aria-label="{{ t('legal_nav.label') }}">
+  <a href="/pricing"{% if legal_current == 'pricing' %} aria-current="page"{% endif %}>{{ t('legal_nav.pricing') }}</a>
+  <a href="/terms"{% if legal_current == 'terms' %} aria-current="page"{% endif %}>{{ t('legal_nav.terms') }}</a>
+  <a href="/privacy"{% if legal_current == 'privacy' %} aria-current="page"{% endif %}>{{ t('legal_nav.privacy') }}</a>
+  <a href="/refunds"{% if legal_current == 'refunds' %} aria-current="page"{% endif %}>{{ t('legal_nav.refunds') }}</a>
 </nav>

@@ -4,14 +4,15 @@ import secrets
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse, Response
-from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.deps import get_current_user_optional
 from app.core.security import hash_password
+from app.core.templates import templates
 from app.core.urls import public_base_url
+from app.i18n import api_message, locale_from_request, t
 from app.models.invite import InviteCode
 from app.models.user import User, UserTier
 from app.services.admin import (
@@ -29,18 +30,17 @@ from app.services.plans import count_alerts_today
 from app.services.qr import qr_png_bytes
 
 router = APIRouter(tags=["admin"])
-templates = Jinja2Templates(directory="app/templates")
 
 
 def _login_redirect(next_path: str = "/admin") -> RedirectResponse:
     return RedirectResponse(url=f"/login?next={next_path}", status_code=303)
 
 
-def _require_admin(user: User | None, next_path: str = "/admin"):
+def _require_admin(user: User | None, next_path: str = "/admin", request: Request | None = None):
     if not user:
         return _login_redirect(next_path)
     if not is_admin_user(user):
-        raise HTTPException(status_code=404, detail="העמוד לא נמצא")
+        raise HTTPException(status_code=404, detail=api_message(request, "admin.not_found"))
     return None
 
 
@@ -53,14 +53,14 @@ def redeem_url_for(code: str, request: Request) -> str:
     return f"{public_base_url(request)}/redeem/{code}"
 
 
-async def _user_rows(db: AsyncSession) -> list[dict]:
+async def _user_rows(db: AsyncSession, locale: str = "en") -> list[dict]:
     result = await db.execute(select(User).order_by(User.id.desc()))
     rows = []
     for user in result.scalars().all():
         rows.append(
             {
                 "user": user,
-                "tier_label": "פרו" if user.tier == UserTier.PRO.value else "חינם",
+                "tier_label": t(locale, "nav.pro") if user.tier == UserTier.PRO.value else t(locale, "nav.free"),
                 "alerts_today": await count_alerts_today(db, user.id),
                 "upgrade_requested": bool(user.upgrade_requested_at),
                 "protected": is_env_protected_owner(user.email),
@@ -77,11 +77,12 @@ async def _admin_context(
 ) -> dict:
     invites = await all_invites(db)
     unused = [inv for inv in invites if invite_status(inv) == "unused"]
+    locale = locale_from_request(request)
     ctx = {
         "admin": admin,
         "user": admin,
         "nav_mode": "app",
-        "users": await _user_rows(db),
+        "users": await _user_rows(db, locale),
         "unused_invites": unused,
         "invites": invites,
         "invite_status": {inv.id: invite_status(inv) for inv in invites},
@@ -101,7 +102,7 @@ async def admin_home(
     db: AsyncSession = Depends(get_db),
     user: User | None = Depends(get_current_user_optional),
 ):
-    blocked = _require_admin(user)
+    blocked = _require_admin(user, request=request)
     if blocked:
         return blocked
     return templates.TemplateResponse(
@@ -183,13 +184,13 @@ async def admin_create_user(
     email = email.strip().lower()
     existing = await db.execute(select(User).where(User.email == email))
     if existing.scalar_one_or_none():
-        ctx = await _admin_context(request, db, user, error="האימייל הזה כבר רשום.")
+        ctx = await _admin_context(request, db, user, error=t(locale_from_request(request), "admin.email_dup"))
         return templates.TemplateResponse(request, "admin.html", ctx, status_code=400)
     raw_password = password.strip()
     if not raw_password:
         raw_password = _temp_password()
     if len(raw_password) < 8:
-        ctx = await _admin_context(request, db, user, error="הסיסמה חייבת להכיל לפחות 8 תווים.")
+        ctx = await _admin_context(request, db, user, error=t(locale_from_request(request), "admin.pw_short"))
         return templates.TemplateResponse(request, "admin.html", ctx, status_code=400)
     new_user = User(email=email, hashed_password=hash_password(raw_password))
     db.add(new_user)
@@ -202,7 +203,7 @@ async def admin_create_user(
         request,
         db,
         user,
-        flash="המשתמש נוצר. הראו לו את הסיסמה עכשיו — היא לא תופיע שוב.",
+        flash=t(locale_from_request(request), "admin.user_created"),
         generated_password=raw_password,
         created_email=email,
     )
@@ -249,7 +250,7 @@ async def admin_print_invite(
         return blocked
     invite = await db.get(InviteCode, invite_id)
     if not invite:
-        raise HTTPException(status_code=404, detail="העמוד לא נמצא")
+        raise HTTPException(status_code=404, detail=api_message(request, "admin.not_found"))
     return templates.TemplateResponse(
         request,
         "admin_print.html",
@@ -273,7 +274,7 @@ async def admin_invite_qr(
         return blocked
     invite = await db.get(InviteCode, invite_id)
     if not invite:
-        raise HTTPException(status_code=404, detail="העמוד לא נמצא")
+        raise HTTPException(status_code=404, detail=api_message(request, "admin.not_found"))
     png = qr_png_bytes(redeem_url_for(invite.code, request))
     return Response(content=png, media_type="image/png")
 
@@ -285,19 +286,20 @@ async def redeem_page(
     db: AsyncSession = Depends(get_db),
     user: User | None = Depends(get_current_user_optional),
 ):
+    locale = locale_from_request(request)
     if user:
-        ok, message = await redeem_invite(db, code, user)
+        ok, message_key = await redeem_invite(db, code, user)
         return templates.TemplateResponse(
             request,
             "redeem.html",
-            {"ok": ok, "message": message, "code": code.upper(), "logged_in": True},
+            {"ok": ok, "message": t(locale, message_key), "code": code.upper(), "logged_in": True},
         )
     return templates.TemplateResponse(
         request,
         "redeem.html",
         {
             "ok": None,
-            "message": "כדי לממש את הקוד צריך להירשם או להיכנס. אחר כך הקוד יופעל אוטומטית.",
+            "message": t(locale, "redeem.need_auth"),
             "code": code.upper(),
             "logged_in": False,
             "next": f"/redeem/{code}",
