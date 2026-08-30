@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     ALLOW_PRO_EMAILS: str = ""
     # Comma-separated owner emails. jonathanhaim2@gmail.com is always treated as owner.
     ADMIN_EMAILS: str = "jonathanhaim2@gmail.com"
+    # Paddle Billing (Merchant of Record). Never commit live keys.
+    PADDLE_API_KEY: str = ""
+    PADDLE_WEBHOOK_SECRET: str = ""
+    PADDLE_PRICE_ID: str = ""
+    PADDLE_SANDBOX: bool = False
 
 
 @lru_cache

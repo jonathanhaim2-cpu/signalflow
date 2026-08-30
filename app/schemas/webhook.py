@@ -74,19 +74,36 @@ def validate_target_config(target_type: str, config: dict[str, Any]) -> dict[str
     raise ValueError("סוג יעד לא נתמך")
 
 
+class DestinationIn(BaseModel):
+    type: TargetLiteral
+    config: dict[str, Any]
+
+
 class EndpointCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-    target_type: TargetLiteral
-    target_config: dict[str, Any]
+    target_type: TargetLiteral | None = None
+    target_config: dict[str, Any] | None = None
     extra_target_type: TargetLiteral | None = None
     extra_target_config: dict[str, Any] | None = None
+    destinations: list[DestinationIn] | None = None
 
     @model_validator(mode="after")
     def validate_config(self) -> "EndpointCreate":
-        validate_target_config(self.target_type, self.target_config)
+        if self.destinations:
+            for dest in self.destinations:
+                validate_target_config(dest.type, dest.config)
+            return self
+        if not self.target_type:
+            raise ValueError("בחרו לפחות יעד אחד")
+        validate_target_config(self.target_type, self.target_config or {})
         if self.extra_target_type:
             validate_target_config(self.extra_target_type, self.extra_target_config or {})
         return self
+
+
+class DestinationOut(BaseModel):
+    type: str
+    config: dict[str, Any]
 
 
 class EndpointOut(BaseModel):
@@ -97,6 +114,7 @@ class EndpointOut(BaseModel):
     target_config: dict[str, Any]
     extra_target_type: str | None = None
     extra_target_config: dict[str, Any] | None = None
+    destinations: list[DestinationOut] = Field(default_factory=list)
     is_active: bool
     created_at: datetime
     webhook_url: str | None = None

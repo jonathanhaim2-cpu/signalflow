@@ -36,11 +36,18 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; color-scheme: dark; }
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+  max-width: 100%;
+  overflow-x: clip;
+}
 
 body.sf-body {
   margin: 0;
   min-height: 100vh;
+  max-width: 100%;
+  overflow-x: clip;
   background:
     radial-gradient(900px 500px at 90% -10%, rgba(16, 212, 138, 0.08), transparent 55%),
     radial-gradient(700px 420px at 0% 20%, rgba(224, 184, 90, 0.04), transparent 50%),
@@ -85,8 +92,11 @@ button { cursor: pointer; }
 }
 
 .wrap {
-  width: min(var(--container), calc(100% - 40px));
+  width: 100%;
+  max-width: var(--container);
+  padding-inline: 20px;
   margin-inline: auto;
+  box-sizing: border-box;
 }
 
 .wordmark {
@@ -124,6 +134,7 @@ button { cursor: pointer; }
   justify-content: space-between;
   gap: 16px;
   min-height: 68px;
+  min-width: 0;
 }
 
 .nav-links {
@@ -141,7 +152,14 @@ button { cursor: pointer; }
 
 .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.04); }
 
-.nav-cta { display: flex; align-items: center; gap: 10px; }
+.nav-cta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
 
 .btn {
   display: inline-flex;
@@ -201,10 +219,11 @@ button { cursor: pointer; }
 
 .hero {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: 56px;
   align-items: center;
   padding: 72px 0 36px;
+  min-width: 0;
 }
 
 .hero h1 {
@@ -304,6 +323,9 @@ button { cursor: pointer; }
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 10px 12px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .preview-log {
   margin-top: 12px;
@@ -341,7 +363,7 @@ button { cursor: pointer; }
 
 .how-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -422,7 +444,7 @@ button { cursor: pointer; }
 
 .pricing {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -450,7 +472,7 @@ button { cursor: pointer; }
   line-height: 1;
 }
 .price small { font-family: var(--font-ui); font-size: 0.9rem; color: var(--muted); }
-.plan-card ul { margin: 16px 0 22px; padding: 0 18px 0 0; color: var(--text-soft); }
+.plan-card ul { margin: 16px 0 22px; padding-inline-start: 18px; color: var(--text-soft); }
 .plan-card li { margin: 8px 0; }
 .gold-label {
   display: inline-block;
@@ -483,18 +505,28 @@ button { cursor: pointer; }
 /* Auth */
 .auth-shell {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   min-height: calc(100vh - 68px);
+  overflow-x: clip;
 }
 
 .auth-plans {
-  padding: 48px 40px;
+  min-width: 0;
+  max-width: 100%;
+  padding-block: 48px;
+  padding-inline: clamp(20px, 4vw, 40px);
   border-inline-end: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(16,212,138,0.05), transparent 40%);
 }
 
 .auth-form-col {
-  padding: 48px 40px 64px;
+  min-width: 0;
+  max-width: 100%;
+  padding-block: 48px 64px;
+  padding-inline: clamp(20px, 4vw, 40px);
   display: flex;
   align-items: center;
 }
@@ -525,8 +557,8 @@ button { cursor: pointer; }
   box-shadow: 0 0 0 1px rgba(224, 184, 90, 0.28);
 }
 
-.plan-pick h3 { margin: 0 0 4px; }
-.plan-pick p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.plan-pick h3 { margin: 0 0 4px; overflow-wrap: anywhere; }
+.plan-pick p { margin: 0; color: var(--muted); font-size: 0.9rem; overflow-wrap: anywhere; }
 
 .field { margin-bottom: 14px; }
 .field label {
@@ -569,7 +601,13 @@ button { cursor: pointer; }
 
 /* App shell */
 .app-bar { min-height: 64px; }
-.app-main { width: min(1080px, calc(100% - 36px)); margin: 28px auto 64px; }
+.app-main {
+  width: 100%;
+  max-width: 1080px;
+  padding-inline: 18px;
+  margin: 28px auto 64px;
+  box-sizing: border-box;
+}
 
 .quiet-banner {
   font-size: 0.82rem;
@@ -614,7 +652,7 @@ button { cursor: pointer; }
 
 .checklist {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
@@ -644,7 +682,7 @@ button { cursor: pointer; }
 /* Guides */
 .guide-toc {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin: 24px 0 40px;
 }
@@ -665,7 +703,7 @@ button { cursor: pointer; }
 .tutorial-head { margin-bottom: 18px; }
 .steps {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 22px;
   align-items: start;
 }
@@ -715,9 +753,33 @@ button { cursor: pointer; }
 
 .hidden { display: none !important; }
 
+.dest-block {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: #070a12;
+  min-width: 0;
+}
+
+.dest-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dest-block-head label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
 @media (max-width: 920px) {
   .hero, .how-grid, .pricing, .auth-shell, .steps, .checklist, .guide-toc {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .auth-plans { border-inline-end: 0; border-bottom: 1px solid var(--line); }
   .nav-inner { flex-wrap: wrap; }

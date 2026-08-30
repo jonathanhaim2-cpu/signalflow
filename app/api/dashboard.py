@@ -47,8 +47,11 @@ async def guides_page(request: Request, user: User | None = Depends(get_current_
     )
 
 
-@router.get("/dashboard")
+@router.api_route("/dashboard", methods=["GET", "POST"])
 async def dashboard_page(request: Request, user: User | None = Depends(get_current_user_optional)):
     if not user:
         return RedirectResponse(url="/login")
+    if request.method == "POST":
+        checkout = request.query_params.get("checkout") or "success"
+        return RedirectResponse(url=f"/dashboard?checkout={checkout}", status_code=303)
     return templates.TemplateResponse(request, "dashboard.html", {"user": user, "nav_mode": "app"})

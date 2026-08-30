@@ -6,6 +6,7 @@ from app.core.logging import logger
 from app.models.alert_log import AlertLog, AlertStatus
 from app.models.user import User
 from app.models.webhook import TargetType, WebhookEndpoint
+from app.services.destinations import dest_label, destinations_of
 from app.services.dispatcher import send_discord, send_telegram, send_whatsapp
 from app.services.formatter import (
     format_discord_markdown,
@@ -52,38 +53,33 @@ async def relay_alert(
     content_type: str | None,
     user: User | None = None,
 ) -> AlertLog:
-    """Format and dispatch an incoming alert, then persist the delivery log. Never raises."""
+    """Format and dispatch an incoming alert to every destination. Never raises."""
     start = time.perf_counter()
     payload_text = raw_body.decode("utf-8", errors="replace")[:4000]
     retry = is_pro(user)
 
     try:
         alert = parse_alert_payload(raw_body, content_type)
-        result = await _dispatch_one(
-            endpoint.target_type, endpoint.target_config or {}, alert, user, retry=retry
-        )
-        error_parts = []
-        success = result.success
-        if not result.success and result.error_message:
-            error_parts.append(result.error_message)
-
-        if endpoint.extra_target_type and endpoint.extra_target_config:
-            extra = await _dispatch_one(
-                endpoint.extra_target_type,
-                endpoint.extra_target_config,
-                alert,
-                user,
-                retry=retry,
-            )
-            success = success and extra.success
-            if not extra.success and extra.error_message:
-                error_parts.append(f"יעד נוסף: {extra.error_message}")
+        dests = destinations_of(endpoint)
+        error_parts: list[str] = []
+        any_ok = False
+        for dest in dests:
+            dest_type = dest.get("type") or ""
+            dest_config = dest.get("config") or {}
+            result = await _dispatch_one(dest_type, dest_config, alert, user, retry=retry)
+            if result.success:
+                any_ok = True
+            else:
+                label = dest_label(dest_type)
+                message = result.error_message or "שליחה נכשלה"
+                logger.warning("Relay dest=%s endpoint=%s failed: %s", dest_type, endpoint.id, message)
+                error_parts.append(f"{label}: {message}")
 
         total_latency_ms = (time.perf_counter() - start) * 1000
         log = AlertLog(
             endpoint_id=endpoint.id,
             payload_raw=payload_text,
-            status=AlertStatus.DELIVERED.value if success else AlertStatus.FAILED.value,
+            status=AlertStatus.DELIVERED.value if any_ok else AlertStatus.FAILED.value,
             latency_ms=round(total_latency_ms, 2),
             error_message="; ".join(error_parts) or None,
         )

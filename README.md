@@ -4,10 +4,32 @@ A lightweight webhook relay that receives TradingView alerts, formats them, and 
 
 ## Plans
 
-- **Free:** 1 channel, 3 alerts per UTC day, SignalFlow footer on outbound messages.
-- **Pro:** unlimited channels and alerts, no footer, one retry after ~3s on Telegram/Discord/WhatsApp 5xx or timeout. Optional second destination per channel.
+- **Free:** 1 webhook URL, 3 alerts per UTC day, SignalFlow footer on outbound messages. That one URL may fan out to WhatsApp, Telegram, and Discord together.
+- **Pro:** $9 / month (USD). Unlimited webhook URLs and alerts, no footer, one retry after ~3s on Telegram/Discord/WhatsApp 5xx or timeout.
 
-There is no Stripe and no payment keys. A free user clicks «רוצה פרו» to join a waitlist (`upgrade_requested_at`). Grant Pro with:
+### Paddle Billing (Merchant of Record)
+
+Pro checkout uses [Paddle](https://www.paddle.com/) — foreign receipts in USD. Paddle is the merchant of record.
+
+1. Create a Paddle account and a product with a **$9 USD / month** recurring price.
+2. In Paddle → Developer tools → Notifications, add webhook URL:
+   `https://signalflow-cl0v.onrender.com/api/v1/billing/paddle`
+   Subscribe at least to `transaction.completed`, `subscription.created`, `subscription.activated`, `subscription.canceled`, `subscription.past_due`.
+3. Set a default payment link (Checkout settings) so `checkout.url` is returned.
+4. On Render, set these environment variables (never commit secrets):
+
+```
+PADDLE_API_KEY=...
+PADDLE_WEBHOOK_SECRET=...
+PADDLE_PRICE_ID=pri_...
+PADDLE_SANDBOX=true            # use sandbox-api.paddle.com while testing
+```
+
+`POST /api/v1/billing/checkout` (logged-in) creates a transaction (`collection_mode: automatic`, `items: [{price_id, quantity: 1}]`, `custom_data.user_id`) and returns `checkout.url`. The webhook verifies `Paddle-Signature`.
+
+If the keys are missing the API returns Hebrew `סליקה לא הוגדרה עדיין` (HTTP 503). The dashboard «רוצה פרו» button is hidden when the user is already Pro.
+
+Admin / allowlist / invite-code Pro grants still work and are not revoked by a later Paddle cancellation.
 
 ```bash
 ALLOW_PRO_EMAILS=you@example.com
@@ -63,7 +85,7 @@ The container listens on `$PORT` (default 8000) for Render.
 
 ## Connecting TradingView
 
-1. Create a webhook endpoint (Telegram, Discord, or WhatsApp).
+1. Create a webhook endpoint. One URL can include WhatsApp, Telegram, and Discord together.
 2. Copy the generated webhook URL. On Render it looks like `https://signalflow-cl0v.onrender.com/api/v1/webhook/<token>` — never localhost. Set `APP_BASE_URL` only if you need to override host detection.
 3. In TradingView: Alert → **Notifications** → check **Webhook URL** → paste → Save.
 4. Use the dashboard copy button for the JSON template, e.g.:
@@ -107,17 +129,19 @@ Telegram: BotFather token + chat id. Discord: Channel Settings → Integrations 
 - `POST /api/v1/webhook/{endpoint_token}` — public TradingView receiver
 - `POST /api/v1/webhook/{endpoint_token}/test` — dashboard tester
 - `GET /api/v1/health` — health check
-- `GET /api/v1/auth/me`, `POST /api/v1/auth/request-pro` — plan + waitlist
+- `GET /api/v1/auth/me` — plan snapshot
+- `POST /api/v1/billing/checkout` — Paddle transaction / checkout URL ($9 / month)
+- `POST /api/v1/billing/paddle` — Paddle webhook
 - `POST /api/v1/auth/signup`, `/login`, `/logout`
-- `GET/POST /api/v1/endpoints`, `DELETE /api/v1/endpoints/{id}`, `PATCH /api/v1/endpoints/{id}/toggle`
+- `GET/POST /api/v1/endpoints` — `destinations: [{type, config}, …]` (legacy `target_type` / `extra_target_*` still work)
+- `DELETE /api/v1/endpoints/{id}`, `PATCH /api/v1/endpoints/{id}/toggle`
 - `GET /api/v1/endpoints/{id}/logs`
 
 ## Production (Render)
 
 - The Dockerfile runs `sh -c "uvicorn … --port ${PORT:-8000}"`.
 - Public webhook URLs are built from the request host (`X-Forwarded-Host` / `Host`). Set `APP_BASE_URL` only to override.
-- Set a strong `SECRET_KEY`. Do not commit `.env`.
-- Free Render sleeps after ~15 minutes idle; the dashboard explains this in Hebrew.
+- Set a strong `SECRET_KEY`. Do not commit `.env` or Paddle keys.
 - Swap `DATABASE_URL` to Postgres when you want persistence across deploys.
 
 ## Tests
