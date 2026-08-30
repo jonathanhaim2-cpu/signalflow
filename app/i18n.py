@@ -641,8 +641,6 @@ STRINGS: dict[str, dict[str, Any]] = {
             "need_dest_short": "Choose at least one destination",
         },
         "js": {
-            "caption_free": "You are signing up for the free plan.",
-            "caption_pro": "You will sign up, then continue to $9/month checkout on Paddle.",
             "invalid_email_password": "Invalid email or password",
             "email_taken": "That email is already registered",
             "reauth": "Please sign in again",
@@ -1219,8 +1217,6 @@ STRINGS: dict[str, dict[str, Any]] = {
             "need_dest_short": "בחרו לפחות יעד אחד",
         },
         "js": {
-            "caption_free": "נרשמים לתוכנית חינם.",
-            "caption_pro": "נרשמים ואז עוברים לתשלום $9 לחודש ב-Paddle.",
             "invalid_email_password": "אימייל או סיסמה שגויים",
             "email_taken": "האימייל הזה כבר רשום אצלנו",
             "reauth": "צריך להתחבר מחדש",

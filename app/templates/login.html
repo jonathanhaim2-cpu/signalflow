@@ -36,6 +36,9 @@
   </section>
 </div>
 {% endblock %}
+{% block i18n_js %}
+<script>window.SF_I18N = {{ i18n_js_json | safe }};</script>
+{% endblock %}
 {% block scripts %}
 <script>
 const T = window.SF_I18N || {};

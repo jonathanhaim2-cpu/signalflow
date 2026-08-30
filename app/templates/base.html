@@ -32,7 +32,8 @@
       }
     }
   </script>
-  <script>window.SF_I18N = {{ i18n_js | tojson }}; window.SF_LOCALE = {{ locale | tojson }};</script>
+  <script>window.SF_LOCALE = {{ locale | tojson }};</script>
+  {% block i18n_js %}{% endblock %}
   {% block extra_head %}{% endblock %}
 </head>
 <body class="sf-body">

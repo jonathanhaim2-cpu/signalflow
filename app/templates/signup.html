@@ -20,7 +20,7 @@
   <section class="auth-form-col">
     <form id="signup-form" class="auth-form">
       <h2 style="margin:0 0 8px">{{ t('signup.h2') }}</h2>
-      <p class="hint" id="plan-caption" style="color:var(--muted);margin:0 0 20px">{{ t('signup.caption_free') }}</p>
+      <p class="hint" id="plan-caption" style="color:var(--muted);margin:0 0 20px" data-free="{{ t('signup.caption_free') }}" data-pro="{{ t('signup.caption_pro') }}">{{ t('signup.caption_free') }}</p>
       <input type="hidden" name="plan" id="plan-input" value="free" />
       <div class="field">
         <label>{{ t('common.email') }}</label>
@@ -39,9 +39,13 @@
   </section>
 </div>
 {% endblock %}
+{% block i18n_js %}
+<script>window.SF_I18N = {{ i18n_js_json | safe }};</script>
+{% endblock %}
 {% block scripts %}
 <script>
 const T = window.SF_I18N || {};
+const caption = document.getElementById('plan-caption');
 const nextPath = (() => {
   const n = new URLSearchParams(location.search).get('next') || '';
   return (n.startsWith('/') && !n.startsWith('//')) ? n : '/dashboard';
@@ -54,7 +58,9 @@ function setPlan(plan) {
   document.getElementById('pick-pro').classList.toggle('is-on', plan === 'pro');
   document.getElementById('pick-free').setAttribute('aria-pressed', plan === 'free');
   document.getElementById('pick-pro').setAttribute('aria-pressed', plan === 'pro');
-  document.getElementById('plan-caption').textContent = plan === 'pro' ? T.caption_pro : T.caption_free;
+  document.getElementById('plan-caption').textContent = plan === 'pro'
+    ? (caption.dataset.pro || T.caption_pro)
+    : (caption.dataset.free || T.caption_free);
   document.getElementById('pro-note').classList.toggle('hidden', plan !== 'pro');
 }
 document.getElementById('pick-free').addEventListener('click', () => setPlan('free'));

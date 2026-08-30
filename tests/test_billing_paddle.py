@@ -175,7 +175,7 @@ async def test_bad_signature_rejected(client, monkeypatch, clear_settings):
         headers={"Content-Type": "application/json", "Paddle-Signature": "ts=1;h1=deadbeef"},
     )
     assert res.status_code == 400
-    assert "חתימה" in res.json()["detail"]
+    assert "signature" in res.json()["detail"].lower()
 
 
 async def test_already_pro_cannot_checkout(client, monkeypatch, clear_settings, session_factory):
@@ -187,4 +187,4 @@ async def test_already_pro_cannot_checkout(client, monkeypatch, clear_settings, 
         await grant_pro(db, "haspro@example.com")
     res = await client.post("/api/v1/billing/checkout")
     assert res.status_code == 400
-    assert "פרו" in res.json()["detail"]
+    assert "Pro" in res.json()["detail"]

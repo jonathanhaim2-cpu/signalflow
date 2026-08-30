@@ -131,7 +131,8 @@ async def test_guides_whatsapp_and_green_api(client):
     assert "Most reliable easy setup" in html
     assert "If CallMeBot does not reply" in html
     assert "Open console.green-api.com and create an instance." in html
-    assert "Get QR (not the Green-API home page)" in html
+    assert "open Get QR" in html
+    assert "not on the Green-API home page" in html
     assert "Linked devices" in html
     assert "Copy the instance id and API token" in html
     assert "try tomorrow" not in html.lower()
