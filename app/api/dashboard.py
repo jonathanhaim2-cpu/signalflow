@@ -47,6 +47,34 @@ async def guides_page(request: Request, user: User | None = Depends(get_current_
     )
 
 
+def _legal_context(user: User | None, page: str) -> dict:
+    return {
+        "nav_mode": "app" if user else "marketing",
+        "user": user,
+        "legal_current": page,
+    }
+
+
+@router.get("/pricing")
+async def pricing_page(request: Request, user: User | None = Depends(get_current_user_optional)):
+    return templates.TemplateResponse(request, "pricing.html", _legal_context(user, "pricing"))
+
+
+@router.get("/terms")
+async def terms_page(request: Request, user: User | None = Depends(get_current_user_optional)):
+    return templates.TemplateResponse(request, "terms.html", _legal_context(user, "terms"))
+
+
+@router.get("/privacy")
+async def privacy_page(request: Request, user: User | None = Depends(get_current_user_optional)):
+    return templates.TemplateResponse(request, "privacy.html", _legal_context(user, "privacy"))
+
+
+@router.get("/refunds")
+async def refunds_page(request: Request, user: User | None = Depends(get_current_user_optional)):
+    return templates.TemplateResponse(request, "refunds.html", _legal_context(user, "refunds"))
+
+
 @router.api_route("/dashboard", methods=["GET", "POST"])
 async def dashboard_page(request: Request, user: User | None = Depends(get_current_user_optional)):
     if not user:
