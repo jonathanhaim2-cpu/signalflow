@@ -7,6 +7,7 @@ import httpx
 
 from app.core.config import get_settings
 from app.core.logging import logger
+from app.i18n import t
 
 _client: httpx.AsyncClient | None = None
 
@@ -25,9 +26,9 @@ CALLMEBOT_BODY_ERROR_MARKERS = (
     "not_valid",
 )
 
-MSG_CALLMEBOT_MISSING = "חסר מספר טלפון או קוד שקיבלתם בואטסאפ. ממלאים את שניהם."
-MSG_CALLMEBOT_BODY = "CallMeBot לא שלח את ההודעה. בדקו שהמספר והקוד נכונים, ושהפעלתם את הבוט בואטסאפ."
-MSG_UNKNOWN_PROVIDER = "ספק וואטסאפ לא מוכר"
+MSG_CALLMEBOT_MISSING = t("en", "api.callmebot_missing")
+MSG_CALLMEBOT_BODY = t("en", "api.callmebot_body")
+MSG_UNKNOWN_PROVIDER = t("en", "api.unknown_wa")
 
 
 def get_http_client() -> httpx.AsyncClient:

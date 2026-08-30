@@ -1,152 +1,157 @@
 {% extends "base.html" %}
-{% block title %}הערוץ שלי — SignalFlow{% endblock %}
+{% block title %}{{ t('dash.title') }}{% endblock %}
 {% block content %}
 <main class="app-main">
   <section class="panel" id="plan-card" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center">
     <div>
-      <p class="preview-kicker">התוכנית שלכם</p>
-      <p id="plan-summary" style="font-weight:800;margin:4px 0">טוען…</p>
+      <p class="preview-kicker">{{ t('dash.plan_kicker') }}</p>
+      <p id="plan-summary" style="font-weight:800;margin:4px 0">{{ t('common.loading') }}</p>
       <p id="plan-remaining" class="hint" style="margin:0"></p>
     </div>
     <div>
-      <button type="button" id="want-pro-btn" class="btn btn-gold btn-sm">רוצה פרו</button>
+      <button type="button" id="want-pro-btn" class="btn btn-gold btn-sm">{{ t('dash.want_pro') }}</button>
       <p id="want-pro-msg" class="note note-ok hidden" style="margin:0"></p>
     </div>
   </section>
 
   <div class="checklist">
-    <a class="check-item" href="/guides#whatsapp">
+    <a class="check-item" href="/guides#telegram">
       <span class="check-num">1</span>
-      <div><strong>מחברים יעד</strong><span>וואטסאפ לטלפון, טלגרם או דיסקורד</span></div>
+      <div><strong>{{ t('dash.c1_h') }}</strong><span>{{ t('dash.c1_p') }}</span></div>
     </a>
     <a class="check-item" href="#endpoints-list">
       <span class="check-num">2</span>
-      <div><strong>מעתיקים קישור</strong><span>לחיצה אחת על העתק קישור</span></div>
+      <div><strong>{{ t('dash.c2_h') }}</strong><span>{{ t('dash.c2_p') }}</span></div>
     </a>
     <a class="check-item" href="/guides#tradingview">
       <span class="check-num">3</span>
-      <div><strong>וי ב-TradingView</strong><span>Notifications → Webhook URL</span></div>
+      <div><strong>{{ t('dash.c3_h') }}</strong><span>Notifications → Webhook URL</span></div>
     </a>
   </div>
 
   <section class="panel channel-card">
-    <h2>הערוץ</h2>
-    <p class="hint">קישור אחד ל-TradingView. אפשר לחבר וואטסאפ, טלגרם ודיסקורד יחד.</p>
-    <div id="endpoints-list"><p class="hint">טוען…</p></div>
+    <h2>{{ t('dash.channel_h') }}</h2>
+    <p class="hint">{{ t('dash.channel_hint') }}</p>
+    <div id="endpoints-list"><p class="hint">{{ t('common.loading') }}</p></div>
   </section>
 
   <section class="panel">
-    <h2>חיבור חדש</h2>
-    <p class="hint">שם אחד, קישור אחד. בחרו 1–3 יעדים — אותה התראה תגיע לכולם. <a href="/guides" style="color:var(--signal)">מדריכי התחברות</a></p>
+    <h2>{{ t('dash.new_h') }}</h2>
+    <p class="hint">{{ t('dash.new_hint') }} <a href="/guides" style="color:var(--signal)">{{ t('dash.guides_link') }}</a></p>
     <form id="create-form">
       <div class="field">
-        <label>שם</label>
-        <input class="sf-input" name="name" required placeholder="אסטרטגיית ביטקוין" />
+        <label>{{ t('dash.name') }}</label>
+        <input class="sf-input" name="name" required placeholder="{{ t('dash.name_ph') }}" />
       </div>
 
       <div class="dest-block" data-dest="whatsapp">
         <div class="dest-block-head">
-          <label><input type="checkbox" id="dest-wa" /> וואטסאפ</label>
-          <a href="/guides#whatsapp" style="color:var(--signal);font-size:0.88rem">מדריך וואטסאפ</a>
+          <label><input type="checkbox" id="dest-wa" /> {{ t('landing.chip_wa') }}</label>
+          <a href="/guides#whatsapp" style="color:var(--signal);font-size:0.88rem">{{ t('dash.guide_wa') }}</a>
         </div>
         <div id="whatsapp-fields" class="dest-fields hidden space-y-3" style="margin-top:12px">
           <div class="field">
-            <label>איך לחבר</label>
+            <label>{{ t('dash.how_connect') }}</label>
             <select class="sf-input" name="wa_provider" id="wa-provider">
-              <option value="callmebot" selected>הדרך הקלה — לטלפון שלי</option>
-              <option value="green_api">דרך מתקדמת — Green-API</option>
-              <option value="meta">דרך מתקדמת — Meta</option>
+              <option value="callmebot" selected>{{ t('dash.wa_callmebot') }}</option>
+              <option value="green_api">{{ t('dash.wa_green') }}</option>
+              <option value="meta">{{ t('dash.wa_meta') }}</option>
             </select>
           </div>
-          <p id="wa-own-phone-note">ההתראות מגיעות <strong>לוואטסאפ שלכם</strong> — אותו מספר שמפעילים כאן. בלי מכשיר שני ובלי סריקת QR.</p>
+          <p id="wa-own-phone-note">{{ t('dash.wa_own') }}</p>
           <div id="wa-callmebot-fields" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="field"><label>מספר טלפון</label><input class="sf-input" name="wa_phone" placeholder="972501234567" dir="ltr" /></div>
-            <div class="field"><label>קוד שקיבלתם בואטסאפ</label><input class="sf-input" name="wa_apikey" type="password" autocomplete="off" placeholder="הקוד מההודעה של הבוט" dir="ltr" /></div>
+            <div class="field"><label>{{ t('dash.phone') }}</label><input class="sf-input" name="wa_phone" placeholder="972501234567" dir="ltr" /></div>
+            <div class="field"><label>{{ t('dash.wa_code') }}</label><input class="sf-input" name="wa_apikey" type="password" autocomplete="off" placeholder="{{ t('dash.wa_code_ph') }}" dir="ltr" /></div>
           </div>
           <div id="wa-green-fields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="field"><label>מזהה המופע</label><input class="sf-input" name="id_instance" placeholder="idInstance" dir="ltr" /></div>
-            <div class="field"><label>הקוד (מוסתר)</label><input class="sf-input" name="api_token" type="password" autocomplete="off" placeholder="apiTokenInstance" dir="ltr" /></div>
-            <div class="field"><label>מספר שיקבל (למשל 9725…)</label><input class="sf-input" name="wa_chat_id" placeholder="972501234567" dir="ltr" /></div>
+            <div class="field"><label>{{ t('dash.id_instance') }}</label><input class="sf-input" name="id_instance" placeholder="idInstance" dir="ltr" /></div>
+            <div class="field"><label>{{ t('dash.api_token') }}</label><input class="sf-input" name="api_token" type="password" autocomplete="off" placeholder="apiTokenInstance" dir="ltr" /></div>
+            <div class="field"><label>{{ t('dash.wa_recipient') }}</label><input class="sf-input" name="wa_chat_id" placeholder="972501234567" dir="ltr" /></div>
           </div>
           <div id="wa-meta-fields" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="field"><label>מזהה מספר</label><input class="sf-input" name="phone_number_id" placeholder="phone_number_id" dir="ltr" /></div>
-            <div class="field"><label>קוד גישה (מוסתר)</label><input class="sf-input" name="access_token" type="password" autocomplete="off" placeholder="access token" dir="ltr" /></div>
-            <div class="field"><label>נמען (E.164)</label><input class="sf-input" name="wa_to" placeholder="+972501234567" dir="ltr" /></div>
+            <div class="field"><label>{{ t('dash.phone_number_id') }}</label><input class="sf-input" name="phone_number_id" placeholder="phone_number_id" dir="ltr" /></div>
+            <div class="field"><label>{{ t('dash.access_token') }}</label><input class="sf-input" name="access_token" type="password" autocomplete="off" placeholder="access token" dir="ltr" /></div>
+            <div class="field"><label>{{ t('dash.wa_to') }}</label><input class="sf-input" name="wa_to" placeholder="+972501234567" dir="ltr" /></div>
           </div>
         </div>
       </div>
 
       <div class="dest-block" data-dest="telegram">
         <div class="dest-block-head">
-          <label><input type="checkbox" id="dest-tg" checked /> טלגרם</label>
-          <a href="/guides#telegram" style="color:var(--signal);font-size:0.88rem">מדריך טלגרם</a>
+          <label><input type="checkbox" id="dest-tg" checked /> {{ t('landing.chip_tg') }}</label>
+          <a href="/guides#telegram" style="color:var(--signal);font-size:0.88rem">{{ t('dash.guide_tg') }}</a>
         </div>
         <div id="telegram-fields" class="dest-fields grid grid-cols-1 md:grid-cols-2 gap-3" style="margin-top:12px">
-          <div class="field"><label>מספר הצ׳אט בטלגרם</label><input class="sf-input" name="chat_id" placeholder="למשל 123456789" dir="ltr" /></div>
-          <div class="field"><label>קוד הבוט (מוסתר)</label><input class="sf-input" name="bot_token" type="password" autocomplete="off" placeholder="הקוד שקיבלתם מ-BotFather" dir="ltr" /></div>
+          <div class="field"><label>{{ t('dash.tg_chat') }}</label><input class="sf-input" name="chat_id" placeholder="{{ t('dash.tg_chat_ph') }}" dir="ltr" /></div>
+          <div class="field"><label>{{ t('dash.tg_token') }}</label><input class="sf-input" name="bot_token" type="password" autocomplete="off" placeholder="{{ t('dash.tg_token_ph') }}" dir="ltr" /></div>
         </div>
       </div>
 
       <div class="dest-block" data-dest="discord">
         <div class="dest-block-head">
-          <label><input type="checkbox" id="dest-dc" /> דיסקורד</label>
-          <a href="/guides#discord" style="color:var(--signal);font-size:0.88rem">מדריך דיסקורד</a>
+          <label><input type="checkbox" id="dest-dc" /> {{ t('landing.chip_dc') }}</label>
+          <a href="/guides#discord" style="color:var(--signal);font-size:0.88rem">{{ t('dash.guide_dc') }}</a>
         </div>
         <div id="discord-fields" class="dest-fields hidden field" style="margin-top:12px">
-          <label>קישור דיסקורד (Webhook)</label>
-          <input class="sf-input" name="discord_webhook_url" type="password" autocomplete="off" placeholder="מדביקים כאן את הקישור מערוץ הדיסקורד" dir="ltr" />
+          <label>{{ t('dash.dc_url') }}</label>
+          <input class="sf-input" name="discord_webhook_url" type="password" autocomplete="off" placeholder="{{ t('dash.dc_url_ph') }}" dir="ltr" />
         </div>
       </div>
 
-      <div><button type="submit" class="btn btn-primary">שמירה</button></div>
+      <div><button type="submit" class="btn btn-primary">{{ t('dash.save') }}</button></div>
     </form>
     <p id="create-error" class="form-error hidden"></p>
 
     <details id="telegram-help" class="mt-4" open>
-      <summary>איך מוצאים את מספר הצ׳אט וקוד הבוט</summary>
-      <ol class="list-decimal list-inside mt-2 space-y-1" style="color:var(--muted);font-size:0.9rem">
-        <li>בטלגרם פותחים את <a href="https://t.me/BotFather" target="_blank" style="color:var(--signal)">BotFather</a> ושולחים /newbot.</li>
-        <li>נותנים שם לבוט. הוא מחזיר קוד ארוך — זה קוד הבוט. מעתיקים לכאן.</li>
-        <li>פותחים את הבוט החדש ולוחצים Start, או מוסיפים אותו לקבוצה ושולחים הודעה.</li>
-        <li>מספר הצ׳אט: אחרי הודעה לבוט, פותחים בדפדפן את הכתובת <span dir="ltr" class="font-mono text-xs">https://api.telegram.org/botהקוד/getUpdates</span> ומחפשים את המספר ליד id.</li>
+      <summary>{{ t('dash.tg_help_sum') }}</summary>
+      <ol class="guide-ol">
+        <li>{{ t('dash.tg_li1') }}</li>
+        <li>{{ t('dash.tg_li2') }}</li>
+        <li>{{ t('dash.tg_li3') }}</li>
+        <li>{{ t('dash.tg_li4') }} <span dir="ltr" class="font-mono text-xs">https://api.telegram.org/botTOKEN/getUpdates</span> {{ t('dash.tg_li4b') }}</li>
       </ol>
     </details>
     <details id="discord-help" class="mt-4 hidden" open>
-      <summary>איך מחלצים קישור מדיסקורד</summary>
-      <ol class="list-decimal list-inside mt-2 space-y-1" style="color:var(--muted);font-size:0.9rem">
-        <li>פותחים דיסקורד במחשב ונכנסים לשרת.</li>
-        <li>עומדים על הערוץ, לוחצים על גלגל השיניים ליד שם הערוץ.</li>
-        <li>בתפריט משמאל: <strong dir="ltr">Integrations</strong> → <strong dir="ltr">Webhooks</strong>.</li>
-        <li>לוחצים <strong dir="ltr">New Webhook</strong> (או בוחרים אחד קיים).</li>
-        <li>לוחצים <strong dir="ltr">Copy Webhook URL</strong> ומדביקים כאן למעלה.</li>
+      <summary>{{ t('dash.dc_help_sum') }}</summary>
+      <ol class="guide-ol">
+        <li>{{ t('dash.dc_li1') }}</li>
+        <li>{{ t('dash.dc_li2') }}</li>
+        <li>{{ t('dash.dc_li3') }}</li>
+        <li>{{ t('dash.dc_li4') }}</li>
+        <li>{{ t('dash.dc_li5') }}</li>
       </ol>
-      <p class="hint">הקישור צריך להיראות כך: <span dir="ltr" class="font-mono">https://discord.com/api/webhooks/…</span></p>
+      <p class="hint">{{ t('dash.dc_hint') }} <span dir="ltr" class="font-mono">https://discord.com/api/webhooks/…</span></p>
     </details>
     <details id="whatsapp-help" class="mt-4 hidden" open>
-      <summary>איך מקבלים התראות לוואטסאפ שלכם (בלי סריקת QR)</summary>
+      <summary>{{ t('dash.wa_help_sum') }}</summary>
       <div class="mt-2 space-y-3" style="color:var(--muted);font-size:0.9rem">
-        <p>זה שולח <strong style="color:var(--text)">לטלפון שלכם</strong> — לא למכשיר שני, ולא צריך לסרוק כלום בדף הבית.</p>
-        <ol class="list-decimal list-inside space-y-1">
-          <li>בוואטסאפ מוסיפים איש קשר: <span dir="ltr" class="font-mono">+34 694 23 41 84</span> (אפשר לקרוא לו SignalFlow / CallMeBot).</li>
-          <li>שולחים לו בדיוק: <span dir="ltr" class="font-mono">I allow callmebot to send me messages</span></li>
-          <li>מחכים לתשובה עם קוד (APIKEY). אם אין תשובה תוך שתי דקות, מנסים שוב מחר (מגבלת הבוט).</li>
-          <li>מדביקים כאן את המספר שלכם בפורמט <span dir="ltr" class="font-mono">9725…</span> ואת הקוד.</li>
-          <li>לוחצים בדיקה מהירה — ההודעה צריכה להגיע לאותו וואטסאפ.</li>
+        <p>{{ t('dash.wa_help_p') }}</p>
+        <ol class="guide-ol">
+          <li>{{ t('dash.wa_li1') }}</li>
+          <li>{{ t('dash.wa_li2') }} <span dir="ltr" class="font-mono">I allow callmebot to send me messages</span></li>
+          <li>{{ t('dash.wa_li3') }}</li>
+          <li>{{ t('dash.wa_li4') }}</li>
+          <li>{{ t('dash.wa_li5') }}</li>
         </ol>
-        <details class="panel" style="padding:12px;margin:0">
-          <summary>דרך מתקדמת — Green-API (לא חובה)</summary>
-          <p class="hint" style="margin-top:8px">רק אם כבר משתמשים בזה: נכנסים ל־<a href="https://console.green-api.com" target="_blank" style="color:var(--signal)">console.green-api.com</a> → Create instance → ממתינים כשתי דקות → Get QR. בוואטסאפ: Linked devices → Link a device. אין QR בדף הבית של Green-API.</p>
-        </details>
+        <div class="guide-block">
+          <h3>{{ t('dash.ga_h') }}</h3>
+          <ol class="guide-ol">
+            <li>{{ t('dash.ga_li1') }}</li>
+            <li>{{ t('dash.ga_li2') }}</li>
+            <li>{{ t('dash.ga_li3') }}</li>
+            <li>{{ t('dash.ga_li4') }}</li>
+          </ol>
+        </div>
       </div>
     </details>
   </section>
 
   <section class="panel">
     <div class="flex items-center justify-between gap-3 mb-2">
-      <h3 style="margin:0;font-size:1rem">תבנית JSON ל-TradingView</h3>
-      <button type="button" id="copy-tv-json" class="btn btn-ghost btn-sm">העתק תבנית</button>
+      <h3 style="margin:0;font-size:1rem">{{ t('dash.tv_json_h') }}</h3>
+      <button type="button" id="copy-tv-json" class="btn btn-ghost btn-sm">{{ t('dash.copy_tpl') }}</button>
     </div>
-    <p class="hint">מדביקים בשדה ההודעה של ההתראה.</p>
+    <p class="hint">{{ t('dash.tv_json_hint') }}</p>
     <pre id="tv-json-template" dir="ltr" class="preview-url" style="white-space:pre-wrap">{% raw %}{
   "ticker": "{{ticker}}",
   "action": "BUY",
@@ -161,40 +166,40 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <section class="panel">
-      <h2>בדיקה מהירה</h2>
-      <p class="hint">שולחים התראה מדומה, בלי TradingView.</p>
+      <h2>{{ t('dash.test_h') }}</h2>
+      <p class="hint">{{ t('dash.test_hint') }}</p>
       <div class="space-y-3">
-        <div class="field"><label>לאן לשלוח</label><select class="sf-input" id="test-endpoint"></select></div>
-        <div class="field"><label>סימול / מניה</label><input class="sf-input" id="test-ticker" value="BTCUSDT" dir="ltr" /></div>
+        <div class="field"><label>{{ t('dash.test_to') }}</label><select class="sf-input" id="test-endpoint"></select></div>
+        <div class="field"><label>{{ t('dash.test_ticker') }}</label><input class="sf-input" id="test-ticker" value="BTCUSDT" dir="ltr" /></div>
         <div class="field">
-          <label>קנייה / מכירה</label>
+          <label>{{ t('dash.test_side') }}</label>
           <select class="sf-input" id="test-action">
-            <option value="BUY">קנייה</option>
-            <option value="SELL">מכירה</option>
-            <option value="ALERT">התראה</option>
+            <option value="BUY">{{ t('dash.buy') }}</option>
+            <option value="SELL">{{ t('dash.sell') }}</option>
+            <option value="ALERT">{{ t('dash.alert') }}</option>
           </select>
         </div>
-        <div class="field"><label>מחיר</label><input class="sf-input" id="test-price" value="67250" dir="ltr" /></div>
+        <div class="field"><label>{{ t('dash.price') }}</label><input class="sf-input" id="test-price" value="67250" dir="ltr" /></div>
         <details>
-          <summary>מתקדם — JSON</summary>
+          <summary>{{ t('dash.advanced_json') }}</summary>
           <textarea id="test-payload" rows="8" dir="ltr" class="sf-input mt-2 font-mono"></textarea>
         </details>
-        <button type="button" id="send-test" class="btn btn-primary">שלחו בדיקה</button>
-        <pre id="test-result" class="preview-url" style="min-height:80px;white-space:pre-wrap">עוד לא נשלחה בדיקה.</pre>
+        <button type="button" id="send-test" class="btn btn-primary">{{ t('dash.send_test') }}</button>
+        <pre id="test-result" class="preview-url" style="min-height:80px;white-space:pre-wrap">{{ t('dash.test_none') }}</pre>
       </div>
     </section>
     <section class="panel">
       <div class="flex items-center justify-between gap-3 mb-3">
-        <h2 style="margin:0">מה הגיע</h2>
+        <h2 style="margin:0">{{ t('dash.logs_h') }}</h2>
         <select id="logs-endpoint" class="sf-input" style="width:auto;min-width:140px"></select>
       </div>
       <div class="overflow-x-auto">
         <table class="table">
           <thead>
-            <tr><th>סטטוס</th><th>זמן תגובה</th><th>תצוגה</th><th>מתי</th></tr>
+            <tr><th>{{ t('dash.th_status') }}</th><th>{{ t('dash.th_latency') }}</th><th>{{ t('dash.th_preview') }}</th><th>{{ t('dash.th_when') }}</th></tr>
           </thead>
           <tbody id="logs-body">
-            <tr><td colspan="4" style="color:var(--muted)">בחרו חיבור כדי לראות מה הגיע.</td></tr>
+            <tr><td colspan="4" style="color:var(--muted)">{{ t('dash.logs_pick') }}</td></tr>
           </tbody>
         </table>
       </div>
@@ -204,6 +209,8 @@
 {% endblock %}
 {% block scripts %}
 <script>
+const T = window.SF_I18N || {};
+const locale = window.SF_LOCALE || 'en';
 const telegramFields = document.getElementById('telegram-fields');
 const discordFields = document.getElementById('discord-fields');
 const whatsappFields = document.getElementById('whatsapp-fields');
@@ -219,9 +226,9 @@ let me = null;
 let endpointsCache = [];
 
 function destLabel(type) {
-  if (type === 'telegram') return 'טלגרם';
-  if (type === 'whatsapp') return 'וואטסאפ';
-  return 'דיסקורד';
+  if (type === 'telegram') return T.telegram;
+  if (type === 'whatsapp') return T.whatsapp;
+  return T.discord;
 }
 
 function destsOf(ep) {
@@ -261,8 +268,8 @@ function defaultPayload() {
     action: document.getElementById('test-action').value || 'BUY',
     price: document.getElementById('test-price').value || '0',
     timeframe: '15m',
-    strategy_name: 'בדיקה',
-    message: 'התראת בדיקה מ-SignalFlow'
+    strategy_name: T.test_strategy,
+    message: T.test_message
   };
 }
 function syncPayloadBox() {
@@ -277,32 +284,31 @@ syncPayloadBox();
 function renderPlan() {
   if (!me) return;
   const isPro = me.tier === 'pro';
-  document.getElementById('plan-summary').textContent = isPro ? 'פרו — בלי הגבלה' : 'חינם';
+  document.getElementById('plan-summary').textContent = isPro ? T.plan_pro : T.plan_free;
   const pill = document.getElementById('nav-plan-pill');
   if (pill) {
-    pill.textContent = isPro ? 'פרו' : 'חינם';
+    pill.textContent = isPro ? T.pill_pro : T.pill_free;
     pill.classList.toggle('pro', isPro);
     pill.classList.toggle('free', !isPro);
   }
   const wantBtn = document.getElementById('want-pro-btn');
   if (isPro) {
-    document.getElementById('plan-remaining').textContent = 'ערוצים והתראות ללא הגבלה. בלי חתימת SignalFlow בהודעות.';
+    document.getElementById('plan-remaining').textContent = T.plan_pro_detail;
     wantBtn.classList.add('hidden');
   } else {
     const left = me.alerts_remaining_today ?? 0;
-    document.getElementById('plan-remaining').textContent =
-      'נשארו ' + left + ' התראות היום (מתוך 3). קישור אחד. בהודעות יופיע SignalFlow.';
+    document.getElementById('plan-remaining').textContent = T.plan_free_remaining.replace('{n}', left);
     wantBtn.classList.remove('hidden');
   }
   const paid = new URLSearchParams(location.search).get('checkout');
   const msg = document.getElementById('want-pro-msg');
   if (paid === 'success') {
     msg.className = 'note note-ok';
-    msg.textContent = isPro ? 'התשלום התקבל. החשבון בפרו.' : 'התשלום התקבל. אם הפרו לא הופיע תוך דקה — רעננו את העמוד.';
+    msg.textContent = isPro ? T.pay_ok : T.pay_pending;
     msg.classList.remove('hidden');
   } else if (paid === 'failure' || paid === 'cancel') {
     msg.className = 'note note-warn';
-    msg.textContent = 'התשלום לא הושלם. אפשר לנסות שוב.';
+    msg.textContent = T.pay_fail;
     msg.classList.remove('hidden');
   }
 }
@@ -326,22 +332,22 @@ async function loadEndpoints() {
 function renderEndpoints() {
   const container = document.getElementById('endpoints-list');
   if (endpointsCache.length === 0) {
-    container.innerHTML = '<p class="hint">עוד אין חיבור. שמרו אחד למטה.</p>';
+    container.innerHTML = '<p class="hint">' + T.no_endpoints + '</p>';
     return;
   }
   container.innerHTML = endpointsCache.map(ep => `
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl" style="background:#070a12;border:1px solid var(--line)">
       <div>
         <div class="font-semibold">${ep.name}
-          <span class="ok-pill" style="${ep.is_active ? '' : 'color:var(--muted);background:rgba(255,255,255,0.06)'}">${ep.is_active ? 'פעיל' : 'כבוי'}</span>
+          <span class="ok-pill" style="${ep.is_active ? '' : 'color:var(--muted);background:rgba(255,255,255,0.06)'}">${ep.is_active ? T.active : T.paused}</span>
           ${destsOf(ep).map(d => `<span class="dest-chip" style="margin-inline-start:6px">${destLabel(d.type)}</span>`).join('')}
         </div>
         <div class="preview-url" style="margin-top:8px">${ep.webhook_url}</div>
       </div>
       <div class="flex gap-2 shrink-0">
-        <button onclick="copyUrl(this, '${ep.webhook_url}')" class="btn btn-primary btn-sm">העתק קישור</button>
-        <button onclick="toggleEndpoint(${ep.id})" class="btn btn-ghost btn-sm">${ep.is_active ? 'השהה' : 'הפעל'}</button>
-        <button onclick="deleteEndpoint(${ep.id})" class="btn btn-danger btn-sm">מחק</button>
+        <button onclick="copyUrl(this, '${ep.webhook_url}')" class="btn btn-primary btn-sm">${T.copy_url}</button>
+        <button onclick="toggleEndpoint(${ep.id})" class="btn btn-ghost btn-sm">${ep.is_active ? T.pause : T.enable}</button>
+        <button onclick="deleteEndpoint(${ep.id})" class="btn btn-danger btn-sm">${T.delete}</button>
       </div>
     </div>
   `).join('');
@@ -349,15 +355,15 @@ function renderEndpoints() {
 
 function populateSelects() {
   const options = endpointsCache.map(ep => `<option value="${ep.id}" data-token="${ep.token}">${ep.name}</option>`).join('');
-  document.getElementById('test-endpoint').innerHTML = options || '<option value="">אין חיבור עדיין</option>';
-  document.getElementById('logs-endpoint').innerHTML = options || '<option value="">אין חיבור עדיין</option>';
+  document.getElementById('test-endpoint').innerHTML = options || '<option value="">' + T.no_connection + '</option>';
+  document.getElementById('logs-endpoint').innerHTML = options || '<option value="">' + T.no_connection + '</option>';
   if (endpointsCache.length > 0) loadLogs(endpointsCache[0].id);
 }
 
 function copyUrl(btn, url) {
   navigator.clipboard.writeText(url).then(() => {
     const prev = btn.textContent;
-    btn.textContent = 'הועתק!';
+    btn.textContent = T.copied;
     setTimeout(() => { btn.textContent = prev; }, 1600);
   });
 }
@@ -367,7 +373,7 @@ document.getElementById('copy-tv-json').addEventListener('click', function () {
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copy-tv-json');
     const prev = btn.textContent;
-    btn.textContent = 'הועתק!';
+    btn.textContent = T.copied;
     setTimeout(() => { btn.textContent = prev; }, 1600);
   });
 });
@@ -377,7 +383,7 @@ async function toggleEndpoint(id) {
   loadEndpoints();
 }
 async function deleteEndpoint(id) {
-  if (!confirm('למחוק את החיבור הזה?')) return;
+  if (!confirm(T.confirm_delete)) return;
   await fetch(`/api/v1/endpoints/${id}`, { method: 'DELETE' });
   loadEndpoints();
 }
@@ -398,9 +404,9 @@ function buildDestinations(form) {
   if (destDc.checked) dests.push({ type: 'discord', config: { discord_webhook_url: form.discord_webhook_url.value } });
   return dests;
 }
-function hebrewDetail(data, fallback) {
+function locDetail(data, fallback) {
   if (typeof data.detail === 'string' && data.detail.trim()) return data.detail;
-  if (Array.isArray(data.detail) && data.detail[0] && data.detail[0].msg) return 'בדקו שמילאתם את כל השדות.';
+  if (Array.isArray(data.detail) && data.detail[0] && data.detail[0].msg) return T.check_fields;
   return fallback;
 }
 
@@ -411,7 +417,7 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
   errorEl.classList.add('hidden');
   const destinations = buildDestinations(form);
   if (!destinations.length) {
-    errorEl.textContent = 'בחרו לפחות יעד אחד.';
+    errorEl.textContent = T.need_dest;
     errorEl.classList.remove('hidden');
     return;
   }
@@ -422,7 +428,7 @@ document.getElementById('create-form').addEventListener('submit', async (e) => {
   if (res.ok) { form.reset(); destTg.checked = true; destWa.checked = false; destDc.checked = false; syncDestination(); syncWaProvider(); loadEndpoints(); }
   else {
     const data = await res.json().catch(() => ({}));
-    errorEl.textContent = hebrewDetail(data, 'לא הצלחנו לשמור. בדקו שמילאתם את כל השדות.');
+    errorEl.textContent = locDetail(data, T.save_failed);
     errorEl.classList.remove('hidden');
   }
 });
@@ -433,15 +439,15 @@ async function loadLogs(endpointId) {
   if (!endpointId) return;
   const res = await fetch(`/api/v1/endpoints/${endpointId}/logs`);
   const tbody = document.getElementById('logs-body');
-  if (!res.ok) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">לא הצלחנו לטעון.</td></tr>'; return; }
+  if (!res.ok) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">' + T.logs_fail + '</td></tr>'; return; }
   const logs = await res.json();
-  if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">עוד לא הגיעו התראות.</td></tr>'; return; }
+  if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">' + T.logs_empty + '</td></tr>'; return; }
   tbody.innerHTML = logs.map(l => `
     <tr>
-      <td><span class="ok-pill" style="${l.status === 'delivered' ? '' : 'color:#ffb4b8;background:var(--danger-dim)'}">${l.status === 'delivered' ? 'הגיע' : 'לא הגיע'}</span></td>
+      <td><span class="ok-pill" style="${l.status === 'delivered' ? '' : 'color:#ffb4b8;background:var(--danger-dim)'}">${l.status === 'delivered' ? T.delivered : T.failed}</span></td>
       <td>${Number(l.latency_ms).toFixed(0)} ms</td>
       <td class="font-mono text-xs" style="color:var(--muted);max-width:12rem;overflow:hidden;text-overflow:ellipsis">${(l.payload_raw || '').replace(/</g, '&lt;').slice(0, 80)}</td>
-      <td style="color:var(--faint);font-size:0.75rem">${new Date(l.created_at).toLocaleString('he-IL')}</td>
+      <td style="color:var(--faint);font-size:0.75rem">${new Date(l.created_at).toLocaleString(locale === 'he' ? 'he-IL' : 'en-US')}</td>
     </tr>
   `).join('');
 }
@@ -450,25 +456,25 @@ document.getElementById('send-test').addEventListener('click', async () => {
   const select = document.getElementById('test-endpoint');
   const token = select.options[select.selectedIndex]?.dataset.token;
   const resultEl = document.getElementById('test-result');
-  if (!token) { resultEl.textContent = 'קודם שומרים חיבור למעלה.'; return; }
+  if (!token) { resultEl.textContent = T.need_save; return; }
   const payload = defaultPayload();
-  resultEl.textContent = 'שולח…';
+  resultEl.textContent = T.sending;
   const res = await fetch(`/api/v1/webhook/${token}/test`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
   });
   const data = await res.json().catch(() => ({}));
   if (res.status === 429 || res.status === 403) {
-    resultEl.textContent = typeof data.detail === 'string' ? data.detail : 'הגעתם למגבלה של התוכנית החינמית.';
+    resultEl.textContent = typeof data.detail === 'string' ? data.detail : T.free_limit;
     loadMe();
     return;
   }
   const ok = data.status === 'delivered' || data.ok === true;
   if (ok && data.error_message) {
-    resultEl.textContent = 'נשלח לחלק מהיעדים. ' + data.error_message;
+    resultEl.textContent = T.partial + data.error_message;
   } else {
     resultEl.textContent = ok
-      ? 'נשלח. אם היעד מחובר תראו הודעה שם, וגם שורה ב«מה הגיע».'
-      : ('נשלח לשרת, אבל לא הגיע ליעד. ' + (data.error_message || (typeof data.detail === 'string' ? data.detail : 'בדקו את פרטי החיבור.')));
+      ? T.test_ok
+      : (T.test_fail + (data.error_message || (typeof data.detail === 'string' ? data.detail : T.check_connection)));
   }
   loadLogs(select.value);
   loadMe();
@@ -485,7 +491,7 @@ document.getElementById('want-pro-btn').addEventListener('click', async () => {
   msg.className = 'note note-warn';
   msg.textContent = typeof data.detail === 'string' && data.detail.trim()
     ? data.detail
-    : 'סליקה לא הוגדרה עדיין';
+    : T.billing_unconfigured;
   msg.classList.remove('hidden');
 });
 

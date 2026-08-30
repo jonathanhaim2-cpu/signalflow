@@ -1,62 +1,66 @@
 {% extends "base.html" %}
 {% set nav_mode = 'auth' %}
 {% set auth_alt = 'signup' %}
-{% set auth_alt_label = 'הרשמה' %}
-{% block title %}כניסה — SignalFlow{% endblock %}
+{% block title %}{{ t('login.title') }}{% endblock %}
 {% block content %}
 <div class="auth-shell">
   <section class="auth-plans">
-    <p class="eyebrow">עוד אין חשבון?</p>
-    <h1 style="font-size:2rem;letter-spacing:-0.03em;margin:10px 0 18px">חינם או פרו</h1>
-    <p class="lede" style="margin-bottom:22px">אפשר להירשם עכשיו. פרו ב־$9 לחודש. Paddle מוציא קבלה מחו״ל. ביטול בכל עת.</p>
+    <p class="eyebrow">{{ t('login.eyebrow') }}</p>
+    <h1 style="font-size:2rem;letter-spacing:-0.03em;margin:10px 0 18px">{{ t('login.h1') }}</h1>
+    <p class="lede" style="margin-bottom:22px">{{ t('login.lede') }}</p>
     <a class="plan-pick" href="/signup?plan=free">
-      <h3>הרשמה כחינם</h3>
-      <p>קישור אחד, 3 התראות ביום. $0.</p>
+      <h3>{{ t('login.free_h') }}</h3>
+      <p>{{ t('login.free_p') }}</p>
     </a>
     <a class="plan-pick pro" href="/signup?plan=pro">
-      <h3>הרשמה כפרו</h3>
-      <p>$9 לחודש. בלי הגבלה, בלי חתימה. ביטול בכל עת.</p>
+      <h3>{{ t('login.pro_h') }}</h3>
+      <p>{{ t('login.pro_p') }}</p>
     </a>
   </section>
   <section class="auth-form-col">
     <form id="login-form" class="auth-form">
-      <h2 style="margin:0 0 8px">כניסה</h2>
-      <p style="color:var(--muted);margin:0 0 20px">חשבון קיים? כאן נכנסים.</p>
+      <h2 style="margin:0 0 8px">{{ t('login.h2') }}</h2>
+      <p style="color:var(--muted);margin:0 0 20px">{{ t('login.lede_form') }}</p>
       <div class="field">
-        <label>אימייל</label>
+        <label>{{ t('common.email') }}</label>
         <input type="email" name="email" required autocomplete="email" dir="ltr" />
       </div>
       <div class="field">
-        <label>סיסמה</label>
+        <label>{{ t('common.password') }}</label>
         <input type="password" name="password" required autocomplete="current-password" dir="ltr" />
       </div>
       <p id="error" class="form-error hidden"></p>
-      <button type="submit" class="btn btn-primary" style="width:100%">כניסה</button>
-      <p style="color:var(--muted);font-size:0.88rem;margin-top:16px;text-align:center">עוד אין חשבון? <a id="signup-link" href="/signup" style="color:var(--signal)">הרשמה</a></p>
+      <button type="submit" class="btn btn-primary" style="width:100%">{{ t('login.submit') }}</button>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:16px;text-align:center">{{ t('login.no_account') }} <a id="signup-link" href="/signup" style="color:var(--signal)">{{ t('login.signup') }}</a></p>
     </form>
   </section>
 </div>
 {% endblock %}
 {% block scripts %}
 <script>
+const T = window.SF_I18N || {};
 const nextPath = (() => {
   const n = new URLSearchParams(location.search).get('next') || '';
   return (n.startsWith('/') && !n.startsWith('//')) ? n : '/dashboard';
 })();
 document.getElementById('signup-link').href = '/signup?next=' + encodeURIComponent(nextPath);
-function heError(detail, fallback) {
+function locError(detail, fallback) {
   const map = {
-    'Invalid email or password': 'אימייל או סיסמה שגויים',
-    'Email already registered': 'האימייל הזה כבר רשום אצלנו',
-    'Not authenticated': 'צריך להתחבר מחדש',
+    'Invalid email or password': T.invalid_email_password,
+    'Email already registered': T.email_taken,
+    'That email is already registered': T.email_taken,
+    'Not authenticated': T.reauth,
+    'Please sign in again': T.reauth,
+    'אימייל או סיסמה שגויים': T.invalid_email_password,
+    'צריך להתחבר מחדש': T.reauth,
   };
   if (typeof detail === 'string' && map[detail]) return map[detail];
   if (typeof detail === 'string' && detail.trim()) return detail;
   if (Array.isArray(detail) && detail[0]) {
     const msg = (detail[0].msg || '').toLowerCase();
-    if (msg.includes('email')) return 'כתובת האימייל לא תקינה';
-    if (msg.includes('at least 8') || msg.includes('min_length')) return 'הסיסמה חייבת להכיל לפחות 8 תווים';
-    return 'משהו לא תקין בפרטים. בדקו ונסו שוב.';
+    if (msg.includes('email')) return T.bad_email;
+    if (msg.includes('at least 8') || msg.includes('min_length')) return T.pw_short;
+    return T.bad_fields;
   }
   return fallback;
 }
@@ -72,7 +76,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   if (res.ok) { window.location.href = nextPath; }
   else {
     const data = await res.json().catch(() => ({}));
-    errorEl.textContent = heError(data.detail, 'הכניסה נכשלה');
+    errorEl.textContent = locError(data.detail, T.login_failed);
     errorEl.classList.remove('hidden');
   }
 });

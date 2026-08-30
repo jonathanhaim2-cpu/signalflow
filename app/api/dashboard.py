@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
-from fastapi.templating import Jinja2Templates
 
 from app.core.deps import get_current_user_optional
+from app.core.templates import templates
 from app.models.user import User
 
 router = APIRouter(tags=["dashboard"])
-templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/")
@@ -23,7 +22,7 @@ async def signup_page(request: Request, user: User | None = Depends(get_current_
     return templates.TemplateResponse(
         request,
         "signup.html",
-        {"nav_mode": "auth", "auth_alt": "login", "auth_alt_label": "כניסה"},
+        {"nav_mode": "auth", "auth_alt": "login"},
     )
 
 
@@ -34,7 +33,7 @@ async def login_page(request: Request, user: User | None = Depends(get_current_u
     return templates.TemplateResponse(
         request,
         "login.html",
-        {"nav_mode": "auth", "auth_alt": "signup", "auth_alt_label": "הרשמה"},
+        {"nav_mode": "auth", "auth_alt": "signup"},
     )
 
 

@@ -13,30 +13,33 @@
     </a>
 
     {% if mode == 'marketing' %}
-    <nav class="nav-links" aria-label="ראשי">
-      <a href="/guides">מדריכים</a>
-      <a href="/pricing">מחירים</a>
+    <nav class="nav-links" aria-label="{{ t('nav.primary') }}">
+      <a href="/guides">{{ t('nav.guides') }}</a>
+      <a href="/pricing">{{ t('nav.pricing') }}</a>
     </nav>
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="/login">כניסה</a>
-      <a class="btn btn-primary btn-sm" href="/signup">הרשמה</a>
+      <a class="btn btn-ghost btn-sm" href="/login">{{ t('nav.login') }}</a>
+      <a class="btn btn-primary btn-sm" href="/signup">{{ t('nav.signup') }}</a>
+      {% include "partials/lang_switch.html" %}
     </div>
     {% elif mode == 'auth' %}
     <div class="nav-cta">
-      <a class="btn btn-ghost btn-sm" href="/guides">מדריכים</a>
-      <a class="btn btn-ghost btn-sm" href="{% if auth_alt == 'login' %}/login{% else %}/signup{% endif %}">{{ auth_alt_label|default('כניסה') }}</a>
+      <a class="btn btn-ghost btn-sm" href="/guides">{{ t('nav.guides') }}</a>
+      <a class="btn btn-ghost btn-sm" href="{% if auth_alt == 'login' %}/login{% else %}/signup{% endif %}">{% if auth_alt == 'login' %}{{ t('nav.login') }}{% else %}{{ t('nav.signup') }}{% endif %}</a>
+      {% include "partials/lang_switch.html" %}
     </div>
     {% else %}
-    <nav class="nav-links" aria-label="חשבון">
-      <a href="/guides">מדריכים</a>
-      {% if user is defined and user.is_admin %}<a href="/admin">ניהול</a>{% endif %}
+    <nav class="nav-links" aria-label="{{ t('nav.account') }}">
+      <a href="/guides">{{ t('nav.guides') }}</a>
+      {% if user is defined and user.is_admin %}<a href="/admin">{{ t('nav.admin') }}</a>{% endif %}
     </nav>
     <div class="nav-cta">
-      <span id="nav-plan-pill" class="plan-pill free">חינם</span>
+      <span id="nav-plan-pill" class="plan-pill free">{{ t('nav.free') }}</span>
       {% if user is defined %}
       <span class="text-sm" style="color:var(--muted)" dir="ltr">{{ user.email }}</span>
       {% endif %}
-      <button type="button" id="logout-btn" class="btn btn-ghost btn-sm">התנתק</button>
+      <button type="button" id="logout-btn" class="btn btn-ghost btn-sm">{{ t('nav.logout') }}</button>
+      {% include "partials/lang_switch.html" %}
     </div>
     {% endif %}
   </div>

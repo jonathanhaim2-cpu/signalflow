@@ -1,6 +1,6 @@
 # SignalFlow
 
-A lightweight webhook relay that receives TradingView alerts, formats them, and forwards them to Telegram, Discord, and WhatsApp. The dashboard is Hebrew RTL for non-technical traders.
+A lightweight webhook relay that receives TradingView alerts, formats them, and forwards them to Telegram, Discord, and WhatsApp. The public UI defaults to English (LTR). A header control switches to Hebrew (RTL) and stores `sf_lang`.
 
 ## Plans
 
@@ -9,7 +9,7 @@ A lightweight webhook relay that receives TradingView alerts, formats them, and 
 
 ### Paddle Billing (Merchant of Record)
 
-Pro checkout uses [Paddle](https://www.paddle.com/) — foreign receipts in USD. Paddle is the merchant of record.
+Pro checkout uses [Paddle](https://www.paddle.com/). Price is $9 USD / month. The UI copy is: “Billed securely with Paddle. Cancel anytime.”
 
 1. Create a Paddle account and a product with a **$9 USD / month** recurring price.
 2. In Paddle → Developer tools → Notifications, add webhook URL:
@@ -27,7 +27,7 @@ PADDLE_SANDBOX=true            # use sandbox-api.paddle.com while testing
 
 `POST /api/v1/billing/checkout` (logged-in) creates a transaction (`collection_mode: automatic`, `items: [{price_id, quantity: 1}]`, `custom_data.user_id`) and returns `checkout.url`. The webhook verifies `Paddle-Signature`.
 
-If the keys are missing the API returns Hebrew `סליקה לא הוגדרה עדיין` (HTTP 503). The dashboard «רוצה פרו» button is hidden when the user is already Pro.
+If the keys are missing the API returns `Billing is not configured yet.` (HTTP 503), or the Hebrew equivalent when `sf_lang=he`. The Get Pro button is hidden when the user is already Pro.
 
 Admin / allowlist / invite-code Pro grants still work and are not revoked by a later Paddle cancellation.
 
@@ -41,12 +41,12 @@ python scripts/grant_pro.py you@example.com
 
 Jonathan (`jonathanhaim2@gmail.com`) is the owner. On first signup/login that email becomes **admin + Pro**. Additional admins: `ADMIN_EMAILS` (comma-separated).
 
-Hebrew SSR at `/admin` (non-admins get 404 / login redirect):
+Admin UI at `/admin` (non-admins get 404 / login redirect), English by default:
 
-- User list: email, חינם/פרו, date, alerts today, upgrade requested
-- «הפוך לפרו» / «הורד לחינם» / השבת
+- User list: email, Free/Pro, date, alerts today, upgrade requested
+- Make Pro / Move to Free / Disable
 - Create a user (email + temp password, shown once)
-- One-time Pro invite codes with a large code + QR PNG (`/redeem/{code}`). Default expiry 7 days; unused codes can be revoked or printed («הדפס / שמור»).
+- One-time Pro invite codes with a large code + QR PNG (`/redeem/{code}`). Default expiry 7 days; unused codes can be revoked or printed.
 
 Set on Render: `ADMIN_EMAILS=jonathanhaim2@gmail.com`.
 
@@ -103,20 +103,20 @@ The container listens on `$PORT` (default 8000) for Render.
 }
 ```
 
-Plain text still forwards; every attempt is logged as הגיע / לא הגיע.
+Plain text still forwards; every attempt is logged as delivered / failed.
 
 ## WhatsApp
 
-**Easy path (CallMeBot, default):** alerts go to *your* WhatsApp — the same number that activated the bot. No second device, no QR.
+CallMeBot is a free third-party bot. WhatsApp sometimes does not reply. Telegram is the most reliable easy channel. If CallMeBot does not reply, use Green-API.
 
 1. Add `+34 694 23 41 84` as a WhatsApp contact (name it SignalFlow / CallMeBot).
 2. Send exactly: `I allow callmebot to send me messages`
-3. The bot replies with an APIKEY. If nothing arrives within two minutes, try again tomorrow (bot limit).
-4. In the dashboard, paste your number as `9725…` and the APIKEY, then use בדיקה מהירה.
+3. The bot should reply with an APIKEY. If CallMeBot does not reply, use Green-API.
+4. In the dashboard, paste your number as `9725…` and the APIKEY, then send a test.
 
 SignalFlow sends a GET to `https://api.callmebot.com/whatsapp.php?phone=…&text=…&apikey=…` (personal use only). Israeli `05…` numbers are stored as `9725…`. The APIKEY is masked in API responses.
 
-**Advanced — Green-API:** [console.green-api.com](https://console.green-api.com) → Create instance → wait ~2 minutes → Get QR → WhatsApp: Linked devices → Link a device. Then paste `idInstance`, `apiTokenInstance`, and the recipient phone. QR is not on the Green-API homepage.
+**Green-API:** Open [console.green-api.com](https://console.green-api.com) and create an instance. When it is ready, open Get QR (not the home page). In WhatsApp: Linked devices → Link a device, then scan that QR. Copy the instance id and API token into SignalFlow.
 
 **Advanced — Meta Cloud API:** `phone_number_id` + `access_token` + recipient `to` (E.164).
 

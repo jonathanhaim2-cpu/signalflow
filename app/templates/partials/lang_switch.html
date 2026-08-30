@@ -1,0 +1,5 @@
+<nav class="lang-switch" aria-label="{{ t('nav.language') }}">
+  <a href="{{ lang_href('en') }}" hreflang="en" class="{% if locale == 'en' %}is-on{% endif %}"{% if locale == 'en' %} aria-current="true"{% endif %}>EN</a>
+  <span class="lang-switch-sep" aria-hidden="true">|</span>
+  <a href="{{ lang_href('he') }}" hreflang="he" class="{% if locale == 'he' %}is-on{% endif %}"{% if locale == 'he' %} aria-current="true"{% endif %}>עברית</a>
+</nav>

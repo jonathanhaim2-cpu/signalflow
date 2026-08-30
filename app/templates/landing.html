@@ -1,38 +1,38 @@
 {% extends "base.html" %}
-{% block title %}SignalFlow — התראות מ-TradingView לטלפון{% endblock %}
-{% block og_title %}SignalFlow — התראות לטלפון{% endblock %}
+{% block title %}{{ t('landing.title') }}{% endblock %}
+{% block og_title %}{{ t('landing.og_title') }}{% endblock %}
 {% block content %}
 <main>
   <section class="wrap hero">
     <div>
-      <p class="eyebrow">בלי לפספס עסקה</p>
-      <h1>ההתראה מגיעה<br>לוואטסאפ שלכם.</h1>
-      <p class="lede">מ-TradingView ישר לטלפון — וואטסאפ, טלגרם ודיסקורד, גם יחד. בלי מכשיר שני ובלי סריקת QR.</p>
+      <p class="eyebrow">{{ t('landing.eyebrow') }}</p>
+      <h1>{{ t('landing.h1_1') }}<br>{{ t('landing.h1_2') }}</h1>
+      <p class="lede">{{ t('landing.lede') }}</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/signup">הרשמה בחינם</a>
-        <a class="btn btn-ghost" href="/login">כניסה</a>
+        <a class="btn btn-primary" href="/signup">{{ t('landing.cta_free') }}</a>
+        <a class="btn btn-ghost" href="/login">{{ t('landing.cta_login') }}</a>
       </div>
-      <div class="dest-row" aria-label="יעדים">
+      <div class="dest-row" aria-label="{{ t('landing.dests') }}">
         <span class="dest-chip"><i class="dest-dot tv"></i> TradingView</span>
-        <span class="dest-chip"><i class="dest-dot wa"></i> וואטסאפ</span>
-        <span class="dest-chip"><i class="dest-dot tg"></i> טלגרם</span>
-        <span class="dest-chip"><i class="dest-dot dc"></i> דיסקורד</span>
+        <span class="dest-chip"><i class="dest-dot tg"></i> {{ t('landing.chip_tg') }}</span>
+        <span class="dest-chip"><i class="dest-dot wa"></i> {{ t('landing.chip_wa') }}</span>
+        <span class="dest-chip"><i class="dest-dot dc"></i> {{ t('landing.chip_dc') }}</span>
       </div>
     </div>
 
     <div class="product-preview" aria-hidden="true">
       <div class="preview-top">
         <div class="preview-dots"><i></i><i></i><i></i></div>
-        <span>הערוץ שלי</span>
+        <span>{{ t('landing.preview_channel') }}</span>
       </div>
       <div class="preview-card">
-        <div class="preview-kicker">קישור אחד</div>
-        <div class="preview-title">אסטרטגיית ביטקוין</div>
-        <div class="preview-status"><span class="pulse"></span> וואטסאפ + טלגרם מחוברים</div>
+        <div class="preview-kicker">{{ t('landing.preview_kicker') }}</div>
+        <div class="preview-title">{{ t('landing.preview_title') }}</div>
+        <div class="preview-status"><span class="pulse"></span> {{ t('landing.preview_status') }}</div>
         <div class="preview-url">https://signalflow-cl0v.onrender.com/api/v1/webhook/8f3a21c0</div>
         <div class="preview-log">
-          <div class="log-row"><span>BTCUSDT · קנייה · 67,250</span><span class="ok-pill">הגיע</span></div>
-          <div class="log-row"><span>ETHUSDT · מכירה · 3,201</span><span class="ok-pill">הגיע</span></div>
+          <div class="log-row"><span>{{ t('landing.preview_buy') }}</span><span class="ok-pill">{{ t('landing.preview_ok') }}</span></div>
+          <div class="log-row"><span>{{ t('landing.preview_sell') }}</span><span class="ok-pill">{{ t('landing.preview_ok') }}</span></div>
         </div>
       </div>
     </div>
@@ -41,21 +41,21 @@
   <section class="section" id="how">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">איך זה עובד</p>
-        <h2>שלושה צעדים קצרים.</h2>
-        <p>מחברים יעד, מעתיקים קישור, ומסמנים וי ב-TradingView. יש מדריך מצולם לכל שלב.</p>
+        <p class="eyebrow">{{ t('landing.how_eyebrow') }}</p>
+        <h2>{{ t('landing.how_h2') }}</h2>
+        <p>{{ t('landing.how_lede') }}</p>
       </div>
       <div class="how-grid">
         <article class="how-card">
           <div class="shot">
-            <div class="frame frame-wa">
-              <div class="frame-bar">וואטסאפ · SignalFlow</div>
-              <div class="bubble">🟢 BUY — BTCUSDT<br>Price: 67250<br>ההתראה אצלכם בטלפון</div>
+            <div class="frame frame-tg">
+              <div class="frame-bar" style="color:#2aabee">{{ t('landing.how1_bar') }}</div>
+              <div class="bubble">🟢 BUY — BTCUSDT<br>Price: 67250<br>{{ t('landing.how1_bubble') }}</div>
             </div>
           </div>
           <div class="copy">
-            <h3>מחברים את הוואטסאפ שלכם</h3>
-            <p>מוסיפים איש קשר, שולחים משפט אחד, מדביקים את הקוד. ההודעות מגיעות לאותו טלפון.</p>
+            <h3>{{ t('landing.how1_h') }}</h3>
+            <p>{{ t('landing.how1_p') }}</p>
           </div>
         </article>
         <article class="how-card">
@@ -63,12 +63,12 @@
             <div class="frame" style="background:#0c111c">
               <div class="frame-bar">SignalFlow</div>
               <div class="preview-url" style="margin:16px 12px">https://…/api/v1/webhook/…</div>
-              <div style="margin:0 12px 14px" class="ok-pill">העתק קישור</div>
+              <div style="margin:0 12px 14px" class="ok-pill">{{ t('landing.how2_copy') }}</div>
             </div>
           </div>
           <div class="copy">
-            <h3>מעתיקים את הקישור האישי</h3>
-            <p>לחיצה אחת. זה הכתובת ש-TradingView תשלח אליה בכל התראה.</p>
+            <h3>{{ t('landing.how2_h') }}</h3>
+            <p>{{ t('landing.how2_p') }}</p>
           </div>
         </article>
         <article class="how-card">
@@ -79,48 +79,48 @@
             </div>
           </div>
           <div class="copy">
-            <h3>מסמנים וי ב-TradingView</h3>
-            <p>בכל התראה: Notifications, וי ליד Webhook URL, מדביקים, שומרים. בלי הווי — לא מגיע.</p>
+            <h3>{{ t('landing.how3_h') }}</h3>
+            <p>{{ t('landing.how3_p') }}</p>
           </div>
         </article>
       </div>
-      <p style="margin-top:22px"><a class="btn btn-ghost" href="/guides">למדריכים המצולמים</a></p>
+      <p style="margin-top:22px"><a class="btn btn-ghost" href="/guides">{{ t('landing.how_cta') }}</a></p>
     </div>
   </section>
 
   <section class="section" id="pricing">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">מחירים</p>
-        <h2>חינם להתחיל. פרו כשצריך יותר.</h2>
-        <p>פרו ב־$9 לחודש. Paddle מוציא קבלה מחו״ל. ביטול בכל עת.</p>
+        <p class="eyebrow">{{ t('landing.price_eyebrow') }}</p>
+        <h2>{{ t('landing.price_h2') }}</h2>
+        <p>{{ t('landing.price_lede') }}</p>
       </div>
       <div class="pricing">
         <article class="plan-card">
-          <h3>חינם</h3>
-          <div class="price">$0 <small>/ לחודש</small></div>
+          <h3>{{ t('landing.free_name') }}</h3>
+          <div class="price">$0 <small>{{ t('landing.free_period') }}</small></div>
           <ul>
-            <li>קישור אחד ל-TradingView</li>
-            <li>3 התראות ביום</li>
-            <li>וואטסאפ, טלגרם ודיסקורד באותו קישור</li>
-            <li>חתימת SignalFlow בהודעות</li>
+            <li>{{ t('landing.free_li1') }}</li>
+            <li>{{ t('landing.free_li2') }}</li>
+            <li>{{ t('landing.free_li3') }}</li>
+            <li>{{ t('landing.free_li4') }}</li>
           </ul>
-          <a class="btn btn-ghost" href="/signup?plan=free">הרשמה כחינם</a>
+          <a class="btn btn-ghost" href="/signup?plan=free">{{ t('landing.cta_free_plan') }}</a>
         </article>
         <article class="plan-card featured">
-          <span class="gold-label">פרו</span>
-          <h3>פרו</h3>
-          <div class="price">$9 <small>/ חודש · USD</small></div>
+          <span class="gold-label">{{ t('landing.pro_name') }}</span>
+          <h3>{{ t('landing.pro_name') }}</h3>
+          <div class="price">$9 <small>{{ t('landing.pro_period') }}</small></div>
           <ul>
-            <li>בלי הגבלת קישורים והתראות</li>
-            <li>ניסיון חוזר אם השליחה נכשלת</li>
-            <li>בלי חתימה בהודעות</li>
-            <li>ביטול בכל עת</li>
+            <li>{{ t('landing.pro_li1') }}</li>
+            <li>{{ t('landing.pro_li2') }}</li>
+            <li>{{ t('landing.pro_li3') }}</li>
+            <li>{{ t('landing.pro_li4') }}</li>
           </ul>
-          <a class="btn btn-gold" href="/signup?plan=pro">הרשמה כפרו</a>
+          <a class="btn btn-gold" href="/signup?plan=pro">{{ t('landing.cta_pro_plan') }}</a>
         </article>
       </div>
-      <p style="margin-top:18px;color:var(--muted);font-size:0.9rem">פירוט, תנאי שימוש והחזרים — ב<a href="/pricing" style="color:var(--signal)">דף המחירים</a>.</p>
+      <p style="margin-top:18px;color:var(--muted);font-size:0.9rem">{{ t('landing.legal_more') }}<a href="/pricing" style="color:var(--signal)">{{ t('landing.legal_more_link') }}</a>.</p>
     </div>
   </section>
 </main>

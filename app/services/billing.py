@@ -13,14 +13,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.logging import logger
 from app.core.urls import public_base_url
+from app.i18n import api_message, t
 from app.models.user import User, UserTier
 from app.services.admin import is_admin_user
 from app.services.plans import parse_allow_pro_emails
 
-MSG_BILLING_UNCONFIGURED = "סליקה לא הוגדרה עדיין"
-MSG_ALREADY_PRO = "כבר יש לכם פרו."
-MSG_PADDLE_FAILED = "לא הצלחנו לפתוח דף תשלום. נסו שוב בעוד רגע."
-MSG_BAD_SIGNATURE = "חתימה לא תקינה"
+MSG_BILLING_UNCONFIGURED = t("en", "api.billing_unconfigured")
+MSG_ALREADY_PRO = t("en", "api.already_pro")
+MSG_PADDLE_FAILED = t("en", "api.paddle_failed")
+MSG_BAD_SIGNATURE = t("en", "api.bad_signature")
 
 PROD_BASE = "https://api.paddle.com"
 SANDBOX_BASE = "https://sandbox-api.paddle.com"
@@ -128,9 +129,9 @@ def _checkout_url(data: dict[str, Any]) -> str | None:
 
 async def create_checkout_session(user: User, request: Request, db: AsyncSession) -> dict[str, str]:
     if not paddle_configured():
-        raise HTTPException(status_code=503, detail=MSG_BILLING_UNCONFIGURED)
+        raise HTTPException(status_code=503, detail=api_message(request, "api.billing_unconfigured"))
     if (user.tier or "").lower() == UserTier.PRO.value:
-        raise HTTPException(status_code=400, detail=MSG_ALREADY_PRO)
+        raise HTTPException(status_code=400, detail=api_message(request, "api.already_pro"))
 
     payload = _checkout_payload(user, request)
     data = await paddle_request("transactions", payload)
@@ -139,7 +140,7 @@ async def create_checkout_session(user: User, request: Request, db: AsyncSession
     txn_id = str(inner.get("id") or "")
     if not url:
         logger.warning("Paddle create transaction missing checkout.url: %s", data)
-        raise HTTPException(status_code=502, detail=MSG_PADDLE_FAILED)
+        raise HTTPException(status_code=502, detail=api_message(request, "api.paddle_failed"))
     if txn_id:
         user.paddle_transaction_id = txn_id
         await db.commit()

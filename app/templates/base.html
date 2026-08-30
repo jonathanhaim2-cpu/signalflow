@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="{{ html_lang }}" dir="{{ html_dir }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#05070d" />
-  <meta name="description" content="{% block description %}התראות מ-TradingView מגיעות לטלפון שלכם — וואטסאפ, טלגרם או דיסקורד.{% endblock %}" />
+  <meta name="description" content="{% block description %}{{ t('meta.default_description') }}{% endblock %}" />
   <meta property="og:title" content="{% block og_title %}SignalFlow{% endblock %}" />
-  <meta property="og:description" content="התראות מ-TradingView לטלפון. בלי לפספס עסקה." />
+  <meta property="og:description" content="{{ t('meta.og_description') }}" />
   <meta property="og:image" content="/static/og.png" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -32,6 +32,7 @@
       }
     }
   </script>
+  <script>window.SF_I18N = {{ i18n_js | tojson }}; window.SF_LOCALE = {{ locale | tojson }};</script>
   {% block extra_head %}{% endblock %}
 </head>
 <body class="sf-body">

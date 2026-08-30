@@ -7,9 +7,8 @@ from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.core.logging import logger
 from app.models.user import User
+from app.i18n import api_message
 from app.services.billing import (
-    MSG_BAD_SIGNATURE,
-    MSG_BILLING_UNCONFIGURED,
     apply_paddle_webhook,
     create_checkout_session,
     paddle_configured,
@@ -39,9 +38,9 @@ async def paddle_webhook(request: Request, db: AsyncSession = Depends(get_db)) -
     if secret:
         if not verify_paddle_signature(signature, raw, secret):
             logger.warning("Paddle webhook signature mismatch")
-            raise HTTPException(status_code=400, detail=MSG_BAD_SIGNATURE)
+            raise HTTPException(status_code=400, detail=api_message(request, "api.bad_signature"))
     elif not paddle_configured() and not raw:
-        raise HTTPException(status_code=503, detail=MSG_BILLING_UNCONFIGURED)
+        raise HTTPException(status_code=503, detail=api_message(request, "api.billing_unconfigured"))
 
     payload = parse_json_body(raw)
     result = await apply_paddle_webhook(db, payload)

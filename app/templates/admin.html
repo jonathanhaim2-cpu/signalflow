@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% block title %}ניהול — SignalFlow{% endblock %}
+{% block title %}{{ t('admin.title') }}{% endblock %}
 {% block content %}
 <main class="app-main">
   <div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
     <div>
-      <p class="eyebrow">ניהול</p>
-      <h1 style="margin:6px 0 0;font-size:1.8rem;letter-spacing:-0.03em">ניהול SignalFlow</h1>
-      <p class="hint">רק לבעלים. בלי חיוב — משנים תוכנית ויוצרים קודי הזמנה.</p>
+      <p class="eyebrow">{{ t('admin.eyebrow') }}</p>
+      <h1 style="margin:6px 0 0;font-size:1.8rem;letter-spacing:-0.03em">{{ t('admin.h1') }}</h1>
+      <p class="hint">{{ t('admin.hint') }}</p>
     </div>
-    <a href="/dashboard" class="btn btn-ghost btn-sm">חזרה לערוץ שלי</a>
+    <a href="/dashboard" class="btn btn-ghost btn-sm">{{ t('admin.back') }}</a>
   </div>
 
   {% if flash %}
   <div class="note note-ok" style="margin-bottom:16px">
     <p class="font-semibold">{{ flash }}</p>
     {% if created_email and generated_password %}
-    <p>אימייל: <span dir="ltr" class="font-mono">{{ created_email }}</span></p>
+    <p>{{ t('admin.email') }}: <span dir="ltr" class="font-mono">{{ created_email }}</span></p>
     <p class="font-mono text-2xl tracking-wider" dir="ltr" style="margin-top:8px">{{ generated_password }}</p>
     {% endif %}
   </div>
@@ -25,12 +25,12 @@
   {% endif %}
 
   <section class="panel">
-    <h2>משתמשים</h2>
+    <h2>{{ t('admin.users_h') }}</h2>
     <div class="overflow-x-auto">
       <table class="table">
         <thead>
           <tr>
-            <th>אימייל</th><th>תוכנית</th><th>נרשם</th><th>התראות היום</th><th>ביקש פרו</th><th>פעולות</th>
+            <th>{{ t('admin.email') }}</th><th>{{ t('admin.th_plan') }}</th><th>{{ t('admin.th_joined') }}</th><th>{{ t('admin.th_today') }}</th><th>{{ t('admin.th_wanted') }}</th><th>{{ t('admin.th_actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -38,32 +38,32 @@
           <tr>
             <td>
               <span dir="ltr" class="font-mono text-xs">{{ row.user.email }}</span>
-              {% if row.user.is_admin %}<span class="gold-label">בעלים</span>{% endif %}
-              {% if row.user.is_disabled %}<span class="ok-pill" style="color:#ffb4b8;background:var(--danger-dim)">מושבת</span>{% endif %}
+              {% if row.user.is_admin %}<span class="gold-label">{{ t('admin.owner') }}</span>{% endif %}
+              {% if row.user.is_disabled %}<span class="ok-pill" style="color:#ffb4b8;background:var(--danger-dim)">{{ t('admin.disabled') }}</span>{% endif %}
             </td>
             <td>{{ row.tier_label }}</td>
             <td style="color:var(--muted);font-size:0.8rem">{{ row.user.created_at.strftime('%d.%m.%Y') if row.user.created_at else '' }}</td>
             <td>{{ row.alerts_today }}</td>
-            <td>{{ 'כן' if row.upgrade_requested else 'לא' }}</td>
+            <td>{{ t('common.yes') if row.upgrade_requested else t('common.no') }}</td>
             <td>
               <div class="flex flex-wrap gap-2">
                 {% if row.user.tier != 'pro' %}
                 <form method="post" action="/admin/users/{{ row.user.id }}/pro">
-                  <button class="btn btn-gold btn-sm">הפוך לפרו</button>
+                  <button class="btn btn-gold btn-sm">{{ t('admin.make_pro') }}</button>
                 </form>
                 {% elif not row.protected %}
                 <form method="post" action="/admin/users/{{ row.user.id }}/free">
-                  <button class="btn btn-ghost btn-sm">הורד לחינם</button>
+                  <button class="btn btn-ghost btn-sm">{{ t('admin.make_free') }}</button>
                 </form>
                 {% endif %}
                 {% if not row.protected and row.user.id != admin.id %}
                   {% if row.user.is_disabled %}
                   <form method="post" action="/admin/users/{{ row.user.id }}/enable">
-                    <button class="btn btn-ghost btn-sm">הפעל</button>
+                    <button class="btn btn-ghost btn-sm">{{ t('admin.enable') }}</button>
                   </form>
                   {% else %}
                   <form method="post" action="/admin/users/{{ row.user.id }}/disable">
-                    <button class="btn btn-danger btn-sm">השבת</button>
+                    <button class="btn btn-danger btn-sm">{{ t('admin.disable') }}</button>
                   </form>
                   {% endif %}
                 {% endif %}
@@ -77,26 +77,26 @@
   </section>
 
   <section class="panel">
-    <h2>יצירת משתמש</h2>
-    <p class="hint">אם משאירים סיסמה ריקה — ניצור אחת ונציג אותה פעם אחת.</p>
+    <h2>{{ t('admin.create_h') }}</h2>
+    <p class="hint">{{ t('admin.create_hint') }}</p>
     <form method="post" action="/admin/users/create" class="grid grid-cols-1 md:grid-cols-3 gap-3">
-      <div class="field"><label>אימייל</label><input class="sf-input" name="email" type="email" required dir="ltr" /></div>
-      <div class="field"><label>סיסמה זמנית (לא חובה)</label><input class="sf-input" name="password" type="text" dir="ltr" placeholder="ריק = ניצור בשבילכם" /></div>
-      <div class="flex items-end"><button class="btn btn-primary">צור משתמש</button></div>
+      <div class="field"><label>{{ t('admin.email') }}</label><input class="sf-input" name="email" type="email" required dir="ltr" /></div>
+      <div class="field"><label>{{ t('admin.temp_pw') }}</label><input class="sf-input" name="password" type="text" dir="ltr" placeholder="{{ t('admin.temp_ph') }}" /></div>
+      <div class="flex items-end"><button class="btn btn-primary">{{ t('admin.create_btn') }}</button></div>
     </form>
   </section>
 
   <section class="panel">
-    <h2>קוד הזמנה לפרו + ברקוד</h2>
-    <p class="hint">כל קוד חד־פעמי. מי שסורק נרשם או נכנס, ואז הופך לפרו. ברירת מחדל: 7 ימים.</p>
+    <h2>{{ t('admin.invites_h') }}</h2>
+    <p class="hint">{{ t('admin.invites_hint') }}</p>
     <form method="post" action="/admin/invites" class="flex flex-wrap items-end gap-3 mb-6">
       <div class="field" style="margin:0">
-        <label>תוקף (ימים)</label>
+        <label>{{ t('admin.days') }}</label>
         <input class="sf-input" name="days" type="number" value="7" min="1" max="365" style="width:7rem" />
       </div>
-      <button class="btn btn-gold">צור קוד + QR</button>
+      <button class="btn btn-gold">{{ t('admin.create_qr') }}</button>
     </form>
-    <h3 style="font-size:1rem;margin-bottom:12px">קודים שעוד לא נוצלו</h3>
+    <h3 style="font-size:1rem;margin-bottom:12px">{{ t('admin.unused_h') }}</h3>
     {% if unused_invites %}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       {% for inv in unused_invites %}
@@ -104,18 +104,18 @@
         <p class="font-mono text-3xl tracking-wider text-center mb-3" dir="ltr">{{ inv.code }}</p>
         <img src="/admin/invites/{{ inv.id }}/qr.png" alt="QR" class="mx-auto w-40 h-40 bg-white p-2 rounded" />
         <p class="text-xs mt-2 text-center font-mono" dir="ltr" style="color:var(--faint)">{{ redeem_urls[inv.id] }}</p>
-        <p class="text-xs text-center" style="color:var(--muted)">בתוקף עד {{ inv.expires_at.strftime('%d.%m.%Y') if inv.expires_at else '' }}</p>
+        <p class="text-xs text-center" style="color:var(--muted)">{{ t('admin.valid_until', date=(inv.expires_at.strftime('%d.%m.%Y') if inv.expires_at else '')) }}</p>
         <div class="flex justify-center gap-2 mt-3">
-          <a href="/admin/invites/{{ inv.id }}/print" class="btn btn-ghost btn-sm">הדפס / שמור</a>
+          <a href="/admin/invites/{{ inv.id }}/print" class="btn btn-ghost btn-sm">{{ t('admin.print') }}</a>
           <form method="post" action="/admin/invites/{{ inv.id }}/revoke">
-            <button class="btn btn-danger btn-sm">בטל קוד</button>
+            <button class="btn btn-danger btn-sm">{{ t('admin.revoke') }}</button>
           </form>
         </div>
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <p class="hint">אין קודים פתוחים. צרו אחד למעלה.</p>
+    <p class="hint">{{ t('admin.none') }}</p>
     {% endif %}
   </section>
 </main>

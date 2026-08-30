@@ -128,14 +128,14 @@ async def redeem_invite(db: AsyncSession, code: str, user: User) -> tuple[bool, 
     result = await db.execute(select(InviteCode).where(InviteCode.code == normalized))
     invite = result.scalar_one_or_none()
     if not invite:
-        return False, "הקוד לא נמצא. בדקו שהעתקתם אותו נכון."
+        return False, "redeem.not_found"
     status = invite_status(invite)
     if status == "revoked":
-        return False, "הקוד בוטל ולא ניתן לממש אותו."
+        return False, "redeem.revoked"
     if status == "used":
-        return False, "הקוד כבר מומש. כל קוד עובד פעם אחת."
+        return False, "redeem.used"
     if status == "expired":
-        return False, "פג תוקף הקוד. בקשו מהבעלים קוד חדש."
+        return False, "redeem.expired"
     user.tier = UserTier.PRO.value
     user.manual_pro = True
     user.upgrade_requested_at = None
@@ -143,7 +143,7 @@ async def redeem_invite(db: AsyncSession, code: str, user: User) -> tuple[bool, 
     invite.redeemed_by_user_id = user.id
     await db.commit()
     await db.refresh(user)
-    return True, "החשבון שודרג לפרו. בלי הגבלת ערוצים והתראות."
+    return True, "redeem.success"
 
 
 async def revoke_invite(db: AsyncSession, invite: InviteCode) -> InviteCode:

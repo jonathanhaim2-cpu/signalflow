@@ -4,16 +4,17 @@ from typing import Any
 
 from fastapi import HTTPException
 
+from app.i18n import t
 from app.models.webhook import WebhookEndpoint
 from app.schemas.webhook import validate_target_config
 
 ALLOWED_TYPES = ("telegram", "discord", "whatsapp")
 MAX_DESTINATIONS = 3
 
-MSG_NEED_DEST = "בחרו לפחות יעד אחד."
-MSG_MAX_DEST = "אפשר לחבר עד שלושה יעדים לאותו קישור."
-MSG_DUP_DEST = "כל סוג יעד יכול להופיע פעם אחת בלבד."
-MSG_BAD_DEST = "סוג יעד לא נתמך"
+MSG_NEED_DEST = t("en", "api.need_dest")
+MSG_MAX_DEST = t("en", "api.max_dest")
+MSG_DUP_DEST = t("en", "api.dup_dest")
+MSG_BAD_DEST = t("en", "api.bad_dest")
 
 
 def dest_label(target_type: str) -> str:

@@ -7,6 +7,7 @@ from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.core.limiter import limiter
 from app.core.logging import logger
+from app.i18n import api_message
 from app.models.user import User
 from app.models.webhook import WebhookEndpoint
 from app.schemas.webhook import AlertLogOut, TradingViewAlert
@@ -16,7 +17,9 @@ from app.services.relay import relay_alert
 router = APIRouter(prefix="/webhook", tags=["webhook"])
 
 
-async def _load_endpoint(db: AsyncSession, endpoint_token: str) -> WebhookEndpoint:
+async def _load_endpoint(
+    db: AsyncSession, endpoint_token: str, request: Request | None = None
+) -> WebhookEndpoint:
     result = await db.execute(
         select(WebhookEndpoint)
         .options(selectinload(WebhookEndpoint.user))
@@ -24,11 +27,11 @@ async def _load_endpoint(db: AsyncSession, endpoint_token: str) -> WebhookEndpoi
     )
     endpoint = result.scalar_one_or_none()
     if not endpoint:
-        raise HTTPException(status_code=404, detail="חיבור לא מוכר")
+        raise HTTPException(status_code=404, detail=api_message(request, "api.unknown_connection"))
     if not endpoint.is_active:
-        raise HTTPException(status_code=403, detail="החיבור כבוי")
+        raise HTTPException(status_code=403, detail=api_message(request, "api.connection_off"))
     if endpoint.user and endpoint.user.is_disabled:
-        raise HTTPException(status_code=403, detail="החשבון מושבת")
+        raise HTTPException(status_code=403, detail=api_message(request, "api.account_disabled_short"))
     return endpoint
 
 
@@ -39,8 +42,8 @@ async def receive_webhook(
     request: Request,
     db: AsyncSession = Depends(get_db),
 ) -> AlertLogOut:
-    endpoint = await _load_endpoint(db, endpoint_token)
-    await enforce_alert_quota(db, endpoint.user)
+    endpoint = await _load_endpoint(db, endpoint_token, request)
+    await enforce_alert_quota(db, endpoint.user, request)
 
     raw_body = await request.body()
     content_type = request.headers.get("content-type")
@@ -56,15 +59,16 @@ async def receive_webhook(
 async def test_webhook(
     endpoint_token: str,
     alert: TradingViewAlert,
+    request: Request,
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ) -> AlertLogOut:
     """Send a simulated alert through an owned endpoint — used by the dashboard's payload tester."""
-    endpoint = await _load_endpoint(db, endpoint_token)
+    endpoint = await _load_endpoint(db, endpoint_token, request)
     if endpoint.user_id != user.id:
-        raise HTTPException(status_code=404, detail="החיבור לא נמצא")
+        raise HTTPException(status_code=404, detail=api_message(request, "api.connection_missing"))
 
-    await enforce_alert_quota(db, user)
+    await enforce_alert_quota(db, user, request)
 
     raw_body = alert.model_dump_json().encode("utf-8")
     log = await relay_alert(db, endpoint, raw_body, "application/json", user=user)

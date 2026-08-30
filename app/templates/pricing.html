@@ -1,53 +1,53 @@
 {% extends "base.html" %}
-{% block title %}מחירים — SignalFlow{% endblock %}
-{% block og_title %}מחירים — SignalFlow{% endblock %}
-{% block description %}תוכנית חינם וערוץ אחד, או SignalFlow פרו ב־9 דולר לחודש. החיוב דרך Paddle. אפשר לבטל בכל עת.{% endblock %}
+{% block title %}{{ t('pricing.title') }}{% endblock %}
+{% block og_title %}{{ t('pricing.og_title') }}{% endblock %}
+{% block description %}{{ t('pricing.description') }}{% endblock %}
 {% block content %}
 <main class="wrap legal-page">
-  <p class="eyebrow">מחירים</p>
-  <h1>תוכניות ומחיר</h1>
-  <p class="lede">SignalFlow מעביר התראות מ-TradingView לוואטסאפ, לטלגרם או לדיסקורד. אפשר להתחיל בחינם. פרו עולה 9 דולר ארה״ב לחודש.</p>
-  <p class="legal-meta">מחירים בדולר ארה״ב. החיוב של פרו מתבצע דרך Paddle.</p>
+  <p class="eyebrow">{{ t('pricing.eyebrow') }}</p>
+  <h1>{{ t('pricing.h1') }}</h1>
+  <p class="lede">{{ t('pricing.lede') }}</p>
+  <p class="legal-meta">{{ t('pricing.meta') }}</p>
   {% include "partials/legal_nav.html" %}
 
   <div class="pricing legal-pricing">
     <article class="plan-card">
-      <h2>חינם</h2>
-      <div class="price">$0 <small>/ לחודש</small></div>
-      <p class="plan-note">בלי כרטיס אשראי.</p>
+      <h2>{{ t('landing.free_name') }}</h2>
+      <div class="price">$0 <small>{{ t('landing.free_period') }}</small></div>
+      <p class="plan-note">{{ t('pricing.free_note') }}</p>
       <ul>
-        <li>ערוץ אחד</li>
-        <li>3 התראות ביום (לפי שעון UTC)</li>
-        <li>וואטסאפ, טלגרם או דיסקורד</li>
-        <li>חתימת SignalFlow בהודעות היוצאות</li>
+        <li>{{ t('pricing.free_li1') }}</li>
+        <li>{{ t('pricing.free_li2') }}</li>
+        <li>{{ t('pricing.free_li3') }}</li>
+        <li>{{ t('pricing.free_li4') }}</li>
       </ul>
-      <a class="btn btn-ghost" href="/signup?plan=free">הרשמה כחינם</a>
+      <a class="btn btn-ghost" href="/signup?plan=free">{{ t('landing.cta_free_plan') }}</a>
     </article>
     <article class="plan-card featured">
-      <span class="gold-label">פרו</span>
-      <h2>פרו</h2>
-      <div class="price">$9 <small>/ לחודש · USD</small></div>
-      <p class="plan-note">חיוב חודשי חוזר. אפשר לבטל בכל עת.</p>
+      <span class="gold-label">{{ t('landing.pro_name') }}</span>
+      <h2>{{ t('landing.pro_name') }}</h2>
+      <div class="price">$9 <small>{{ t('landing.pro_period') }}</small></div>
+      <p class="plan-note">{{ t('pricing.pro_note') }}</p>
       <ul>
-        <li>בלי הגבלת ערוצים והתראות</li>
-        <li>יעד נוסף לאותה התראה</li>
-        <li>ניסיון חוזר אם השליחה נכשלת</li>
-        <li>בלי חתימת SignalFlow בהודעות</li>
+        <li>{{ t('pricing.pro_li1') }}</li>
+        <li>{{ t('pricing.pro_li2') }}</li>
+        <li>{{ t('pricing.pro_li3') }}</li>
+        <li>{{ t('pricing.pro_li4') }}</li>
       </ul>
-      <a class="btn btn-gold" href="/signup?plan=pro">הרשמה כפרו</a>
+      <a class="btn btn-gold" href="/signup?plan=pro">{{ t('landing.cta_pro_plan') }}</a>
     </article>
   </div>
 
   <div class="legal-prose">
-    <h2>איך משלמים</h2>
-    <p>מנוי פרו מחויב ב־9 דולר ארה״ב לחודש. הסליקה, החשבוניות והמע״מ (אם חל) מטופלים על ידי <span dir="ltr">Paddle.com Market Ltd</span> כסוחר הרשמי (Merchant of Record). הקבלה מגיעה מ-Paddle — זו חשבונית זרה, לא חשבונית ישראלית של SignalFlow.</p>
-    <p>אפשר לבטל את המנוי בכל עת. הביטול נכנס לתוקף בסוף תקופת החיוב שכבר שולמה. פירוט על החזרים נמצא ב<a href="/refunds">מדיניות ההחזרים</a>.</p>
+    <h2>{{ t('pricing.pay_h') }}</h2>
+    <p>{{ t('pricing.pay_p1') }}</p>
+    <p>{{ t('pricing.pay_p2') }} <a href="/refunds">{{ t('pricing.pay_p2_link') }}</a>.</p>
 
-    <h2>מה כלול ומה לא</h2>
-    <p>המחיר הוא עבור שירות העברת ההתראות: קבלת Webhook מ-TradingView ושליחה ליעד שחיברתם. SignalFlow אינו ייעוץ השקעות, אינו מבצע עסקאות, ואינו אחראי לתוכן ההתראה או לתוצאה המסחרית שלה.</p>
+    <h2>{{ t('pricing.scope_h') }}</h2>
+    <p>{{ t('pricing.scope_p') }}</p>
 
-    <h2>מסמכים קשורים</h2>
-    <p>השימוש כפוף ל<a href="/terms">תנאי השימוש</a> ול<a href="/privacy">מדיניות הפרטיות</a>. שאלות על חיוב או חשבונית: <a href="mailto:jonathanhaim2@gmail.com" dir="ltr">jonathanhaim2@gmail.com</a>.</p>
+    <h2>{{ t('pricing.docs_h') }}</h2>
+    <p>{{ t('pricing.docs_p') }} <a href="/terms">{{ t('pricing.docs_terms') }}</a> {{ t('pricing.docs_and') }} <a href="/privacy">{{ t('pricing.docs_privacy') }}</a>. {{ t('pricing.docs_q') }} <a href="mailto:jonathanhaim2@gmail.com" dir="ltr">jonathanhaim2@gmail.com</a>.</p>
   </div>
 </main>
 {% endblock %}

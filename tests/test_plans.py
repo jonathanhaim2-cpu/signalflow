@@ -20,7 +20,7 @@ async def test_free_blocked_on_second_channel(client):
 
     second = await _create_telegram(client, name="ערוץ שני")
     assert second.status_code == 403
-    assert "קישור אחד" in second.json()["detail"]
+    assert "one webhook" in second.json()["detail"]
 
 
 async def test_free_blocked_on_fourth_alert(client, fake_http):
@@ -42,7 +42,7 @@ async def test_free_blocked_on_fourth_alert(client, fake_http):
     )
     assert fourth.status_code == 429
     assert "3" in fourth.json()["detail"]
-    assert "התראות" in fourth.json()["detail"]
+    assert "alerts" in fourth.json()["detail"]
     assert len(fake_http.calls) == 3
 
 

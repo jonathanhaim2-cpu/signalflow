@@ -1,10 +1,11 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.i18n import api_message
 from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.core.security import create_access_token, hash_password, verify_password
@@ -26,11 +27,16 @@ def _set_session_cookie(response: Response, email: str) -> str:
 
 
 @router.post("/signup", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-async def signup(payload: UserCreate, response: Response, db: AsyncSession = Depends(get_db)) -> User:
+async def signup(
+    payload: UserCreate,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+) -> User:
     email = str(payload.email).strip().lower()
     existing = await db.execute(select(User).where(User.email == email))
     if existing.scalar_one_or_none():
-        raise HTTPException(status_code=400, detail="האימייל הזה כבר רשום אצלנו")
+        raise HTTPException(status_code=400, detail=api_message(request, "api.email_taken"))
 
     user = User(email=email, hashed_password=hash_password(payload.password))
     if (payload.plan or "free").lower() == "pro":
@@ -45,14 +51,19 @@ async def signup(payload: UserCreate, response: Response, db: AsyncSession = Dep
 
 
 @router.post("/login", response_model=Token)
-async def login(payload: UserLogin, response: Response, db: AsyncSession = Depends(get_db)) -> Token:
+async def login(
+    payload: UserLogin,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+) -> Token:
     email = str(payload.email).strip().lower()
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
     if not user or not verify_password(payload.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="אימייל או סיסמה שגויים")
+        raise HTTPException(status_code=401, detail=api_message(request, "api.bad_credentials"))
     if user.is_disabled:
-        raise HTTPException(status_code=401, detail="החשבון מושבת. פנו לבעלים.")
+        raise HTTPException(status_code=401, detail=api_message(request, "api.account_disabled"))
 
     user = await persist_allowlist_pro(db, user)
     token = _set_session_cookie(response, user.email)
